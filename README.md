@@ -30,6 +30,6 @@ int main(int argc, char const *argv[]) {
 
 |  type | apple | windows | linux |
 | - | - | - | - |
-| _Size | - [x] a | [x] | [x] |
-| _Point | [x] | [x] | [x] |
-| _Rect | [x] | [x] | [x] |
+| _Size | ✅ | ✅ | ✅ |
+| _Point | ✅ | ✅ | ✅ |
+| _Rect | ✅ | ✅ | ✅ |
