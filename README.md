@@ -1,5 +1,3 @@
-### Sneek peak
-
 ```c
 #include <libcore/app.h>
 #include <libcore/window.h>
@@ -23,13 +21,3 @@ int main(int argc, char const *argv[]) {
     return 0;
 }
 ```
-
-### Scope
-
-###### Types
-
-|  type | apple | windows | linux |
-| - | - | - | - |
-| _Size | ✅ | ✅ | ✅ |
-| _Point | ✅ | ✅ | ✅ |
-| _Rect | ✅ | ✅ | ✅ |
