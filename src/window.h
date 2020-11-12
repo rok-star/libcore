@@ -38,6 +38,10 @@ typedef struct _Event {
     } mouse_info;
 } _Event;
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 _Window* _Window_create(void);
 void _Window_destroy(_Window*);
 void _Window_set_visible(_Window*, bool);
@@ -66,6 +70,10 @@ void _Window_on_event(_Window*, void (*)(_Event const*,void*), void*);
     void* _Window_HWND(_Window*);
 #elif __APPLE__
     void* _Window_NSWindow(_Window*);
+#endif
+
+#ifdef __cplusplus
+}
 #endif
 
 #endif /* _LIBCORE_WINDOW_H */

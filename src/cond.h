@@ -5,11 +5,19 @@
 
 typedef struct _Cond _Cond;
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 _Cond* _Cond_create(void);
 void _Cond_destroy(_Cond*);
 void _Cond_notify(_Cond*);
 void _Cond_notify_all(_Cond*);
 void _Cond_wait(_Cond*, _Lock*);
 void _Cond_wait_timeout(_Cond*, _Lock*, double);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* _LIBCORE_COND_H */
