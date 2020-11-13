@@ -8,7 +8,7 @@ typedef enum {
     _MINUTE_DATE_PART		= 3,
     _SECOND_DATE_PART 		= 4,
     _MILLISECOND_DATE_PART 	= 5
-} _DATE_PART
+} _DATE_PART;
 
 typedef struct _Date {
 	double time;
@@ -26,7 +26,7 @@ extern "C" {
 #endif
 
 void _Date_now(_Date*);
-void _Date_rewind(_Date*,_DATE_PART,int);
+void _Date_seek(_Date*,_DATE_PART,int);
 
 #ifdef __cplusplus
 }

@@ -1,7 +1,8 @@
 #ifndef _LIBCORE_WINDOW_H
 #define _LIBCORE_WINDOW_H
 
-#include <libcore/type.h>
+#include <libcore/size.h>
+#include <libcore/point.h>
 #include <libcore/keyboard.h>
 
 typedef struct _Window _Window;
