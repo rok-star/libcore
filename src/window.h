@@ -8,23 +8,23 @@
 typedef struct _Window _Window;
 
 typedef enum {
-    _SHOW_EVENT,
-    _HIDE_EVENT,
-    _SIZE_EVENT,
-    _CLOSE_EVENT,
-    _MAXIMIZE_EVENT,
-    _MINIMIZE_EVENT,
-    _MOUSEMOVE_EVENT,
-    _LBUTTONDOWN_EVENT,
-    _LBUTTONUP_EVENT,
-    _RBUTTONDOWN_EVENT,
-    _RBUTTONUP_EVENT,
-    _KEYDOWN_EVENT,
-    _KEYUP_EVENT,
-} _EVENT;
+    _SHOW_WINDOW_EVENT,
+    _HIDE_WINDOW_EVENT,
+    _SIZE_WINDOW_EVENT,
+    _CLOSE_WINDOW_EVENT,
+    _MAXIMIZE_WINDOW_EVENT,
+    _MINIMIZE_WINDOW_EVENT,
+    _MOUSEMOVE_WINDOW_EVENT,
+    _LBUTTONDOWN_WINDOW_EVENT,
+    _LBUTTONUP_WINDOW_EVENT,
+    _RBUTTONDOWN_WINDOW_EVENT,
+    _RBUTTONUP_WINDOW_EVENT,
+    _KEYDOWN_WINDOW_EVENT,
+    _KEYUP_WINDOW_EVENT,
+} _WINDOW_EVENT;
 
-typedef struct _Event {
-    _EVENT type;
+typedef struct _WindowEvent {
+    _WINDOW_EVENT type;
     _Window* window;
     struct {
         _KEY key;
@@ -37,7 +37,7 @@ typedef struct _Event {
         _Point position;
         int wheel;
     } mouse_info;
-} _Event;
+} _WindowEvent;
 
 #ifdef __cplusplus
 extern "C" {
@@ -65,7 +65,7 @@ bool _Window_minimized(_Window*);
 bool _Window_topmost(_Window*);
 _Size _Window_size(_Window*);
 char* _Window_text(_Window*);
-void _Window_on_event(_Window*, void (*)(_Event const*,void*), void*);
+void _Window_on_event(_Window*, void (*)(_WindowEvent const*,void*), void*);
 
 #if _WIN32
     void* _Window_HWND(_Window*);
