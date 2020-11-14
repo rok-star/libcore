@@ -4,7 +4,7 @@
 
 void event(_WindowEvent const* event, void* param) {
     if (event->type == _CLOSE_WINDOW_EVENT) {
-        _Runloop_exit();
+        _App_exit();
     }
 }
 
@@ -14,7 +14,7 @@ int main(int argc, char const *argv[]) {
     _Window_set_closable(window, true);
     _Window_set_visible(window, true);
 
-    _Runloop_run(NULL, NULL);
+    _App_run();
 
     return 0;
 }

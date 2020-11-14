@@ -1,17 +1,19 @@
 #include <Cocoa/Cocoa.h>
 #include <libcore/MACRO.h>
-#include <libcore/runloop.h>
+#include <libcore/app.h>
 
+void (*__on_event)(_AppEvent const*,void*) = NULL;
+void* __param = NULL;
 bool __running = false;
 
-void _Runloop_run(void (*on_event)(_RunloopEvent const*,void*), void* param) {
+void _App_run() {
 	_ASSERT(__running == false);
 
 	[NSApplication sharedApplication];
 	[NSApp setActivationPolicy: NSApplicationActivationPolicyRegular];
 
-	if (on_event != NULL)
-		on_event(&(_RunloopEvent){ .type = _RUN_RUNLOOP_EVENT }, param);
+	if (__on_event != NULL)
+		__on_event(&(_AppEvent){ .type = _RUN_APP_EVENT }, __param);
 
 	CFRunLoopAddObserver(
 		CFRunLoopGetCurrent(),
@@ -21,8 +23,8 @@ void _Runloop_run(void (*on_event)(_RunloopEvent const*,void*), void* param) {
 			YES,
 			0,
 			^(CFRunLoopObserverRef a, CFRunLoopActivity b) {
-				if (on_event != NULL)
-					on_event(&(_RunloopEvent){ .type = _SPIN_RUNLOOP_EVENT }, param);
+				if (__on_event != NULL)
+					__on_event(&(_AppEvent){ .type = _SPIN_APP_EVENT }, __param);
 			}
 		),
 		kCFRunLoopDefaultMode
@@ -34,11 +36,11 @@ void _Runloop_run(void (*on_event)(_RunloopEvent const*,void*), void* param) {
 
 	__running = false;
 
-	if (on_event != NULL)
-		on_event(&(_RunloopEvent){ .type = _EXIT_RUNLOOP_EVENT }, param);
+	if (__on_event != NULL)
+		__on_event(&(_AppEvent){ .type = _EXIT_APP_EVENT }, __param);
 }
 
-void _Runloop_exit(void) {
+void _App_exit(void) {
 	_ASSERT(__running == true);
 
 	dispatch_async(dispatch_get_main_queue(), ^{
@@ -46,7 +48,7 @@ void _Runloop_exit(void) {
 	});
 }
 
-void _Runloop_wakeup(void) {
+void _App_wakeup(void) {
 	_ASSERT(__running == true);
 
 	dispatch_async(dispatch_get_main_queue(), ^{
@@ -63,6 +65,13 @@ void _Runloop_wakeup(void) {
 	});
 }
 
-bool _Runloop_running(void) {
+bool _App_running(void) {
 	return __running;
+}
+
+void _App_on_event(void (*on_event)(_AppEvent const*,void*), void* param) {
+	_ASSERT(on_event != NULL);
+
+	__on_event = on_event;
+	__param = param;
 }

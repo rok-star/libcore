@@ -23,7 +23,7 @@ await Promise.all([ Deno.mkdir(Path.dirname(out_lib), { recursive: true }),
 
 await Promise.all([ Deno.copyFile(`${project}/src/WINDOWS.h`, `${out_inc}/WINDOWS.h`),
                     Deno.copyFile(`${project}/src/MACRO.h`, `${out_inc}/MACRO.h`),
-                    Deno.copyFile(`${project}/src/runloop.h`, `${out_inc}/runloop.h`) ]);
+                    Deno.copyFile(`${project}/src/app.h`, `${out_inc}/app.h`) ]);
 
 const target = new Target();
 target.type = TargetType.library;
@@ -35,9 +35,9 @@ target.output = out_lib;
 target.temp = temp;
 
 if (Deno.build.os == 'windows') {
-    target.sources.push(`${project}/src/win32/runloop.c`);
+    target.sources.push(`${project}/src/win32/app.c`);
 } else if (Deno.build.os == 'darwin') {
-    target.sources.push(`${project}/src/apple/runloop.m`);
+    target.sources.push(`${project}/src/apple/app.m`);
 } else {
     throw new Error(`${Deno.build.os} not supported for build target`);
 }
