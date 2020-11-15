@@ -1,32 +1,22 @@
 #ifndef _LIBCORE_DATE_H
 #define _LIBCORE_DATE_H
 
-typedef enum {
-    _DAY_DATE_PART			= 0,
-    _WEEK_DATE_PART			= 1,
-    _HOUR_DATE_PART			= 2,
-    _MINUTE_DATE_PART		= 3,
-    _SECOND_DATE_PART 		= 4,
-    _MILLISECOND_DATE_PART 	= 5
-} _DATE_PART;
-
-typedef struct _Date {
-	double time;
-	int year;
-	int month;
-	int date;
-	int hour;
-	int minute;
-	int second;
-	int millisecond;
-} _Date;
+typedef struct _Date _Date;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-void _Date_now(_Date*);
-void _Date_seek(_Date*,_DATE_PART,int);
+_Date* _Date_create(double);
+void _Date_destroy(_Date*);
+double _Date_time(_Date*);
+int _Date_year(_Date*);
+int _Date_month(_Date*);
+int _Date_date(_Date*);
+int _Date_hour(_Date*);
+int _Date_minute(_Date*);
+int _Date_second(_Date*);
+int _Date_millisecond(_Date*);
 
 #ifdef __cplusplus
 }

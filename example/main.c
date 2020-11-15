@@ -15,15 +15,11 @@ int i = 0;
 void event(_AppEvent const* event, void* param) {
 	_ASSERT(event != NULL);
 	if (event->type == _RUN_APP_EVENT) {
-		puts("run event");
+		;
 	} else if (event->type == _EXIT_APP_EVENT) {
-		puts("exit event");
+		;
 	} else if (event->type == _SPIN_APP_EVENT) {
-		puts("spin event");
-		i += 1;
-
-		if (i >= 100)
-			_App_exit();
+		;
 	}
 }
 

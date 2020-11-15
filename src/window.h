@@ -14,6 +14,8 @@ typedef enum {
     _CLOSE_WINDOW_EVENT,
     _MAXIMIZE_WINDOW_EVENT,
     _MINIMIZE_WINDOW_EVENT,
+    _DEMAXIMIZE_WINDOW_EVENT,
+    _DEMINIMIZE_WINDOW_EVENT,
     _MOUSEMOVE_WINDOW_EVENT,
     _LBUTTONDOWN_WINDOW_EVENT,
     _LBUTTONUP_WINDOW_EVENT,
@@ -23,20 +25,24 @@ typedef enum {
     _KEYUP_WINDOW_EVENT,
 } _WINDOW_EVENT;
 
+typedef struct _KeyInfo {
+    _KEY key;
+    bool shift;
+    bool control;
+    bool option;
+    bool super;
+} _KeyInfo;
+
+typedef struct _MouseInfo {
+    _Point position;
+    int wheel;
+} _MouseInfo;
+
 typedef struct _WindowEvent {
     _WINDOW_EVENT type;
     _Window* window;
-    struct {
-        _KEY key;
-        bool alt;
-        bool shift;
-        bool control;
-        bool super;
-    } key_info;
-    struct {
-        _Point position;
-        int wheel;
-    } mouse_info;
+    _KeyInfo key_info;
+    _MouseInfo mouse_info;
 } _WindowEvent;
 
 #ifdef __cplusplus
@@ -46,8 +52,8 @@ extern "C" {
 _Window* _Window_create(void);
 void _Window_destroy(_Window*);
 void _Window_set_visible(_Window*, bool);
-void _Window_set_closable(_Window*, bool);
 void _Window_set_sizable(_Window*, bool);
+void _Window_set_closable(_Window*, bool);
 void _Window_set_maximizable(_Window*, bool);
 void _Window_set_minimizable(_Window*, bool);
 void _Window_set_maximized(_Window*, bool);
