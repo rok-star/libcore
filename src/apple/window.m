@@ -258,6 +258,11 @@ void _Window_set_minimizable(_Window* window, bool value) {
 
 void _Window_set_maximized(_Window* window, bool value) {
 	_ASSERT(window != NULL);
+	if (value == (bool)(window->pNSWindow.styleMask & NSWindowStyleMaskFullScreen))
+		return;
+	dispatch_async(dispatch_get_main_queue(), ^{
+		[window->pNSWindow toggleFullScreen: window->pNSWindow];
+	});
 }
 
 void _Window_set_minimized(_Window* window, bool value) {
@@ -285,7 +290,7 @@ void _Window_set_text(_Window* window, char const* value) {
 
 bool _Window_visible(_Window* window) {
 	_ASSERT(window != NULL);
-	return false;
+	return window->pNSWindow.visible;
 }
 
 bool _Window_closable(_Window* window) {
