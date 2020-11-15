@@ -4,30 +4,30 @@
 
 @interface __Delegate : NSObject<NSApplicationDelegate>
 
-@property (nonatomic, strong) void (^onRun)(void);
-@property (nonatomic, strong) void (^onExit)(void);
-
 - (id)initWithOnRun:(void(^)(void))onRun onExit:(void(^)(void))onExit;
 
 @end
 
-@implementation __Delegate
+@implementation __Delegate {
+	void (^_onRun)(void);
+	void (^_onExit)(void);
+}
 
 - (id)initWithOnRun:(void(^)(void))onRun onExit:(void(^)(void))onExit {
 	self = [super init];
 	if (self) {
-		self.onRun = onRun;
-		self.onExit = onExit;
+		_onRun = onRun;
+		_onExit = onExit;
 	}
 	return self;
 }
 
 - (void)applicationDidFinishLaunching:(NSNotification*)notification {
-	self.onRun();
+	_onRun();
 }
 
 - (void)applicationWillTerminate:(NSNotification*)notification {
-	self.onExit();
+	_onExit();
 }
 
 @end
@@ -38,7 +38,6 @@ bool __running = false;
 
 void _App_run() {
 	_ASSERT(__running == false);
-
 	[[NSApplication sharedApplication]
 		setDelegate: [[__Delegate alloc]
 			initWithOnRun: ^{
@@ -61,7 +60,6 @@ void _App_run() {
 			}
 		]
 	];
-
 	CFRunLoopAddObserver(
 		CFRunLoopGetCurrent(),
 		CFRunLoopObserverCreateWithHandler(
@@ -76,11 +74,8 @@ void _App_run() {
 		),
 		kCFRunLoopDefaultMode
 	);
-
 	__running = true;
-
 	[NSApp run];
-
 	__running = false;
 }
 
@@ -99,7 +94,6 @@ void _App_run() {
 
 void _App_exit(void) {
 	_ASSERT(__running == true);
-
 	dispatch_async(dispatch_get_main_queue(), ^{
 		[NSApp stop: nil];
 		_POST_EVENT
@@ -108,7 +102,6 @@ void _App_exit(void) {
 
 void _App_wakeup(void) {
 	_ASSERT(__running == true);
-
 	dispatch_async(dispatch_get_main_queue(), ^{
 	    _POST_EVENT
 	});
@@ -120,7 +113,6 @@ bool _App_running(void) {
 
 void _App_on_event(void (*on_event)(_AppEvent const*,void*), void* param) {
 	_ASSERT(on_event != NULL);
-
 	__on_event = on_event;
 	__param = param;
 }

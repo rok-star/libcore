@@ -66,7 +66,7 @@ void _Window_set_minimizable(_Window*, bool);
 void _Window_set_maximized(_Window*, bool);
 void _Window_set_minimized(_Window*, bool);
 void _Window_set_topmost(_Window*, bool);
-void _Window_set_size(_Window*, _Size*);
+void _Window_set_size(_Window*, _Size const*);
 void _Window_set_text(_Window*, char const*);
 bool _Window_visible(_Window*);
 bool _Window_closable(_Window*);
