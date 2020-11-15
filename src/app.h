@@ -9,6 +9,10 @@ typedef enum {
 	_SPIN_APP_EVENT
 } _APP_EVENT;
 
+static char const* _APP_EVENT_NAME[3] = {
+	"RUN", "EXIT", "SPIN"
+};
+
 typedef struct _AppEvent {
 	_APP_EVENT type;
 } _AppEvent;

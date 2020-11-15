@@ -1,36 +1,32 @@
 #include <stdio.h>
 #include <libcore/app.h>
+#include <libcore/window.h>
 #include <libcore/MACRO.h>
 
-// #include <libcore/window.h>
-
-// void event(_Event const* event, void* param) {
-// 	if (event->type == _CLOSE_EVENT) {
-// 		_App_exit(_App_current());
-// 	}
-// }
-
-int i = 0;
-
-void event(_AppEvent const* event, void* param) {
+void window_event(_WindowEvent const* event, void* param) {
 	_ASSERT(event != NULL);
-	if (event->type == _RUN_APP_EVENT) {
-		;
-	} else if (event->type == _EXIT_APP_EVENT) {
-		;
-	} else if (event->type == _SPIN_APP_EVENT) {
-		;
+	printf("%s\n", _WINDOW_EVENT_NAME[event->type]);
+
+	if (event->type == _CLOSE_WINDOW_EVENT) {
+		_App_exit();
 	}
 }
 
-int main(int argc, char const *argv[]) {
-	// _Window* window = _Window_create();
-	// _Window_on_event(window, event, NULL);
-	// _Window_set_closable(window, true);
-	// _Window_set_visible(window, true);
+void app_event(_AppEvent const* event, void* param) {
+	_ASSERT(event != NULL);
+	//printf("%s\n", _APP_EVENT_NAME[event->type]);
+}
 
-	_App_on_event(event, NULL);
+int main(int argc, char const *argv[]) {
+	_Window* window = _Window_create();
+	_Window_on_event(window, window_event, NULL);
+	_Window_set_closable(window, true);
+	_Window_set_visible(window, true);
+
+	_App_on_event(app_event, NULL);
 	_App_run();
+
+	_Window_destroy(window);
 
 	return 0;
 }

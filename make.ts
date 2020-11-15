@@ -1,3 +1,12 @@
+console.log(
+`  _ _ _                        
+ | (_) |                       
+ | |_| |__   ___ ___  _ __ ___ 
+ | | | '_ \\ / __/ _ \\| '__/ _ \\
+ | | | |_) | (_| (_) | | |  __/
+ |_|_|_.__/ \\___\\___/|_|  \\___|
+`);
+
 import * as Path from 'https://deno.land/std/path/mod.ts';
 import { Target, TargetType, Standard, tempPath } from '../buildsystem/mod.ts';
 
@@ -23,6 +32,11 @@ await Promise.all([ Deno.mkdir(Path.dirname(out_lib), { recursive: true }),
 
 await Promise.all([ Deno.copyFile(`${project}/src/WINDOWS.h`, `${out_inc}/WINDOWS.h`),
                     Deno.copyFile(`${project}/src/MACRO.h`, `${out_inc}/MACRO.h`),
+                    Deno.copyFile(`${project}/src/size.h`, `${out_inc}/size.h`),
+                    Deno.copyFile(`${project}/src/point.h`, `${out_inc}/point.h`),
+                    Deno.copyFile(`${project}/src/rect.h`, `${out_inc}/rect.h`),
+                    Deno.copyFile(`${project}/src/keyboard.h`, `${out_inc}/keyboard.h`),
+                    Deno.copyFile(`${project}/src/window.h`, `${out_inc}/window.h`),
                     Deno.copyFile(`${project}/src/app.h`, `${out_inc}/app.h`) ]);
 
 const target = new Target();
@@ -38,6 +52,7 @@ if (Deno.build.os == 'windows') {
     target.sources.push(`${project}/src/win32/app.c`);
 } else if (Deno.build.os == 'darwin') {
     target.sources.push(`${project}/src/apple/app.m`);
+    target.sources.push(`${project}/src/apple/window.m`);
 } else {
     throw new Error(`${Deno.build.os} not supported for build target`);
 }

@@ -4,9 +4,15 @@
 
 @interface __Window : NSWindow<NSWindowDelegate>
 
-@property (nonatomic, strong) _Window* window;
+@property (nonatomic) _Window* window;
 
 @end
+
+typedef struct _Window {
+	__Window* pNSWindow;
+	void (*on_event)(_WindowEvent const*,void*);
+	void* param;
+} _Window;
 
 @implementation __Window;
 
@@ -138,7 +144,7 @@
 }
 
 - (void)windowWillClose:(NSWindow *)sender {
-	if ([self visible])
+	if (self.visible)
 		[self triggerBasicEvent: _HIDE_WINDOW_EVENT];
 }
 
@@ -168,17 +174,11 @@
 
 @end
 
-typedef struct _Window {
-	__Window* pNSWindow;
-	void (*on_event)(_WindowEvent const*,void*);
-	void* param;
-} _Window;
-
 _Window* _Window_create(void) {
 	_Window* window = _NEW(_Window, {});
 
     __Window* pNSWindow = [[__Window alloc] init];
-    [pNSWindow setWindow: window]
+    [pNSWindow setWindow: window];
     [pNSWindow setStyleMask: NSWindowStyleMaskClosable | NSWindowStyleMaskResizable | NSWindowStyleMaskMiniaturizable | NSWindowStyleMaskTitled];
 	[pNSWindow setReleasedWhenClosed: NO];
 	[pNSWindow setAcceptsMouseMovedEvents: YES];
@@ -210,13 +210,13 @@ void _Window_set_visible(_Window* window, bool value) {
 	_ASSERT(window != NULL);
 
 	if (value) {
-		if (![window->pNSWindow visible]) {
+		if (!window->pNSWindow.visible) {
 			[window->pNSWindow makeKeyAndOrderFront: nil];
-		    [window->pNSWindow makeFirstResponder: window->__impl->pNSWindow.contentView];
+		    [window->pNSWindow makeFirstResponder: window->pNSWindow.contentView];
 		    [window->pNSWindow triggerBasicEvent: _SHOW_WINDOW_EVENT];
 		}
 	} else {
-		if ([window->pNSWindow visible]) {
+		if (window->pNSWindow.visible) {
 			[window->pNSWindow close];
 		}
 	}
@@ -228,9 +228,9 @@ void _Window_set_sizable(_Window* window, bool value) {
 	if (value == (bool)(window->pNSWindow.styleMask & NSWindowStyleMaskResizable))
 		return;
 
-	bool closable = [[window->pNSWindow standardWindowButton: NSWindowCloseButton] enabled];
-	bool maximizable = [[window->pNSWindow standardWindowButton: NSWindowZoomButton] enabled];
-	bool minimizable = [[window->pNSWindow standardWindowButton: NSWindowMiniaturizeButton] enabled];
+	bool closable = [window->pNSWindow standardWindowButton: NSWindowCloseButton].enabled;
+	bool maximizable = [window->pNSWindow standardWindowButton: NSWindowZoomButton].enabled;
+	bool minimizable = [window->pNSWindow standardWindowButton: NSWindowMiniaturizeButton].enabled;
 
 	if (value) {
 		window->pNSWindow.styleMask |= NSWindowStyleMaskResizable;
@@ -248,7 +248,7 @@ void _Window_set_closable(_Window* window, bool value) {
 
 	NSButton* button = [window->pNSWindow standardWindowButton: NSWindowCloseButton];
 
-	if (value != [button enabled])
+	if (value != button.enabled)
 		[button setEnabled: value];
 }
 
@@ -257,7 +257,7 @@ void _Window_set_maximizable(_Window* window, bool value) {
 
 	NSButton* button = [window->pNSWindow standardWindowButton: NSWindowZoomButton];
 
-	if (value != [button enabled])
+	if (value != button.enabled)
 		[button setEnabled: value];
 }
 
@@ -266,7 +266,7 @@ void _Window_set_minimizable(_Window* window, bool value) {
 
 	NSButton* button = [window->pNSWindow standardWindowButton: NSWindowMiniaturizeButton];
 
-	if (value != [button enabled])
+	if (value != button.enabled)
 		[button setEnabled: value];
 }
 
@@ -292,42 +292,62 @@ void _Window_set_text(_Window* window, char const* value) {
 
 bool _Window_visible(_Window* window) {
 	_ASSERT(window != NULL);
+
+	return false;
 }
 
 bool _Window_closable(_Window* window) {
 	_ASSERT(window != NULL);
+
+	return false;
 }
 
 bool _Window_sizable(_Window* window) {
 	_ASSERT(window != NULL);
+
+	return false;
 }
 
 bool _Window_maximizable(_Window* window) {
 	_ASSERT(window != NULL);
+
+	return false;
 }
 
 bool _Window_minimizable(_Window* window) {
 	_ASSERT(window != NULL);
+
+	return false;
 }
 
 bool _Window_maximized(_Window* window) {
 	_ASSERT(window != NULL);
+
+	return false;
 }
 
 bool _Window_minimized(_Window* window) {
 	_ASSERT(window != NULL);
+
+	return false;
 }
 
 bool _Window_topmost(_Window* window) {
 	_ASSERT(window != NULL);
+
+	return false;
 }
 
 _Size _Window_size(_Window* window) {
 	_ASSERT(window != NULL);
+
+	return (_Size){ 0, 0 };
 }
 
 char* _Window_text(_Window* window) {
 	_ASSERT(window != NULL);
+
+	return NULL;
 }
 
 void _Window_on_event(_Window* window, void (*on_event)(_WindowEvent const*,void*), void* param) {
@@ -337,8 +357,8 @@ void _Window_on_event(_Window* window, void (*on_event)(_WindowEvent const*,void
 	window->param = param;
 }
 
-NSWindow* _Window_NSWindow(_Window* window) {
+void* _Window_NSWindow(_Window* window) {
 	_ASSERT(window != NULL);
 
-	return window->pNSWindow;
+	return (__bridge void*)window->pNSWindow;
 }

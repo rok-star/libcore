@@ -7,18 +7,27 @@
 @property (nonatomic, strong) void (^onRun)(void);
 @property (nonatomic, strong) void (^onExit)(void);
 
+- (id)initWithOnRun:(void(^)(void))onRun onExit:(void(^)(void))onExit;
+
 @end
 
 @implementation __Delegate
 
+- (id)initWithOnRun:(void(^)(void))onRun onExit:(void(^)(void))onExit {
+	self = [super init];
+	if (self) {
+		self.onRun = onRun;
+		self.onExit = onExit;
+	}
+	return self;
+}
+
 - (void)applicationDidFinishLaunching:(NSNotification*)notification {
-	if (self.onRun != NULL)
-		self.onRun();
+	self.onRun();
 }
 
 - (void)applicationWillTerminate:(NSNotification*)notification {
-	if (self.onExit != NULL)
-		self.onExit();
+	self.onExit();
 }
 
 @end
@@ -30,25 +39,28 @@ bool __running = false;
 void _App_run() {
 	_ASSERT(__running == false);
 
-	__Delegate* delegate = [[__Delegate alloc] init];
-	delegate.onRun = ^{
-		NSMenu* mainMenu = [[NSMenu alloc] init];
-		NSMenu* appMenu = [[NSMenu alloc] init];
-		NSMenuItem* appMenuItem = [mainMenu addItemWithTitle: [NSString stringWithCString: "123" encoding: NSUTF8StringEncoding] action: nil keyEquivalent: @""];
-		[appMenuItem setSubmenu: appMenu];
-		[appMenu addItemWithTitle: @"Quit" action: @selector(stop:) keyEquivalent: @"q"];
-		[NSApp setMainMenu: mainMenu];
-		[NSApp setActivationPolicy: NSApplicationActivationPolicyRegular];
+	[[NSApplication sharedApplication]
+		setDelegate: [[__Delegate alloc]
+			initWithOnRun: ^{
+				NSMenu* mainMenu = [[NSMenu alloc] init];
+				NSMenu* appMenu = [[NSMenu alloc] init];
+				NSMenuItem* appMenuItem = [mainMenu addItemWithTitle: [NSString stringWithCString: "123" encoding: NSUTF8StringEncoding]
+															  action: nil
+													   keyEquivalent: @""];
+				[appMenuItem setSubmenu: appMenu];
+				[appMenu addItemWithTitle: @"Quit" action: @selector(stop:) keyEquivalent: @"q"];
+				[NSApp setMainMenu: mainMenu];
+				[NSApp setActivationPolicy: NSApplicationActivationPolicyRegular];
 
-		if (__on_event != NULL)
-			__on_event(&(_AppEvent){ .type = _RUN_APP_EVENT }, __param);
-	};
-	delegate.onExit = ^{
-		if (__on_event != NULL)
-			__on_event(&(_AppEvent){ .type = _EXIT_APP_EVENT }, __param);
-	};
-
-	[[NSApplication sharedApplication] setDelegate: delegate];
+				if (__on_event != NULL)
+					__on_event(&(_AppEvent){ .type = _RUN_APP_EVENT }, __param);
+			}
+			onExit: ^{
+				if (__on_event != NULL)
+					__on_event(&(_AppEvent){ .type = _EXIT_APP_EVENT }, __param);
+			}
+		]
+	];
 
 	CFRunLoopAddObserver(
 		CFRunLoopGetCurrent(),
@@ -72,11 +84,25 @@ void _App_run() {
 	__running = false;
 }
 
+#define _POST_EVENT { \
+	NSEvent* e = [NSEvent otherEventWithType: NSEventTypeApplicationDefined \
+									location: NSMakePoint(0, 0) \
+							   modifierFlags: 0 \
+								   timestamp: 0.0 \
+								windowNumber: 0 \
+									 context: nil \
+									 subtype: 0 \
+									   data1: 0 \
+									   data2: 0]; \
+	[NSApp postEvent: e atStart: YES]; \
+}
+
 void _App_exit(void) {
 	_ASSERT(__running == true);
 
 	dispatch_async(dispatch_get_main_queue(), ^{
-		[NSApp stop: NULL];
+		[NSApp stop: nil];
+		_POST_EVENT
 	});
 }
 
@@ -84,16 +110,7 @@ void _App_wakeup(void) {
 	_ASSERT(__running == true);
 
 	dispatch_async(dispatch_get_main_queue(), ^{
-	    NSEvent* e = [NSEvent otherEventWithType: NSEventTypeApplicationDefined
-										location: NSMakePoint(0, 0)
-								   modifierFlags: 0
-									   timestamp: 0.0
-									windowNumber: 0
-										 context: nil
-										 subtype: 0
-										   data1: 0
-										   data2: 0];
-		[NSApp postEvent: e atStart: YES];
+	    _POST_EVENT
 	});
 }
 
