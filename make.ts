@@ -72,7 +72,7 @@ if (Deno.args.includes('--example')) {
     const target = new Target();
     target.type = TargetType.executable;
     target.temp = Path.join(temp, 'example');
-    target.output = Path.join(target.temp, 'example.exe');
+    target.output = Path.join(target.temp, `example${(Deno.build.os == 'windows') ? '.exe' : '.a'}`);
     target.cStandard = Standard.c17;
     target.includePath = [Path.dirname(out_inc)];
     target.libraryPath = [Path.dirname(out_lib)];
