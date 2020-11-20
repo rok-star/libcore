@@ -13,12 +13,12 @@
 
 __attribute__((unused))
 static char* GetLastErrorMessage() {
-	DWORD dwError = GetLastError();
-	if (dwError != 0) {
-		LPSTR pMessage = NULL;
+	DWORD error = GetLastError();
+	if (error != 0) {
+		LPSTR message = NULL;
 	    FormatMessageA(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
-						NULL, dwError, MAKELANGID(LANG_ENGLISH, SUBLANG_DEFAULT), (LPSTR)&pMessage, 0, NULL);
-	    return pMessage;
+						NULL, error, MAKELANGID(LANG_ENGLISH, SUBLANG_DEFAULT), (LPSTR)&message, 0, NULL);
+	    return message;
 	} else {
 		static char const* err = "Error message not retrieved";
 		size_t len = strlen(err);
