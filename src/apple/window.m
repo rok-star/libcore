@@ -347,7 +347,7 @@ _Size _Window_size(_Window* window) {
 
 char* _Window_text(_Window* window) {
 	_ASSERT(window != NULL);
-	return [window->pNSWindow.title cStringUsingEncoding: NSUTF8StringEncoding];
+	return _FORMAT("%s", [window->pNSWindow.title cStringUsingEncoding: NSUTF8StringEncoding]);
 }
 
 void _Window_on_event(_Window* window, void (*on_event)(_WindowEvent const*,void*), void* param) {
