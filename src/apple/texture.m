@@ -1,5 +1,6 @@
 #include <libcore/texture.h>
 #include <libcore/MACRO.h>
+
 #include "metal.h"
 
 typedef struct _Texture {

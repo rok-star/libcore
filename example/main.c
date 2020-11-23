@@ -1,4 +1,4 @@
-#include <stdio.h>
+#include <stddef.h>
 #include <libcore/app.h>
 #include <libcore/window.h>
 #include <libcore/context.h>
@@ -14,6 +14,7 @@ void window_render(void) {
 	};
 	_Context_begin_paint(context);
 	_Context_fill_rect(context, &rect, &(_Color){ 255, 255, 255, 255 });
+	_Context_frame_rect(context, &rect, &(_Color){ 255, 0, 0, 255 }, 2);
 	_Context_end_paint(context);
 }
 
@@ -30,7 +31,8 @@ void app_event(_AppEvent const* event, void* param) {
 	_ASSERT(event != NULL);
 	if (event->type == _RUN_APP_EVENT) {
 		window = _Window_create();
-		context = _Context_create(_WINDOW_CONTEXT, window);
+		context = _Context_create(_WINDOW_CONTEXT_TYPE, window);
+		_Context_set_origin(context, _LEFTTOP_CONTEXT_ORIGIN);
 		_Window_on_event(window, window_event, NULL);
 		_Window_set_text(window, "Лорем ипсум");
 		_Window_set_size(window, &(_Size){ 640, 480 });

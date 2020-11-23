@@ -1,6 +1,7 @@
 #include <libcore/window.h>
 #include <libcore/context.h>
 #include <libcore/MACRO.h>
+
 #include "metal.h"
 
 typedef struct _Context {
@@ -24,13 +25,13 @@ typedef struct _Context {
     bool painting;
 } _Context;
 
-_Context* _Context_create(_CONTEXT type, void* target) {
+_Context* _Context_create(_CONTEXT_TYPE type, void* target) {
 	_ASSERT(__metal_device != NULL);
     _ASSERT(__metal_library != NULL);
 
     _Context* context = _NEW(_Context, {});
 
-    if (type == _WINDOW_CONTEXT) {
+    if (type == _WINDOW_CONTEXT_TYPE) {
         context->window = (__bridge NSWindow*)_Window_NSWindow((_Window*)target);
         context->layer = [[CAMetalLayer alloc] init];
         [context->layer setDevice: __metal_device];
@@ -102,7 +103,7 @@ void _Context_begin_paint(_Context* context) {
 
     if ((context->origin != -1)
     && (context->origin != 1))
-    	context->origin = 1;
+    	context->origin = -1;
 
     context->clip_rect_x = 0;
     context->clip_rect_y = 0;
@@ -187,6 +188,11 @@ void _Context_set_clip_rect(_Context* context, _Rect* rect) {
 	    context->clip_rect_height = rect->size.height;
 	    context->clip_rect = true;
    	}
+}
+
+void _Context_set_origin(_Context* context, _CONTEXT_ORIGIN origin) {
+    _ASSERT(context != NULL);
+    context->origin = ((origin == _LEFTTOP_CONTEXT_ORIGIN) ? -1 : 1);
 }
 
 void _Context_draw_texture(_Context* context, _RectF* src, _RectF* dst, _Texture* texture, _Color* tint) {
@@ -391,10 +397,10 @@ void _Context_frame_rect(_Context* context, _RectF* rect, _Color* color, double 
 
 	float vertices[(12 * 4)];
 	float* _dst = vertices;
-	_RECT_TRIANGLES(border1, vertices); _dst += 12;
-	_RECT_TRIANGLES(border2, vertices); _dst += 12;
-	_RECT_TRIANGLES(border3, vertices); _dst += 12;
-	_RECT_TRIANGLES(border4, vertices);
+	_RECT_TRIANGLES(border1, _dst); _dst += 12;
+	_RECT_TRIANGLES(border2, _dst); _dst += 12;
+	_RECT_TRIANGLES(border3, _dst); _dst += 12;
+	_RECT_TRIANGLES(border4, _dst);
 
-	_Context_draw_vertices(context, false, vertices, 8, color);
+	_Context_draw_vertices(context, false, vertices, (12 * 4), color);
 }
