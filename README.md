@@ -41,7 +41,7 @@ void app_event(_AppEvent const* event, void* param) {
         context = _Context_create(_WINDOW_CONTEXT_TYPE, window);
         _Context_set_origin(context, _LEFTTOP_CONTEXT_ORIGIN);
         _Window_on_event(window, window_event, NULL);
-        _Window_set_text(window, "Лорем ипсум");
+        _Window_set_text(window, "Lorem ipsum привет рулет");
         _Window_set_size(window, &(_Size){ 640, 480 });
         _Window_set_closable(window, false);
         _Window_set_sizable(window, true);
