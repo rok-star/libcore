@@ -1,4 +1,6 @@
 ```c
+// deno run --allow-all --unstable ./make.ts --example
+
 #include <stdio.h>
 #include <libcore/app.h>
 #include <libcore/window.h>
