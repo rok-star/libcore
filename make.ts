@@ -8,7 +8,7 @@ console.log(
 `);
 
 import * as Path from 'https://deno.land/std/path/mod.ts';
-import { Target, TargetType, Standard, red, green, yellow, remove, tempPath } from '../buildsystem/mod.ts';
+import { Target, TargetType, Standard, red, green, yellow, remove, tempPath } from 'https://deno.land/x/buildsystem/mod.ts';
 
 const mode: string = Deno.args.includes('--release') ? 'release' : 'debug';
 const temp: string = Path.join(tempPath(), 'libcore', mode);
