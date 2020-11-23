@@ -37,6 +37,9 @@ await Promise.all([ Deno.copyFile(`${project}/src/WINDOWS.h`, `${out_inc}/WINDOW
                     Deno.copyFile(`${project}/src/unicode.h`, `${out_inc}/unicode.h`),
                     Deno.copyFile(`${project}/src/keyboard.h`, `${out_inc}/keyboard.h`),
                     Deno.copyFile(`${project}/src/window.h`, `${out_inc}/window.h`),
+                    Deno.copyFile(`${project}/src/context.h`, `${out_inc}/context.h`),
+                    Deno.copyFile(`${project}/src/texture.h`, `${out_inc}/texture.h`),
+                    Deno.copyFile(`${project}/src/color.h`, `${out_inc}/color.h`),
                     Deno.copyFile(`${project}/src/app.h`, `${out_inc}/app.h`) ]);
 
 const target = new Target();
@@ -56,6 +59,9 @@ if (Deno.build.os == 'windows') {
 } else if (Deno.build.os == 'darwin') {
     target.sources.push(`${project}/src/apple/app.m`);
     target.sources.push(`${project}/src/apple/window.m`);
+    target.sources.push(`${project}/src/apple/context.m`);
+    target.sources.push(`${project}/src/apple/texture.m`);
+    target.sources.push(`${project}/src/apple/metal.m`);
 } else {
     throw new Error(`${Deno.build.os} not supported for build target`);
 }

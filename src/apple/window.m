@@ -262,7 +262,6 @@ void _Window_set_maximized(_Window* window, bool value) {
 	if (value == (bool)(window->pNSWindow.styleMask & NSWindowStyleMaskFullScreen))
 		return;
 	[window->pNSWindow toggleFullScreen: window->pNSWindow];
-	puts("YES");
 }
 
 void _Window_set_minimized(_Window* window, bool value) {

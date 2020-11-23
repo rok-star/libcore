@@ -1,6 +1,7 @@
 #ifndef _LIBCORE_WINDOW_H
 #define _LIBCORE_WINDOW_H
 
+#include <stdbool.h>
 #include <libcore/size.h>
 #include <libcore/point.h>
 #include <libcore/keyboard.h>

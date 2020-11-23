@@ -1,8 +1,8 @@
 #ifndef _LIBCORE_UNICODE_H
 #define _LIBCORE_UNICODE_H
 
-#include <stdint.h>
 #include <stdbool.h>
+#include <stdint.h>
 #include <wchar.h>
 
 #ifdef __cplusplus
