@@ -1,5 +1,5 @@
 ### Status
-🛠 crafting...
+⛏ crafting...
 
 ### Sneak peek
 ```c
