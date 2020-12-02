@@ -5,13 +5,13 @@
 
 typedef struct _Texture {
     id<MTLTexture> texture;
-    void* data;
+    void const* data;
     int size;
     int width;
     int height;
 } _Texture;
 
-_Texture* _Texture_create(void* data, int size, int width, int height) {
+_Texture* _Texture_create(void const* data, int size, int width, int height) {
 	_ASSERT(__metal_device != NULL);
     _ASSERT(__metal_library != NULL);
 
@@ -50,7 +50,7 @@ void _Texture_destroy(_Texture* texture) {
     texture->texture = NULL;
 }
 
-_Size _Texture_size(_Texture* texture) {
+_Size _Texture_size(_Texture const* texture) {
 	_ASSERT(texture != NULL);
 
 	return (_Size){

@@ -296,47 +296,47 @@ void _Window_set_text(_Window* window, char const* value) {
 	[window->pNSWindow setTitle: [NSString stringWithUTF8String: value]];
 }
 
-bool _Window_visible(_Window* window) {
+bool _Window_visible(_Window const* window) {
 	_ASSERT(window != NULL);
 	return window->pNSWindow.visible;
 }
 
-bool _Window_closable(_Window* window) {
+bool _Window_closable(_Window const* window) {
 	_ASSERT(window != NULL);
 	return (bool)(window->pNSWindow.styleMask & NSWindowStyleMaskClosable);
 }
 
-bool _Window_sizable(_Window* window) {
+bool _Window_sizable(_Window const* window) {
 	_ASSERT(window != NULL);
 	return (bool)(window->pNSWindow.styleMask & NSWindowStyleMaskResizable);
 }
 
-bool _Window_maximizable(_Window* window) {
+bool _Window_maximizable(_Window const* window) {
 	_ASSERT(window != NULL);
 	return (bool)(window->pNSWindow.styleMask & NSWindowStyleMaskResizable);
 }
 
-bool _Window_minimizable(_Window* window) {
+bool _Window_minimizable(_Window const* window) {
 	_ASSERT(window != NULL);
 	return (bool)(window->pNSWindow.styleMask & NSWindowStyleMaskMiniaturizable);
 }
 
-bool _Window_maximized(_Window* window) {
+bool _Window_maximized(_Window const* window) {
 	_ASSERT(window != NULL);
 	return (bool)(window->pNSWindow.styleMask & NSWindowStyleMaskFullScreen);
 }
 
-bool _Window_minimized(_Window* window) {
+bool _Window_minimized(_Window const* window) {
 	_ASSERT(window != NULL);
 	return window->pNSWindow.miniaturized;
 }
 
-bool _Window_topmost(_Window* window) {
+bool _Window_topmost(_Window const* window) {
 	_ASSERT(window != NULL);
 	return window->pNSWindow.level == NSStatusWindowLevel;
 }
 
-_Size _Window_size(_Window* window) {
+_Size _Window_size(_Window const* window) {
 	_ASSERT(window != NULL);
 	return (_Size){
 		.width = window->pNSWindow.contentView.frame.size.width,
@@ -344,7 +344,7 @@ _Size _Window_size(_Window* window) {
 	};
 }
 
-char* _Window_text(_Window* window) {
+char* _Window_text(_Window const* window) {
 	_ASSERT(window != NULL);
 	return _FORMAT("%s", [window->pNSWindow.title cStringUsingEncoding: NSUTF8StringEncoding]);
 }
@@ -355,7 +355,7 @@ void _Window_on_event(_Window* window, void (*on_event)(_WindowEvent const*,void
 	window->param = param;
 }
 
-void* _Window_NSWindow(_Window* window) {
+void* _Window_NSWindow(_Window const* window) {
 	_ASSERT(window != NULL);
 	return (__bridge void*)window->pNSWindow;
 }

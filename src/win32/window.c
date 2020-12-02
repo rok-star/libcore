@@ -175,47 +175,47 @@ void _Window_set_text(_Window* window, char const* value) {
 	SetWindowTextW(window->hwnd, wchar);
 }
 
-bool _Window_visible(_Window* window) {
+bool _Window_visible(_Window const* window) {
 	_ASSERT(window != NULL);
 	return false;
 }
 
-bool _Window_closable(_Window* window) {
+bool _Window_closable(_Window const* window) {
 	_ASSERT(window != NULL);
 	return false;
 }
 
-bool _Window_sizable(_Window* window) {
+bool _Window_sizable(_Window const* window) {
 	_ASSERT(window != NULL);
 	return false;
 }
 
-bool _Window_maximizable(_Window* window) {
+bool _Window_maximizable(_Window const* window) {
 	_ASSERT(window != NULL);
 	return false;
 }
 
-bool _Window_minimizable(_Window* window) {
+bool _Window_minimizable(_Window const* window) {
 	_ASSERT(window != NULL);
 	return false;
 }
 
-bool _Window_maximized(_Window* window) {
+bool _Window_maximized(_Window const* window) {
 	_ASSERT(window != NULL);
 	return false;
 }
 
-bool _Window_minimized(_Window* window) {
+bool _Window_minimized(_Window const* window) {
 	_ASSERT(window != NULL);
 	return false;
 }
 
-bool _Window_topmost(_Window* window) {
+bool _Window_topmost(_Window const* window) {
 	_ASSERT(window != NULL);
 	return false;
 }
 
-_Size _Window_size(_Window* window) {
+_Size _Window_size(_Window const* window) {
 	_ASSERT(window != NULL);
 	RECT rc;
 	GetWindowRect(window->hwnd, &rc);
@@ -225,7 +225,7 @@ _Size _Window_size(_Window* window) {
 	};
 }
 
-char* _Window_text(_Window* window) {
+char* _Window_text(_Window const* window) {
 	_ASSERT(window != NULL);
 	return NULL;
 }
@@ -236,7 +236,7 @@ void _Window_on_event(_Window* window, void (*on_event)(_WindowEvent const*,void
 	window->param = param;
 }
 
-void* _Window_HWND(_Window* window) {
+void* _Window_HWND(_Window const* window) {
 	_ASSERT(window != NULL);
 	return 0;
 }

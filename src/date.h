@@ -9,14 +9,14 @@ extern "C" {
 
 _Date* _Date_create(double);
 void _Date_destroy(_Date*);
-double _Date_time(_Date*);
-int _Date_year(_Date*);
-int _Date_month(_Date*);
-int _Date_date(_Date*);
-int _Date_hour(_Date*);
-int _Date_minute(_Date*);
-int _Date_second(_Date*);
-int _Date_millisecond(_Date*);
+double _Date_time(_Date const*);
+int _Date_year(_Date const*);
+int _Date_month(_Date const*);
+int _Date_date(_Date const*);
+int _Date_hour(_Date const*);
+int _Date_minute(_Date const*);
+int _Date_second(_Date const*);
+int _Date_millisecond(_Date const*);
 
 #ifdef __cplusplus
 }

@@ -11,7 +11,7 @@ _Thread* _Thread_create(void(*)(void*));
 void _Thread_destroy(_Thread*);
 void _Thread_cancel(_Thread*);
 void _Thread_join(_Thread*);
-uint64_t _Thread_id(_Thread*);
+uint64_t _Thread_id(_Thread const*);
 
 #ifdef __cplusplus
 }

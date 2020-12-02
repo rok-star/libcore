@@ -9,9 +9,9 @@ typedef struct _Texture _Texture;
 extern "C" {
 #endif
 
-_Texture* _Texture_create(void*,int,int,int);
+_Texture* _Texture_create(void const*,int,int,int);
 void _Texture_destroy(_Texture*);
-_Size _Texture_size(_Texture*);
+_Size _Texture_size(_Texture const*);
 
 #if _WIN32
 
