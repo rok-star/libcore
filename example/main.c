@@ -1,5 +1,6 @@
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include <libcore/app.h>
 #include <libcore/window.h>
 #include <libcore/context.h>
@@ -7,12 +8,14 @@
 
 _Color RED_COLOR = { 255, 0, 0, 255 };
 _Color GREEN_COLOR = { 0, 255, 0, 255 };
+_Color BLUE_COLOR = { 0, 0, 255, 255 };
 _Color WHITE_COLOR = { 255, 255, 255, 255 };
 
 _Window* window = NULL;
 _Context* context = NULL;
 _Brush* red_brush = NULL;
 _Brush* green_brush = NULL;
+_Brush* blue_brush = NULL;
 _Brush* white_brush = NULL;
 
 #define POINT_TO_RECT(a, b) ((_RectF){ { (a).x - (b), (a.y) - (b) }, { ((b) * 2), ((b) * 2) } })
@@ -35,6 +38,18 @@ void stroke_bezier(_RectF const* rect) {
 		_PointF pt = _bezier_point(&p1, &p2, &p3, &p4, t);
 		_RectF rc = POINT_TO_RECT(pt, 2);
 		_Context_fill_rect(context, &rc, red_brush);
+	}
+
+	_PointF* res_data = NULL;
+	int res_num = 0;
+	_bezier_points(&p1, &p2, &p3, &p4, 0.5, &res_data, &res_num);
+
+	printf("res_num: %d\n", res_num);
+
+	for (int i = 0; i < res_num; i++) {
+		_RectF rc = POINT_TO_RECT(res_data[i], 2);
+		printf("x: %f, y: %f\n", res_data[i].x, res_data[i].y);
+		_Context_fill_rect(context, &rc, blue_brush);
 	}
 }
 
@@ -66,6 +81,7 @@ void app_event(_AppEvent const* event, void* param) {
 	if (event->type == _RUN_APP_EVENT) {
 		red_brush = _Brush_create_color(&RED_COLOR);
 		green_brush = _Brush_create_color(&GREEN_COLOR);
+		blue_brush = _Brush_create_color(&BLUE_COLOR);
 		white_brush = _Brush_create_color(&WHITE_COLOR);
 		window = _Window_create();
 		context = _Context_create(_WINDOW_CONTEXT_TYPE, window);
@@ -80,6 +96,8 @@ void app_event(_AppEvent const* event, void* param) {
 		_Window_set_visible(window, true);
 	} else if (event->type == _EXIT_APP_EVENT) {
 		_Brush_destroy(red_brush);
+		_Brush_destroy(green_brush);
+		_Brush_destroy(blue_brush);
 		_Brush_destroy(white_brush);
 		_Context_destroy(context);
 		_Window_destroy(window);

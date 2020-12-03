@@ -8,8 +8,8 @@
 }
 
 #ifndef NDEBUG
-	#define _ASSERT(a) {}
-	#define _ASSERT_M(a, b) {}
+	#define _ASSERT(a)
+	#define _ASSERT_M(a, b)
 #else
 	#define _ASSERT(a) if (!(a)) _ABORT("libcore: Assertion failed: (%s) in file \"%s\" at line %d\n", #a, __FILE__, __LINE__)
 	#define _ASSERT_M(a, b) if (!(a)) _ABORT("libcore: Assertion failed: %s, (%s) in file \"%s\" at line %d\n", #b, #a, __FILE__, __LINE__)
@@ -27,7 +27,6 @@
 	_ASSERT(__ret != NULL); \
 	__ret; \
 })
-
 
 #define _NEW(TYPE, ...) ({ \
 	TYPE* __ret = _ALLOC(TYPE, 1); \
@@ -53,5 +52,18 @@
 	__typeof__(b) __bb = (b); \
 	((__aa < __bb) ? __aa : __bb); \
 })
+
+#define _PUSH(data, size, capacity, ...) { \
+	if (size == capacity) { \
+		__typeof__(data) __nd = _ALLOC(__typeof__(*data), ((size * 2) + 1)); \
+		if (data != NULL) { \
+			memcpy(__nd, data, size * sizeof(*data)); \
+			_FREE(data); \
+		} \
+		data = __nd; \
+		capacity = ((size * 2) + 1); \
+	} \
+	data[size++] = (__VA_ARGS__); \
+}
 
 #endif /* _LIBCORE_MACRO_H */

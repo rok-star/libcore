@@ -1,6 +1,8 @@
 #ifndef _LIBCORE_MATH_H
 #define _LIBCORE_MATH_H
 
+#define _LERP(a, b, t) (a + (b - a) * t)
+
 typedef struct _Point {
 	int x;
 	int y;
@@ -21,6 +23,7 @@ typedef struct _PointF {
 #define _POINT_F(a) ((_PointF){ (a).width, (a).height })
 #define _POINT_ADD(a, b) ((__typeof__(a)){ ((a).x + (b).x), ((a).y + (b).y) })
 #define _POINT_MULT(a, b) ((__typeof__(a)){ ((a).x * (b)), ((a).y * (b)) })
+#define _POINT_LERP(a, b, t) ((__typeof__(a)){ _LERP((a).x, (b).x, t), _LERP((a).y, (b).y, t) });
 #define _POINT_FLATNESS(a, b, c, d) ({ \
 	double __ux = ((3.0 * (b).x) - (2.0 * (a).x) - (d).x); __ux *= __ux; \
 	double __uy = ((3.0 * (b).y) - (2.0 * (a).y) - (d).y); __uy *= __uy; \
@@ -30,8 +33,6 @@ typedef struct _PointF {
 	if (__uy < __vy) __uy = __vy; \
 	(__ux + __uy); \
 })
-
-float _point_flatness(_PointF const*,_PointF const*,_PointF const*,_PointF const*);
 
 typedef struct _Size {
 	int width;
@@ -74,6 +75,6 @@ typedef struct _RectF {
 #define _RECT_MAX_Y(a) ((a).origin.y + (a).size.height)
 
 _PointF _bezier_point(_PointF const*,_PointF const*,_PointF const*,_PointF const*,double);
-void _bezier_points(_PointF const*,_PointF const*,_PointF const*,_PointF const*,float,_PointF*,int*);
+void _bezier_points(_PointF const*,_PointF const*,_PointF const*,_PointF const*,double,_PointF**,int*);
 
 #endif /* _LIBCORE_MATH_H */
