@@ -1,20 +1,54 @@
-#include <stddef.h>
+#include <stdlib.h>
+#include <stdio.h>
 #include <libcore/app.h>
 #include <libcore/window.h>
 #include <libcore/context.h>
 #include <libcore/MACRO.h>
 
+_Color RED_COLOR = { 255, 0, 0, 255 };
+_Color GREEN_COLOR = { 0, 255, 0, 255 };
+_Color WHITE_COLOR = { 255, 255, 255, 255 };
+
 _Window* window = NULL;
 _Context* context = NULL;
+_Brush* red_brush = NULL;
+_Brush* green_brush = NULL;
+_Brush* white_brush = NULL;
+
+#define POINT_TO_RECT(a, b) ((_RectF){ { (a).x - (b), (a.y) - (b) }, { ((b) * 2), ((b) * 2) } })
+
+void stroke_bezier(_RectF const* rect) {
+	_PointF p1 = { 0.0 + 10.0, 0.0 + 10.0 };
+	_PointF p2 = { 0.0 + 10.0, rect->size.height - 10.0 };
+	_PointF p3 = { rect->size.width - 10.0, rect->size.height - 10.0 };
+	_PointF p4 = { rect->size.width - 10.0, 0.0 + 10.0 };
+
+	_Context_fill_rect(context, &POINT_TO_RECT(p1, 4), green_brush);
+	_Context_fill_rect(context, &POINT_TO_RECT(p2, 4), green_brush);
+	_Context_fill_rect(context, &POINT_TO_RECT(p3, 4), green_brush);
+	_Context_fill_rect(context, &POINT_TO_RECT(p4, 4), green_brush);
+
+	int num = rect->size.width / 10;
+
+	for (int i = 0; i < num; i++) {
+		double t = (i / (num - 1.0));
+		_PointF pt = _bezier_point(&p1, &p2, &p3, &p4, t);
+		_RectF rc = POINT_TO_RECT(pt, 2);
+		_Context_fill_rect(context, &rc, red_brush);
+	}
+}
 
 void window_render(void) {
 	_RectF rect = {
 		.origin = { 0, 0 },
-		.size = _TO_SIZE_F(_Window_size(window))
+		.size = _SIZE_F(_Window_size(window))
 	};
 	_Context_begin_paint(context);
-	_Context_fill_rect(context, &rect, &(_Color){ 255, 255, 255, 255 });
-	_Context_frame_rect(context, &rect, &(_Color){ 255, 0, 0, 255 }, 2);
+	_Context_fill_rect(context, &rect, white_brush);
+	_Context_stroke_rect(context, &rect, 2, red_brush);
+
+	stroke_bezier(&rect);
+
 	_Context_end_paint(context);
 }
 
@@ -30,6 +64,9 @@ void window_event(_WindowEvent const* event, void* param) {
 void app_event(_AppEvent const* event, void* param) {
 	_ASSERT(event != NULL);
 	if (event->type == _RUN_APP_EVENT) {
+		red_brush = _Brush_create_color(&RED_COLOR);
+		green_brush = _Brush_create_color(&GREEN_COLOR);
+		white_brush = _Brush_create_color(&WHITE_COLOR);
 		window = _Window_create();
 		context = _Context_create(_WINDOW_CONTEXT_TYPE, window);
 		_Context_set_origin(context, _LEFTTOP_CONTEXT_ORIGIN);
@@ -42,6 +79,8 @@ void app_event(_AppEvent const* event, void* param) {
 		_Window_set_maximizable(window, true);
 		_Window_set_visible(window, true);
 	} else if (event->type == _EXIT_APP_EVENT) {
+		_Brush_destroy(red_brush);
+		_Brush_destroy(white_brush);
 		_Context_destroy(context);
 		_Window_destroy(window);
 	}

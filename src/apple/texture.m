@@ -59,7 +59,7 @@ _Size _Texture_size(_Texture const* texture) {
 	};
 }
 
-void* _Texture_MTLTexture(_Texture* texture) {
+void* _Texture_MTLTexture(_Texture const* texture) {
 	_ASSERT(texture != NULL);
 
 	return (__bridge void*)texture->texture;

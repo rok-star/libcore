@@ -1,7 +1,7 @@
 #ifndef _LIBCORE_TEXTURE_H
 #define _LIBCORE_TEXTURE_H
 
-#include <libcore/size.h>
+#include <libcore/math.h>
 
 typedef struct _Texture _Texture;
 
@@ -16,7 +16,7 @@ _Size _Texture_size(_Texture const*);
 #if _WIN32
 
 #elif __APPLE__
-    void* _Texture_MTLTexture(_Texture*);
+    void* _Texture_MTLTexture(_Texture const*);
 #endif
 
 #ifdef __cplusplus

@@ -170,7 +170,7 @@ void _Context_end_paint(_Context* context) {
     context->drawable = NULL;
 }
 
-void _Context_set_clip_rect(_Context* context, _Rect* rect) {
+void _Context_set_clip_rect(_Context* context, _Rect const* rect) {
     _ASSERT(context != NULL);
 
     if ((rect == NULL)
@@ -195,7 +195,7 @@ void _Context_set_origin(_Context* context, _CONTEXT_ORIGIN origin) {
     context->origin = ((origin == _LEFTTOP_CONTEXT_ORIGIN) ? -1 : 1);
 }
 
-void _Context_draw_texture(_Context* context, _RectF* src, _RectF* dst, _Texture* texture, _Color* tint) {
+void _Context_draw_texture(_Context* context, _RectF const* src, _RectF const* dst, _Texture const* texture, _Color const* tint) {
 	_ASSERT(src != NULL);
 	_ASSERT(dst != NULL);
 	_ASSERT(texture != NULL);
@@ -274,7 +274,7 @@ void _Context_draw_texture(_Context* context, _RectF* src, _RectF* dst, _Texture
     [context->command_encoder drawPrimitives: MTLPrimitiveTypeTriangleStrip vertexStart: 0 vertexCount: 4];
 }
 
-void _Context_draw_vertices(_Context* context, bool strip, float* array, int size, _Color* color) {
+void _Context_draw_vertices(_Context* context, bool strip, float const* array, int size, _Color const* color) {
 	_ASSERT(context != NULL);
 	_ASSERT(array != NULL);
 	_ASSERT(color != NULL);
@@ -336,7 +336,69 @@ void _Context_draw_vertices(_Context* context, bool strip, float* array, int siz
 	(data)[11] = (rect).origin.y; \
 }
 
-void _Context_fill_rect(_Context* context, _RectF* rect, _Color* color) {
+void _Context_stroke_rect(_Context* context, _RectF const* rect, double width, _Brush const* brush) {
+    _ASSERT(context != NULL);
+    _ASSERT(rect != NULL);
+    _ASSERT(color != NULL);
+
+    /* NOTE: Borders are being generated clock-wise for TopLeft origin and opposite for BottomLeft */
+
+    _RectF border1 = {
+        .origin = {
+            .x = rect->origin.x,
+            .y = rect->origin.y
+        },
+        .size = {
+            .width = rect->size.width,
+            .height = width
+        }
+    };
+    _RectF border2 = {
+        .origin = {
+            .x = (_RECT_MAX_X(*rect) - width),
+            .y = rect->origin.y + width
+        },
+        .size = {
+            .width = width,
+            .height = (rect->size.height - width)
+        }
+    };
+    _RectF border3 = {
+        .origin = {
+            .x = rect->origin.x,
+            .y = (_RECT_MAX_Y(*rect) - width)
+        },
+        .size = {
+            .width = (rect->size.width - width),
+            .height = width
+        }
+    };
+    _RectF border4 = {
+        .origin = {
+            .x = rect->origin.x,
+            .y = (rect->origin.y + width)
+        },
+        .size = {
+            .width = width,
+            .height = (rect->size.height - (width * 2))
+        }
+    };
+
+    float vertices[(12 * 4)];
+    float* _dst = vertices;
+    _RECT_TRIANGLES(border1, _dst); _dst += 12;
+    _RECT_TRIANGLES(border2, _dst); _dst += 12;
+    _RECT_TRIANGLES(border3, _dst); _dst += 12;
+    _RECT_TRIANGLES(border4, _dst);
+
+    if (_Brush_type(brush) == _COLOR_BRUSH_TYPE) {
+        _Context_draw_vertices(context, false, vertices, (12 * 4), _Brush_color(brush));
+    } else {
+        _ABORT("_Context_stroke_rect: Only color brushes supported now");
+    }
+}
+
+void _Context_fill_rect(_Context* context, _RectF const* rect, _Brush const* brush) {
 	_ASSERT(context != NULL);
 	_ASSERT(rect != NULL);
 	_ASSERT(color != NULL);
@@ -344,63 +406,9 @@ void _Context_fill_rect(_Context* context, _RectF* rect, _Color* color) {
 	float vertices[8];
 	_RECT_TRIANGLES_STRIP(*rect, vertices);
 
-	_Context_draw_vertices(context, true, vertices, 8, color);
-}
-
-void _Context_frame_rect(_Context* context, _RectF* rect, _Color* color, double width) {
-	_ASSERT(context != NULL);
-	_ASSERT(rect != NULL);
-	_ASSERT(color != NULL);
-
-	/* NOTE: Borders are being generated clock-wise for TopLeft origin and opposite for BottomLeft */
-
-	_RectF border1 = {
-		.origin = {
-			.x = rect->origin.x,
-			.y = rect->origin.y
-		},
-		.size = {
-			.width = rect->size.width,
-			.height = width
-		}
-	};
-	_RectF border2 = {
-		.origin = {
-			.x = (_RECT_MAX_X(*rect) - width),
-			.y = rect->origin.y + width
-		},
-		.size = {
-			.width = width,
-			.height = (rect->size.height - width)
-		}
-	};
-	_RectF border3 = {
-		.origin = {
-			.x = rect->origin.x,
-			.y = (_RECT_MAX_Y(*rect) - width)
-		},
-		.size = {
-			.width = (rect->size.width - width),
-			.height = width
-		}
-	};
-	_RectF border4 = {
-		.origin = {
-			.x = rect->origin.x,
-			.y = (rect->origin.y + width)
-		},
-		.size = {
-			.width = width,
-			.height = (rect->size.height - (width * 2))
-		}
-	};
-
-	float vertices[(12 * 4)];
-	float* _dst = vertices;
-	_RECT_TRIANGLES(border1, _dst); _dst += 12;
-	_RECT_TRIANGLES(border2, _dst); _dst += 12;
-	_RECT_TRIANGLES(border3, _dst); _dst += 12;
-	_RECT_TRIANGLES(border4, _dst);
-
-	_Context_draw_vertices(context, false, vertices, (12 * 4), color);
+    if (_Brush_type(brush) == _COLOR_BRUSH_TYPE) {
+        _Context_draw_vertices(context, true, vertices, 8, _Brush_color(brush));
+    } else {
+        _ABORT("_Context_fill_rect: Only color brushes supported now");
+    }
 }

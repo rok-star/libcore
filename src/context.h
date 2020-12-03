@@ -1,7 +1,7 @@
 #ifndef _LIBCORE_CONTEXT_H
 #define _LIBCORE_CONTEXT_H
 
-#include <libcore/rect.h>
+#include <libcore/math.h>
 #include <libcore/brush.h>
 
 typedef enum {
@@ -26,13 +26,14 @@ _Context* _Context_create(_CONTEXT_TYPE,void*);
 void _Context_destroy(_Context*);
 void _Context_begin_paint(_Context*);
 void _Context_end_paint(_Context*);
+void _Context_set_clip_path(_Context*,_PointF const**,int);
 void _Context_set_clip_rect(_Context*,_Rect const*);
 void _Context_set_origin(_Context*,_CONTEXT_ORIGIN);
-void _Context_stroke_rect(_Context*,_Rect const*,double,_Brush const*);
-void _Context_stroke_ellipse(_Context*,_Rect const*,double,_Brush const*);
-void _Context_fill_path(_Context*,_Point const**,int,_Brush const*);
-void _Context_fill_rect(_Context*,_Rect const*,_Brush const*);
-void _Context_fill_ellipse(_Context*,_Rect const*,_Brush const*);
+void _Context_stroke_rect(_Context*,_RectF const*,double,_Brush const*);
+void _Context_stroke_ellipse(_Context*,_RectF const*,double,_Brush const*);
+void _Context_fill_path(_Context*,_PointF const**,int,_Brush const*);
+void _Context_fill_rect(_Context*,_RectF const*,_Brush const*);
+void _Context_fill_ellipse(_Context*,_RectF const*,_Brush const*);
 
 #ifdef __cplusplus
 }

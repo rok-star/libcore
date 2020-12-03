@@ -31,15 +31,14 @@ await Promise.all([ Deno.mkdir(Path.dirname(out_lib), { recursive: true }),
 
 await Promise.all([ Deno.copyFile(`${project}/src/WINDOWS.h`, `${out_inc}/WINDOWS.h`),
                     Deno.copyFile(`${project}/src/MACRO.h`, `${out_inc}/MACRO.h`),
-                    Deno.copyFile(`${project}/src/size.h`, `${out_inc}/size.h`),
-                    Deno.copyFile(`${project}/src/point.h`, `${out_inc}/point.h`),
-                    Deno.copyFile(`${project}/src/rect.h`, `${out_inc}/rect.h`),
+                    Deno.copyFile(`${project}/src/math.h`, `${out_inc}/math.h`),
                     Deno.copyFile(`${project}/src/unicode.h`, `${out_inc}/unicode.h`),
                     Deno.copyFile(`${project}/src/keyboard.h`, `${out_inc}/keyboard.h`),
                     Deno.copyFile(`${project}/src/window.h`, `${out_inc}/window.h`),
-                    Deno.copyFile(`${project}/src/context.h`, `${out_inc}/context.h`),
-                    Deno.copyFile(`${project}/src/texture.h`, `${out_inc}/texture.h`),
                     Deno.copyFile(`${project}/src/color.h`, `${out_inc}/color.h`),
+                    Deno.copyFile(`${project}/src/brush.h`, `${out_inc}/brush.h`),
+                    Deno.copyFile(`${project}/src/texture.h`, `${out_inc}/texture.h`),
+                    Deno.copyFile(`${project}/src/context.h`, `${out_inc}/context.h`),
                     Deno.copyFile(`${project}/src/app.h`, `${out_inc}/app.h`) ]);
 
 const target = new Target();
@@ -52,6 +51,8 @@ target.output = out_lib;
 target.temp = temp;
 
 target.sources.push(`${project}/src/unicode.c`);
+target.sources.push(`${project}/src/brush.c`);
+target.sources.push(`${project}/src/math.c`);
 
 if (Deno.build.os == 'windows') {
     target.sources.push(`${project}/src/win32/app.c`);
