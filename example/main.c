@@ -44,11 +44,8 @@ void stroke_bezier(_RectF const* rect) {
 	int res_num = 0;
 	_bezier_points(&p1, &p2, &p3, &p4, 0.5, &res_data, &res_num);
 
-	printf("res_num: %d\n", res_num);
-
 	for (int i = 0; i < res_num; i++) {
 		_RectF rc = POINT_TO_RECT(res_data[i], 2);
-		printf("x: %f, y: %f\n", res_data[i].x, res_data[i].y);
 		_Context_fill_rect(context, &rc, blue_brush);
 	}
 }
