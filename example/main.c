@@ -57,7 +57,7 @@ void window_render(void) {
 	};
 	_Context_begin_paint(context);
 	_Context_fill_rect(context, &rect, white_brush);
-	_Context_stroke_rect(context, &rect, 2, red_brush);
+	_Context_rect(context, &rect, 2, red_brush);
 
 	stroke_bezier(&rect);
 

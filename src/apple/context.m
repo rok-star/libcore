@@ -336,7 +336,7 @@ void _Context_draw_vertices(_Context* context, bool strip, float const* array, i
 	(data)[11] = (rect).origin.y; \
 }
 
-void _Context_stroke_rect(_Context* context, _RectF const* rect, double width, _Brush const* brush) {
+void _Context_rect(_Context* context, _RectF const* rect, double width, _Brush const* brush) {
     _ASSERT(context != NULL);
     _ASSERT(rect != NULL);
     _ASSERT(color != NULL);
@@ -394,7 +394,7 @@ void _Context_stroke_rect(_Context* context, _RectF const* rect, double width, _
     if (_Brush_type(brush) == _COLOR_BRUSH_TYPE) {
         _Context_draw_vertices(context, false, vertices, (12 * 4), _Brush_color(brush));
     } else {
-        _ABORT("_Context_stroke_rect: Only color brushes supported now");
+        _ABORT("_Context_rect: Only color brushes supported now");
     }
 }
 
