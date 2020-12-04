@@ -35,14 +35,14 @@ void stroke_bezier(_RectF const* rect) {
 
 	for (int i = 0; i < num; i++) {
 		double t = (i / (num - 1.0));
-		_PointF pt = _bezier_point(&p1, &p2, &p3, &p4, t);
+		_PointF pt = _cubic_point(&p1, &p2, &p3, &p4, t);
 		_RectF rc = POINT_TO_RECT(pt, 2);
 		_Context_fill_rect(context, &rc, red_brush);
 	}
 
 	_PointF* res_data = NULL;
 	int res_num = 0;
-	_bezier_points(&p1, &p2, &p3, &p4, 0.5, &res_data, &res_num);
+	_cubic_points(&p1, &p2, &p3, &p4, 0.5, &res_data, &res_num);
 
 	for (int i = 0; i < res_num; i++) {
 		_RectF rc = POINT_TO_RECT(res_data[i], 2);
