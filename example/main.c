@@ -23,7 +23,10 @@ _Brush* white_brush = NULL;
 void window_render(_Size const* size, float ratio) {
 	_RectF rect1 = {
 		.origin = { 0, 0 },
-		.size = _SIZE_MULT(_SIZE_F(*size), ratio)
+		.size = _SIZE_MULT(
+			_SIZE_F(*size),
+			ratio
+		)
 	};
 
 	_RectF rect2 = {
