@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <stdlib.h>
 #include <libcore/MACRO.h>
 #include <libcore/brush.h>

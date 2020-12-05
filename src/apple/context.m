@@ -4,6 +4,32 @@
 
 #include "metal.h"
 
+#define _RECT_TRIANGLES_STRIP(rect, data) { \
+    (data)[0] = (rect).origin.x; \
+    (data)[1] = (rect).origin.y; \
+    (data)[2] = _RECT_MAX_X(rect); \
+    (data)[3] = (rect).origin.y; \
+    (data)[4] = (rect).origin.x; \
+    (data)[5] = _RECT_MAX_Y(rect); \
+    (data)[6] = _RECT_MAX_X(rect); \
+    (data)[7] = _RECT_MAX_Y(rect); \
+}
+
+#define _RECT_TRIANGLES(rect, data) { \
+    (data)[0] = (rect).origin.x; \
+    (data)[1] = (rect).origin.y; \
+    (data)[2] = _RECT_MAX_X(rect); \
+    (data)[3] = (rect).origin.y; \
+    (data)[4] = (rect).origin.x; \
+    (data)[5] = _RECT_MAX_Y(rect); \
+    (data)[6] = (rect).origin.x; \
+    (data)[7] = _RECT_MAX_Y(rect); \
+    (data)[8] = _RECT_MAX_X(rect); \
+    (data)[9] = _RECT_MAX_Y(rect); \
+    (data)[10] = _RECT_MAX_X(rect); \
+    (data)[11] = (rect).origin.y; \
+}
+
 typedef struct _Context {
     NSWindow* window;
     _Texture* texture;
@@ -14,14 +40,10 @@ typedef struct _Context {
     id<MTLRenderCommandEncoder> command_encoder;
     id<MTLRenderPipelineState> color_pipeline_state;
     id<MTLRenderPipelineState> texture_pipeline_state;
-    int width;
-    int height;
-    float origin;
-    bool clip_rect;
-    int clip_rect_x;
-    int clip_rect_y;
-    int clip_rect_width;
-    int clip_rect_height;
+    _CONTEXT_ORIGIN origin;
+    _Size size;
+    _Rect clip;
+    float scale;
     bool painting;
 } _Context;
 
@@ -29,7 +51,7 @@ _Context* _Context_create(_CONTEXT_TYPE type, void* target) {
 	_ASSERT(__metal_device != NULL);
     _ASSERT(__metal_library != NULL);
 
-    _Context* context = _NEW(_Context, {});
+    _Context* context = _NEW(_Context, { .scale = 2.0f });
 
     if (type == _WINDOW_CONTEXT_TYPE) {
         context->window = (__bridge NSWindow*)_Window_NSWindow((_Window*)target);
@@ -101,16 +123,6 @@ void _Context_begin_paint(_Context* context) {
 
     context->painting = true;
 
-    if ((context->origin != -1)
-    && (context->origin != 1))
-    	context->origin = -1;
-
-    context->clip_rect_x = 0;
-    context->clip_rect_y = 0;
-    context->clip_rect_width = 0;
-    context->clip_rect_height = 0;
-    context->clip_rect = false;
-
     MTLRenderPassDescriptor* pass_descriptor = [MTLRenderPassDescriptor renderPassDescriptor];
     pass_descriptor.colorAttachments[0].clearColor = MTLClearColorMake(0, 0, 0, 0);
     pass_descriptor.colorAttachments[0].loadAction = MTLLoadActionClear;
@@ -119,29 +131,27 @@ void _Context_begin_paint(_Context* context) {
     if (context->window != NULL) {
         _ASSERT(context->layer != NULL);
 
-        NSSize size = context->window.contentView.frame.size;
-		//size.width *= context->window.backingScaleFactor;
-		//size.height *= context->window.backingScaleFactor;
+        context->size = (_Size){
+            .width = (context->window.contentView.frame.size.width * context->window.backingScaleFactor),
+            .height = (context->window.contentView.frame.size.height * context->window.backingScaleFactor),
+        };
+
+        _ASSERT(context->size.width > 0);
+        _ASSERT(context->size.height > 0);
 
         [CATransaction begin];
         [CATransaction setValue: (id)kCFBooleanTrue forKey: kCATransactionDisableActions];
         [context->layer setFrame: context->window.contentView.frame];
-        [context->layer setDrawableSize: size];
+        [context->layer setDrawableSize: NSMakeSize(context->size.width, context->size.height)];
         [CATransaction commit];
-
-        context->width = size.width;
-        context->height = size.height;
-        _ASSERT(context->width > 0);
-        _ASSERT(context->height > 0);
 
         context->drawable = [context->layer nextDrawable];
         pass_descriptor.colorAttachments[0].texture = context->drawable.texture;
     } else {
-    	_Size size = _Texture_size(context->texture);
-        context->width = size.width;
-        context->height = size.height;
-        _ASSERT(context->width > 0);
-        _ASSERT(context->height > 0);
+    	context->size = _Texture_size(context->texture);
+
+        _ASSERT(context->size.width > 0);
+        _ASSERT(context->size.height > 0);
 
         pass_descriptor.colorAttachments[0].texture = (__bridge id<MTLTexture>)_Texture_MTLTexture(context->texture);
     }
@@ -170,29 +180,93 @@ void _Context_end_paint(_Context* context) {
     context->drawable = NULL;
 }
 
-void _Context_set_clip_rect(_Context* context, _Rect const* rect) {
+_Size _Context_size(_Context* context) {
+    _ASSERT(context != NULL);
+    if (context->window != NULL) {
+        _ASSERT(context->layer != NULL);
+        return (_Size){
+            .width = (context->window.contentView.frame.size.width * context->window.backingScaleFactor),
+            .height = (context->window.contentView.frame.size.height * context->window.backingScaleFactor),
+        };
+    } else {
+        return _Texture_size(context->texture);
+    }
+}
+
+_Rect _Context_clip(_Context* context) {
+    _ASSERT(context != NULL);
+    return context->clip;
+}
+
+_CONTEXT_ORIGIN _Context_origin(_Context* context) {
+    _ASSERT(context != NULL);
+    return context->origin;
+}
+
+float _Context_scale(_Context* context) {
+    _ASSERT(context != NULL);
+    return context->scale;
+}
+
+void _Context_set_clip(_Context* context, _Rect const* rect) {
     _ASSERT(context != NULL);
 
     if ((rect == NULL)
     || (rect->size.width <= 0)
    	|| (rect->size.height <= 0)) {
-		context->clip_rect_x = 0;
-	    context->clip_rect_y = 0;
-	    context->clip_rect_width = 0;
-	    context->clip_rect_height = 0;
-	    context->clip_rect = false;
+        context->clip = (_Rect){ { 0, 0 }, { 0, 0 } };
    	} else {
-   		context->clip_rect_x = rect->origin.x;
-	    context->clip_rect_y = rect->origin.y;
-	    context->clip_rect_width = rect->size.width;
-	    context->clip_rect_height = rect->size.height;
-	    context->clip_rect = true;
+        context->clip = *rect;
    	}
 }
 
 void _Context_set_origin(_Context* context, _CONTEXT_ORIGIN origin) {
     _ASSERT(context != NULL);
-    context->origin = ((origin == _LEFTTOP_CONTEXT_ORIGIN) ? -1 : 1);
+    context->origin = origin;
+}
+
+void _Context_set_scale(_Context* context, float scale) {
+    _ASSERT(context != NULL);
+    context->scale = scale;
+}
+
+void _Context_draw_vertices(_Context* context, float const* array, int size, bool strip, _Brush const* brush) {
+    _ASSERT(context != NULL);
+    _ASSERT(array != NULL);
+    _ASSERT(size > 0);
+    _ASSERT(brush != NULL);
+    _ASSERT(context->command_encoder != NULL);
+    _ASSERT((context->size.width > 0) && (context->size.height > 0));
+    _ASSERT(context->painting == true);
+
+    _Color const* color = _Brush_color(brush);
+
+    float uniforms[8] = {
+        color->red,
+        color->green,
+        color->blue,
+        color->alpha,
+        context->size.width,
+        context->size.height,
+        ((context->origin == _LEFTTOP_CONTEXT_ORIGIN) ? -1 : 1),
+        0
+    };
+
+    [context->command_encoder setRenderPipelineState: context->color_pipeline_state];
+    [context->command_encoder setVertexBytes: &uniforms length: (sizeof(float) * 8) atIndex: 0];
+    [context->command_encoder setVertexBytes: array length: (sizeof(float) * size) atIndex: 1];
+    if ((context->clip.size.width > 0)
+    && (context->clip.size.height > 0)) {
+        [context->command_encoder setScissorRect: (MTLScissorRect){
+            context->clip.origin.x,
+            context->clip.origin.y,
+            context->clip.size.width,
+            context->clip.size.height
+        }];
+    }
+    [context->command_encoder drawPrimitives: (strip ? MTLPrimitiveTypeTriangleStrip : MTLPrimitiveTypeTriangle)
+                                  vertexStart: 0
+                                  vertexCount: (size / 2)];
 }
 
 void _Context_draw_texture(_Context* context, _Texture const* texture, _RectF const* src, _RectF const* dst, _Color const* tint) {
@@ -208,8 +282,8 @@ void _Context_draw_texture(_Context* context, _Texture const* texture, _RectF co
     _ASSERT(size.width > 0);
     _ASSERT(size.height > 0);
 
-    if ((dst->origin.x > context->width)
-    || (dst->origin.y > context->height)
+    if ((dst->origin.x > context->size.width)
+    || (dst->origin.y > context->size.height)
     || ((dst->origin.x + dst->size.width) < 0)
     || ((dst->origin.y + dst->size.height) < 0))
         return;
@@ -219,9 +293,9 @@ void _Context_draw_texture(_Context* context, _Texture const* texture, _RectF co
         ((tint != NULL) ? tint->green : 0),
         ((tint != NULL) ? tint->blue : 0),
         ((tint != NULL) ? tint->alpha : 0),
-        context->width,
-        context->height,
-        context->origin,
+        context->size.width,
+        context->size.height,
+        ((context->origin == _LEFTTOP_CONTEXT_ORIGIN) ? -1 : 1),
         ((tint != NULL) ? 1.0f : 0.0f)
     };
 
@@ -263,83 +337,26 @@ void _Context_draw_texture(_Context* context, _Texture const* texture, _RectF co
     [context->command_encoder setVertexBytes: &array length: (sizeof(float) * 16) atIndex: 1];
     [context->command_encoder setFragmentTexture: (__bridge id<MTLTexture>)_Texture_MTLTexture(texture) atIndex: 0];
 
-    if (context->clip_rect) {
+    if ((context->clip.size.width > 0)
+    && (context->clip.size.height > 0)) {
         [context->command_encoder setScissorRect: (MTLScissorRect){
-        	context->clip_rect_x,
-            context->clip_rect_y,
-            context->clip_rect_width,
-            context->clip_rect_height
+        	context->clip.origin.x,
+            context->clip.origin.y,
+            context->clip.size.width,
+            context->clip.size.height
         }];
     }
     [context->command_encoder drawPrimitives: MTLPrimitiveTypeTriangleStrip vertexStart: 0 vertexCount: 4];
 }
 
-void _Context_draw_vertices(_Context* context, bool strip, float const* array, int size, _Color const* color) {
-	_ASSERT(context != NULL);
-	_ASSERT(array != NULL);
-	_ASSERT(color != NULL);
-	_ASSERT(size > 0);
-	_ASSERT(context->command_encoder != NULL);
-    _ASSERT((context->width > 0) && (context->height > 0));
-    _ASSERT(context->painting == true);
+void _Context_stroke_line(_Context* context, _PointF const* from, _PointF const* to, double width, _Brush const* brush) {
 
-    float uniforms[8] = {
-        color->red,
-        color->green,
-        color->blue,
-        color->alpha,
-        context->width,
-        context->height,
-        context->origin,
-        0
-    };
-
-    [context->command_encoder setRenderPipelineState: context->color_pipeline_state];
-    [context->command_encoder setVertexBytes: &uniforms length: (sizeof(float) * 8) atIndex: 0];
-    [context->command_encoder setVertexBytes: array length: (sizeof(float) * size) atIndex: 1];
-    if (context->clip_rect) {
-        [context->command_encoder setScissorRect: (MTLScissorRect){
-        	context->clip_rect_x,
-            context->clip_rect_y,
-            context->clip_rect_width,
-            context->clip_rect_height
-        }];
-    }
-    [context->command_encoder drawPrimitives: (strip ? MTLPrimitiveTypeTriangleStrip : MTLPrimitiveTypeTriangle)
-                                  vertexStart: 0
-                                  vertexCount: (size / 2)];
 }
 
-#define _RECT_TRIANGLES_STRIP(rect, data) { \
-	(data)[0] = (rect).origin.x; \
-	(data)[1] = (rect).origin.y; \
-	(data)[2] = _RECT_MAX_X(rect); \
-	(data)[3] = (rect).origin.y; \
-	(data)[4] = (rect).origin.x; \
-	(data)[5] = _RECT_MAX_Y(rect); \
-	(data)[6] = _RECT_MAX_X(rect); \
-	(data)[7] = _RECT_MAX_Y(rect); \
-}
-
-#define _RECT_TRIANGLES(rect, data) { \
-	(data)[0] = (rect).origin.x; \
-	(data)[1] = (rect).origin.y; \
-	(data)[2] = _RECT_MAX_X(rect); \
-	(data)[3] = (rect).origin.y; \
-	(data)[4] = (rect).origin.x; \
-	(data)[5] = _RECT_MAX_Y(rect); \
-	(data)[6] = (rect).origin.x; \
-	(data)[7] = _RECT_MAX_Y(rect); \
-	(data)[8] = _RECT_MAX_X(rect); \
-	(data)[9] = _RECT_MAX_Y(rect); \
-	(data)[10] = _RECT_MAX_X(rect); \
-	(data)[11] = (rect).origin.y; \
-}
-
-void _Context_rect(_Context* context, _RectF const* rect, double width, _Brush const* brush) {
+void _Context_stroke_rect(_Context* context, _RectF const* rect, double width, _Brush const* brush) {
     _ASSERT(context != NULL);
     _ASSERT(rect != NULL);
-    _ASSERT(color != NULL);
+    _ASSERT(brush != NULL);
 
     /* NOTE: Borders are being generated clock-wise for TopLeft origin and opposite for BottomLeft */
 
@@ -391,24 +408,32 @@ void _Context_rect(_Context* context, _RectF const* rect, double width, _Brush c
     _RECT_TRIANGLES(border3, _dst); _dst += 12;
     _RECT_TRIANGLES(border4, _dst);
 
-    if (_Brush_type(brush) == _COLOR_BRUSH_TYPE) {
-        _Context_draw_vertices(context, false, vertices, (12 * 4), _Brush_color(brush));
-    } else {
-        _ABORT("_Context_rect: Only color brushes supported now");
-    }
+    _Context_draw_vertices(context, vertices, (12 * 4), false, brush);
+}
+
+void _Context_stroke_path(_Context* context, _BezierPath const* path, double width, _Brush const* brush) {
+
+}
+
+void _Context_stroke_ellipse(_Context* context, _RectF const* rect, double width, _Brush const* brush) {
+
 }
 
 void _Context_fill_rect(_Context* context, _RectF const* rect, _Brush const* brush) {
-	_ASSERT(context != NULL);
-	_ASSERT(rect != NULL);
-	_ASSERT(color != NULL);
+    _ASSERT(context != NULL);
+    _ASSERT(rect != NULL);
+    _ASSERT(brush != NULL);
 
-	float vertices[8];
-	_RECT_TRIANGLES_STRIP(*rect, vertices);
+    float vertices[8];
+    _RECT_TRIANGLES_STRIP(*rect, vertices);
 
-    if (_Brush_type(brush) == _COLOR_BRUSH_TYPE) {
-        _Context_draw_vertices(context, true, vertices, 8, _Brush_color(brush));
-    } else {
-        _ABORT("_Context_fill_rect: Only color brushes supported now");
-    }
+    _Context_draw_vertices(context, vertices, 8, true, brush);
+}
+
+void _Context_fill_path(_Context* context, _BezierPath const* path, _Brush const* brush) {
+
+}
+
+void _Context_fill_ellipse(_Context* context, _RectF const* rect, _Brush const* brush) {
+
 }

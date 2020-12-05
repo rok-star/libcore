@@ -37,6 +37,7 @@ await Promise.all([ Deno.copyFile(`${project}/src/WINDOWS.h`, `${out_inc}/WINDOW
                     Deno.copyFile(`${project}/src/window.h`, `${out_inc}/window.h`),
                     Deno.copyFile(`${project}/src/color.h`, `${out_inc}/color.h`),
                     Deno.copyFile(`${project}/src/brush.h`, `${out_inc}/brush.h`),
+                    Deno.copyFile(`${project}/src/bezierpath.h`, `${out_inc}/bezierpath.h`),
                     Deno.copyFile(`${project}/src/texture.h`, `${out_inc}/texture.h`),
                     Deno.copyFile(`${project}/src/context.h`, `${out_inc}/context.h`),
                     Deno.copyFile(`${project}/src/app.h`, `${out_inc}/app.h`) ]);

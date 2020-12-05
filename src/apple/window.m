@@ -28,7 +28,6 @@ typedef struct _Window {
 }
 
 - (void)triggerEventBasic:(_WINDOW_EVENT) type {
-	_ASSERT(event != NULL);
 	if (_window->on_event != NULL) {
 		_window->on_event(
 			&(_WindowEvent){

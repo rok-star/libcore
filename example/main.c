@@ -20,47 +20,17 @@ _Brush* white_brush = NULL;
 
 #define POINT_TO_RECT(a, b) ((_RectF){ { (a).x - (b), (a.y) - (b) }, { ((b) * 2), ((b) * 2) } })
 
-void stroke_bezier(_RectF const* rect) {
-	_PointF p1 = { 0.0 + 10.0, 0.0 + 10.0 };
-	_PointF p2 = { 0.0 + 10.0, rect->size.height - 10.0 };
-	_PointF p3 = { rect->size.width - 10.0, rect->size.height - 10.0 };
-	_PointF p4 = { rect->size.width - 10.0, 0.0 + 10.0 };
 
-	_Context_fill_rect(context, &POINT_TO_RECT(p1, 4), green_brush);
-	_Context_fill_rect(context, &POINT_TO_RECT(p2, 4), green_brush);
-	_Context_fill_rect(context, &POINT_TO_RECT(p3, 4), green_brush);
-	_Context_fill_rect(context, &POINT_TO_RECT(p4, 4), green_brush);
-
-	int num = rect->size.width / 10;
-
-	for (int i = 0; i < num; i++) {
-		double t = (i / (num - 1.0));
-		_PointF pt = _cubic_point(&p1, &p2, &p3, &p4, t);
-		_RectF rc = POINT_TO_RECT(pt, 2);
-		_Context_fill_rect(context, &rc, red_brush);
-	}
-
-	_PointF* res_data = NULL;
-	int res_num = 0;
-	_cubic_points(&p1, &p2, &p3, &p4, 0.5, &res_data, &res_num);
-
-	for (int i = 0; i < res_num; i++) {
-		_RectF rc = POINT_TO_RECT(res_data[i], 2);
-		_Context_fill_rect(context, &rc, blue_brush);
-	}
-}
 
 void window_render(void) {
 	_RectF rect = {
 		.origin = { 0, 0 },
-		.size = _SIZE_F(_Window_size(window))
+		.size = _SIZE_F(_Context_size(context))
 	};
+
 	_Context_begin_paint(context);
 	_Context_fill_rect(context, &rect, white_brush);
-	_Context_rect(context, &rect, 2, red_brush);
-
-	stroke_bezier(&rect);
-
+	_Context_stroke_rect(context, &rect, 2, red_brush);
 	_Context_end_paint(context);
 }
 
@@ -83,6 +53,7 @@ void app_event(_AppEvent const* event, void* param) {
 		window = _Window_create();
 		context = _Context_create(_WINDOW_CONTEXT_TYPE, window);
 		_Context_set_origin(context, _LEFTTOP_CONTEXT_ORIGIN);
+		_Context_set_scale(context, 2.0f);
 		_Window_on_event(window, window_event, NULL);
 		_Window_set_text(window, "Lorem ipsum привет рулет");
 		_Window_set_size(window, &(_Size){ 640, 480 });

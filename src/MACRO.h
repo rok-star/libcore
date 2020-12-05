@@ -7,7 +7,7 @@
 	exit(1); \
 }
 
-#ifndef NDEBUG
+#ifdef NDEBUG
 	#define _ASSERT(a)
 	#define _ASSERT_M(a, b)
 #else
