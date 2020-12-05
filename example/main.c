@@ -55,7 +55,7 @@ void app_event(_AppEvent const* event, void* param) {
 		blue_brush = _Brush_create_color(&BLUE_COLOR);
 		white_brush = _Brush_create_color(&WHITE_COLOR);
 		window = _Window_create();
-		context = _Context_create(_WINDOW_CONTEXT_TYPE, window);
+		context = _Context_create_window(window);
 		_Context_set_origin(context, _LEFTTOP_CONTEXT_ORIGIN);
 		_Window_on_event(window, window_event, NULL);
 		_Window_set_text(window, "Lorem ipsum привет рулет");

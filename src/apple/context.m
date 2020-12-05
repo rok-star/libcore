@@ -52,7 +52,7 @@
 
 typedef struct _Context {
     NSWindow* window;
-    _Texture* texture;
+    _Texture const* texture;
     CAMetalLayer* layer;
     id<CAMetalDrawable> drawable;
     id<MTLCommandQueue> command_queue;
@@ -66,14 +66,14 @@ typedef struct _Context {
     bool painting;
 } _Context;
 
-_Context* _Context_create(_CONTEXT_TYPE type, void* target) {
+_Context* __Context_create(_Texture const* texture, _Window const* window) {
 	_ASSERT(__metal_device != NULL);
     _ASSERT(__metal_library != NULL);
 
     _Context* context = _NEW(_Context, {});
 
-    if (type == _WINDOW_CONTEXT_TYPE) {
-        context->window = (__bridge NSWindow*)_Window_NSWindow((_Window*)target);
+    if (window != NULL) {
+        context->window = (__bridge NSWindow*)_Window_NSWindow(window);
         context->layer = [[CAMetalLayer alloc] init];
         [context->layer setDevice: __metal_device];
         [context->layer setPixelFormat: MTLPixelFormatBGRA8Unorm];
@@ -84,7 +84,7 @@ _Context* _Context_create(_CONTEXT_TYPE type, void* target) {
         [context->window.contentView setWantsLayer: YES];
         [context->window.contentView.layer addSublayer: context->layer];
     } else {
-        context->texture = (_Texture*)target;
+        context->texture = texture;
     }
 
     context->command_queue = [__metal_device newCommandQueue];
@@ -115,6 +115,16 @@ _Context* _Context_create(_CONTEXT_TYPE type, void* target) {
         _ABORT("%s", [[_err localizedDescription] cStringUsingEncoding: NSUTF8StringEncoding]);
 
     return context;
+}
+
+_Context* _Context_create_texture(_Texture const* texture) {
+    _ASSERT(texture != NULL);
+    return __Context_create(texture, NULL);
+}
+
+_Context* _Context_create_window(_Window const* window) {
+    _ASSERT(window != NULL);
+    return __Context_create(NULL, window);
 }
 
 void _Context_destroy(_Context* context) {

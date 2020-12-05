@@ -4,11 +4,8 @@
 #include <libcore/math.h>
 #include <libcore/brush.h>
 #include <libcore/bezierpath.h>
-
-typedef enum {
-	_WINDOW_CONTEXT_TYPE,
-	_TEXTURE_CONTEXT_TYPE
-} _CONTEXT_TYPE;
+#include <libcore/texture.h>
+#include <libcore/window.h>
 
 typedef enum {
 	_LEFTTOP_CONTEXT_ORIGIN,
@@ -27,7 +24,8 @@ typedef struct _Context _Context;
 extern "C" {
 #endif
 
-_Context* _Context_create(_CONTEXT_TYPE,void*);
+_Context* _Context_create_texture(_Texture const*);
+_Context* _Context_create_window(_Window const*);
 void _Context_destroy(_Context*);
 void _Context_begin_paint(_Context*);
 void _Context_end_paint(_Context*);
