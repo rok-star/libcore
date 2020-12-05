@@ -173,7 +173,8 @@ typedef struct _Window {
 }
 
 - (void)windowDidChangeBackingProperties:(NSNotification*)notification {
-	/* */
+	[self triggerEventBasic: _PIXELRATIO_WINDOW_EVENT];
+	[self triggerEventBasic: _SIZE_WINDOW_EVENT];
 }
 
 @end
@@ -346,6 +347,11 @@ _Size _Window_size(_Window const* window) {
 char* _Window_text(_Window const* window) {
 	_ASSERT(window != NULL);
 	return _FORMAT("%s", [window->pNSWindow.title cStringUsingEncoding: NSUTF8StringEncoding]);
+}
+
+float _Window_pixelratio(_Window const* window) {
+	_ASSERT(window != NULL);
+	return window->pNSWindow.backingScaleFactor;
 }
 
 void _Window_on_event(_Window* window, void (*on_event)(_WindowEvent const*,void*), void* param) {

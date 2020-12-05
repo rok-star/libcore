@@ -22,7 +22,8 @@ typedef enum : int {
     _RBUTTONDOWN_WINDOW_EVENT = 11,
     _RBUTTONUP_WINDOW_EVENT   = 12,
     _KEYDOWN_WINDOW_EVENT     = 13,
-    _KEYUP_WINDOW_EVENT       = 14
+    _KEYUP_WINDOW_EVENT       = 14,
+    _PIXELRATIO_WINDOW_EVENT  = 15
 } _WINDOW_EVENT;
 
 static char const* _WINDOW_EVENT_NAME[15] = {
@@ -78,6 +79,7 @@ bool _Window_minimized(_Window const*);
 bool _Window_topmost(_Window const*);
 _Size _Window_size(_Window const*);
 char* _Window_text(_Window const*);
+float _Window_pixelratio(_Window const*);
 void _Window_on_event(_Window*, void (*)(_WindowEvent const*,void*), void*);
 
 #if _WIN32

@@ -4,6 +4,26 @@
 
 #include "metal.h"
 
+#define _RECT_TRANSFORM(rect, transform) { \
+    if ((transform).scale != 0) { \
+        (rect).origin.x *= (transform).scale; \
+        (rect).origin.y *= (transform).scale; \
+        (rect).size.width *= (transform).scale; \
+        (rect).size.height *= (transform).scale; \
+    } \
+    (rect).origin.x += (transform).x; \
+    (rect).origin.y += (transform).y; \
+}
+
+#define _POINT_TRANSFORM(point, transform) { \
+    if ((transform).scale != 0) { \
+        (point).x *= (transform).scale; \
+        (point).y *= (transform).scale; \
+    } \
+    (point).x += (transform).x; \
+    (point).y += (transform).y; \
+}
+
 #define _RECT_TRIANGLES_STRIP(rect, data) { \
     (data)[0] = (rect).origin.x; \
     (data)[1] = (rect).origin.y; \
@@ -43,7 +63,6 @@ typedef struct _Context {
     _CONTEXT_ORIGIN origin;
     _Size size;
     _Rect clip;
-    float scale;
     bool painting;
 } _Context;
 
@@ -51,7 +70,7 @@ _Context* _Context_create(_CONTEXT_TYPE type, void* target) {
 	_ASSERT(__metal_device != NULL);
     _ASSERT(__metal_library != NULL);
 
-    _Context* context = _NEW(_Context, { .scale = 2.0f });
+    _Context* context = _NEW(_Context, {});
 
     if (type == _WINDOW_CONTEXT_TYPE) {
         context->window = (__bridge NSWindow*)_Window_NSWindow((_Window*)target);
@@ -203,11 +222,6 @@ _CONTEXT_ORIGIN _Context_origin(_Context* context) {
     return context->origin;
 }
 
-float _Context_scale(_Context* context) {
-    _ASSERT(context != NULL);
-    return context->scale;
-}
-
 void _Context_set_clip(_Context* context, _Rect const* rect) {
     _ASSERT(context != NULL);
 
@@ -223,11 +237,6 @@ void _Context_set_clip(_Context* context, _Rect const* rect) {
 void _Context_set_origin(_Context* context, _CONTEXT_ORIGIN origin) {
     _ASSERT(context != NULL);
     context->origin = origin;
-}
-
-void _Context_set_scale(_Context* context, float scale) {
-    _ASSERT(context != NULL);
-    context->scale = scale;
 }
 
 void _Context_draw_vertices(_Context* context, float const* array, int size, bool strip, _Brush const* brush) {
@@ -349,11 +358,11 @@ void _Context_draw_texture(_Context* context, _Texture const* texture, _RectF co
     [context->command_encoder drawPrimitives: MTLPrimitiveTypeTriangleStrip vertexStart: 0 vertexCount: 4];
 }
 
-void _Context_stroke_line(_Context* context, _PointF const* from, _PointF const* to, double width, _Brush const* brush) {
+void _Context_stroke_line(_Context* context, _PointF const* from, _PointF const* to, double width, _Brush const* brush, _Transform const* transform) {
 
 }
 
-void _Context_stroke_rect(_Context* context, _RectF const* rect, double width, _Brush const* brush) {
+void _Context_stroke_rect(_Context* context, _RectF const* rect, double width, _Brush const* brush, _Transform const* transform) {
     _ASSERT(context != NULL);
     _ASSERT(rect != NULL);
     _ASSERT(brush != NULL);
@@ -401,6 +410,13 @@ void _Context_stroke_rect(_Context* context, _RectF const* rect, double width, _
         }
     };
 
+    if (transform != NULL) {
+        _RECT_TRANSFORM(border1, *transform);
+        _RECT_TRANSFORM(border2, *transform);
+        _RECT_TRANSFORM(border3, *transform);
+        _RECT_TRANSFORM(border4, *transform);
+    }
+
     float vertices[(12 * 4)];
     float* _dst = vertices;
     _RECT_TRIANGLES(border1, _dst); _dst += 12;
@@ -411,29 +427,34 @@ void _Context_stroke_rect(_Context* context, _RectF const* rect, double width, _
     _Context_draw_vertices(context, vertices, (12 * 4), false, brush);
 }
 
-void _Context_stroke_path(_Context* context, _BezierPath const* path, double width, _Brush const* brush) {
+void _Context_stroke_path(_Context* context, _BezierPath const* path, double width, _Brush const* brush, _Transform const* transform) {
 
 }
 
-void _Context_stroke_ellipse(_Context* context, _RectF const* rect, double width, _Brush const* brush) {
+void _Context_stroke_ellipse(_Context* context, _RectF const* rect, double width, _Brush const* brush, _Transform const* transform) {
 
 }
 
-void _Context_fill_rect(_Context* context, _RectF const* rect, _Brush const* brush) {
+void _Context_fill_rect(_Context* context, _RectF const* rect, _Brush const* brush, _Transform const* transform) {
     _ASSERT(context != NULL);
     _ASSERT(rect != NULL);
     _ASSERT(brush != NULL);
 
+    _RectF rect_ = *rect;
+
+    if (transform != NULL)
+        _RECT_TRANSFORM(rect_, *transform);
+
     float vertices[8];
-    _RECT_TRIANGLES_STRIP(*rect, vertices);
+    _RECT_TRIANGLES_STRIP(rect_, vertices);
 
     _Context_draw_vertices(context, vertices, 8, true, brush);
 }
 
-void _Context_fill_path(_Context* context, _BezierPath const* path, _Brush const* brush) {
+void _Context_fill_path(_Context* context, _BezierPath const* path, _Brush const* brush, _Transform const* transform) {
 
 }
 
-void _Context_fill_ellipse(_Context* context, _RectF const* rect, _Brush const* brush) {
+void _Context_fill_ellipse(_Context* context, _RectF const* rect, _Brush const* brush, _Transform const* transform) {
 
 }

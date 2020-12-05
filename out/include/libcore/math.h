@@ -17,6 +17,7 @@ typedef struct _PointF {
 #define _POINT_F(a) ((_PointF){ (a).width, (a).height })
 #define _POINT_ADD(a, b) ((__typeof__(a)){ ((a).x + (b).x), ((a).y + (b).y) })
 #define _POINT_MULT(a, b) ((__typeof__(a)){ ((a).x * (b)), ((a).y * (b)) })
+#define _POINT_DIV(a, b) ((__typeof__(a)){ ((a).x / (b)), ((a).y / (b)) })
 #define _POINT_LERP(a, b, t) ((__typeof__(a)){ _LERP((a).x, (b).x, t), _LERP((a).y, (b).y, t) });
 
 typedef struct _Size {
@@ -31,6 +32,9 @@ typedef struct _SizeF {
 
 #define _SIZE_I(a) ((_Size){ (a).width, (a).height })
 #define _SIZE_F(a) ((_SizeF){ (a).width, (a).height })
+#define _SIZE_ADD(a, b) ((__typeof__(a)){ ((a).width + (b).width), ((a).height + (b).height) })
+#define _SIZE_MULT(a, b) ((__typeof__(a)){ ((a).width * (b)), ((a).height * (b)) })
+#define _SIZE_DIV(a, b) ((__typeof__(a)){ ((a).width / (b)), ((a).height / (b)) })
 
 typedef struct _Rect {
 	_Point origin;

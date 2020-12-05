@@ -20,24 +20,28 @@ _Brush* white_brush = NULL;
 
 #define POINT_TO_RECT(a, b) ((_RectF){ { (a).x - (b), (a.y) - (b) }, { ((b) * 2), ((b) * 2) } })
 
-
-
-void window_render(void) {
+void window_render(_Size const* size, float ratio) {
 	_RectF rect = {
 		.origin = { 0, 0 },
-		.size = _SIZE_F(_Context_size(context))
+		.size = _SIZE_F(*size)
+	};
+
+	_Transform transform = {
+		.scale = ratio
 	};
 
 	_Context_begin_paint(context);
-	_Context_fill_rect(context, &rect, white_brush);
-	_Context_stroke_rect(context, &rect, 2, red_brush);
+	_Context_fill_rect(context, &rect, white_brush, &transform);
+	_Context_stroke_rect(context, &rect, 2, red_brush, &transform);
 	_Context_end_paint(context);
 }
 
 void window_event(_WindowEvent const* event, void* param) {
 	_ASSERT(event != NULL);
 	if (event->type == _SIZE_WINDOW_EVENT) {
-		window_render();
+		_Size size = _Window_size(window);
+		float ratio = _Window_pixelratio(window);
+		window_render(&size, ratio);
 	} else if (event->type == _CLOSE_WINDOW_EVENT) {
 		_App_exit();
 	}
@@ -53,7 +57,6 @@ void app_event(_AppEvent const* event, void* param) {
 		window = _Window_create();
 		context = _Context_create(_WINDOW_CONTEXT_TYPE, window);
 		_Context_set_origin(context, _LEFTTOP_CONTEXT_ORIGIN);
-		_Context_set_scale(context, 2.0f);
 		_Window_on_event(window, window_event, NULL);
 		_Window_set_text(window, "Lorem ipsum привет рулет");
 		_Window_set_size(window, &(_Size){ 640, 480 });
