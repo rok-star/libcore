@@ -195,7 +195,7 @@ void _Context_set_origin(_Context* context, _CONTEXT_ORIGIN origin) {
     context->origin = ((origin == _LEFTTOP_CONTEXT_ORIGIN) ? -1 : 1);
 }
 
-void _Context_draw_texture(_Context* context, _RectF const* src, _RectF const* dst, _Texture const* texture, _Color const* tint) {
+void _Context_draw_texture(_Context* context, _Texture const* texture, _RectF const* src, _RectF const* dst, _Color const* tint) {
 	_ASSERT(src != NULL);
 	_ASSERT(dst != NULL);
 	_ASSERT(texture != NULL);
