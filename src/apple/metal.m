@@ -22,8 +22,8 @@ char const* __metal_source = "#include <metal_stdlib> \n\
                                 return { \n\
                                     .color = uniforms.color, \n\
                                     .position = float4( \n\
-                                        pvertex_array[vid].x / (uniforms.viewport.x / 2) - 1.0, \n\
-                                        (pvertex_array[vid].y / (uniforms.viewport.y / 2) - 1.0) * uniforms.origin, \n\
+                                        pvertex_array[vid].x / (uniforms.viewport.x / 2.0) - 1.0, \n\
+                                        (pvertex_array[vid].y / (uniforms.viewport.y / 2.0) - 1.0) * uniforms.origin, \n\
                                         1.0, \n\
                                         1.0 \n\
                                     ) \n\
@@ -48,8 +48,8 @@ char const* __metal_source = "#include <metal_stdlib> \n\
                                 return { \n\
                                     .texcoords = float2(pvertex_array[vid].z, pvertex_array[vid].w), \n\
                                     .position = float4( \n\
-                                        pvertex_array[vid].x / (uniforms.viewport.x / 2) - 1.0, \n\
-                                        (pvertex_array[vid].y / (uniforms.viewport.y / 2) - 1.0) * uniforms.origin, \n\
+                                        pvertex_array[vid].x / (uniforms.viewport.x / 2.0) - 1.0, \n\
+                                        (pvertex_array[vid].y / (uniforms.viewport.y / 2.0) - 1.0) * uniforms.origin, \n\
                                         1.0, \n\
                                         1.0 \n\
                                     ), \n\

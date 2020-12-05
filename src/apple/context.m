@@ -79,7 +79,7 @@ _Context* __Context_create(_Texture const* texture, _Window const* window) {
         [context->layer setPixelFormat: MTLPixelFormatBGRA8Unorm];
         [context->layer setMagnificationFilter: kCAFilterNearest];
         [context->layer setMinificationFilter: kCAFilterNearest];
-        [context->layer setFramebufferOnly: YES];
+        [context->layer setFramebufferOnly: NO];
         [context->layer setPresentsWithTransaction: YES];
         [context->window.contentView setWantsLayer: YES];
         [context->window.contentView.layer addSublayer: context->layer];
@@ -160,9 +160,14 @@ void _Context_begin_paint(_Context* context) {
     if (context->window != NULL) {
         _ASSERT(context->layer != NULL);
 
+        // context->size = (_Size){
+        //     .width = (context->window.contentView.frame.size.width * context->window.backingScaleFactor),
+        //     .height = (context->window.contentView.frame.size.height * context->window.backingScaleFactor),
+        // };
+
         context->size = (_Size){
-            .width = (context->window.contentView.frame.size.width * context->window.backingScaleFactor),
-            .height = (context->window.contentView.frame.size.height * context->window.backingScaleFactor),
+            .width = (context->window.contentView.frame.size.width * 0.25),
+            .height = (context->window.contentView.frame.size.height * 0.25),
         };
 
         _ASSERT(context->size.width > 0);
@@ -209,25 +214,29 @@ void _Context_end_paint(_Context* context) {
     context->drawable = NULL;
 }
 
-_Size _Context_size(_Context* context) {
+_Size _Context_size(_Context const* context) {
     _ASSERT(context != NULL);
     if (context->window != NULL) {
         _ASSERT(context->layer != NULL);
+        // return (_Size){
+        //     .width = (context->window.contentView.frame.size.width * context->window.backingScaleFactor),
+        //     .height = (context->window.contentView.frame.size.height * context->window.backingScaleFactor),
+        // };
         return (_Size){
-            .width = (context->window.contentView.frame.size.width * context->window.backingScaleFactor),
-            .height = (context->window.contentView.frame.size.height * context->window.backingScaleFactor),
+            .width = (context->window.contentView.frame.size.width * 0.25),
+            .height = (context->window.contentView.frame.size.height * 0.25),
         };
     } else {
         return _Texture_size(context->texture);
     }
 }
 
-_Rect _Context_clip(_Context* context) {
+_Rect _Context_clip(_Context const* context) {
     _ASSERT(context != NULL);
     return context->clip;
 }
 
-_CONTEXT_ORIGIN _Context_origin(_Context* context) {
+_CONTEXT_ORIGIN _Context_origin(_Context const* context) {
     _ASSERT(context != NULL);
     return context->origin;
 }
@@ -379,16 +388,19 @@ void _Context_stroke_rect(_Context* context, _RectF const* rect, double width, _
 
     /* NOTE: Borders are being generated clock-wise for TopLeft origin and opposite for BottomLeft */
 
+    double half = (width * 0.5);
+
     _RectF border1 = {
         .origin = {
-            .x = rect->origin.x,
-            .y = rect->origin.y
+            .x = rect->origin.x - half,
+            .y = rect->origin.y - half
         },
         .size = {
             .width = rect->size.width,
             .height = width
         }
     };
+
     _RectF border2 = {
         .origin = {
             .x = (_RECT_MAX_X(*rect) - width),

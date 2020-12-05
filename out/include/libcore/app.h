@@ -21,7 +21,7 @@ typedef struct _AppEvent {
 extern "C" {
 #endif
 
-void _App_run();
+void _App_run(void);
 void _App_exit(void);
 void _App_wakeup(void);
 bool _App_running(void);
