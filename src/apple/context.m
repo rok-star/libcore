@@ -280,7 +280,7 @@ void _Context_set_origin(_Context* context, _CONTEXT_ORIGIN origin) {
     context->origin = origin;
 }
 
-void _Context_draw_vertices(_Context* context, float const* array, int size, bool strip, _Brush const* brush) {
+void _Context_draw_vertices(_Context const* context, float const* array, int size, bool strip, _Brush const* brush) {
     _ASSERT(context != NULL);
     _ASSERT(array != NULL);
     _ASSERT(size > 0);
@@ -319,7 +319,7 @@ void _Context_draw_vertices(_Context* context, float const* array, int size, boo
                                   vertexCount: (size / 2)];
 }
 
-void _Context_draw_texture(_Context* context, _Texture const* texture, _RectF const* src, _RectF const* dst, _Color const* tint) {
+void _Context_draw_texture(_Context const* context, _Texture const* texture, _RectF const* src, _RectF const* dst, _Color const* tint) {
 	_ASSERT(src != NULL);
 	_ASSERT(dst != NULL);
 	_ASSERT(texture != NULL);
@@ -399,11 +399,14 @@ void _Context_draw_texture(_Context* context, _Texture const* texture, _RectF co
     [context->command_encoder drawPrimitives: MTLPrimitiveTypeTriangleStrip vertexStart: 0 vertexCount: 4];
 }
 
-void _Context_stroke_line(_Context* context, _PointF const* from, _PointF const* to, double width, _Brush const* brush, _Transform const* transform) {
-
+void _Context_stroke_line(_Context const* context, _PointF const* from, _PointF const* to, double width, _LINE_CAP cap, _Brush const* brush, _Transform const* transform) {
+    _ASSERT(context != NULL);
+    _ASSERT(from != NULL);
+    _ASSERT(to != NULL);
+    _ASSERT(brush != NULL);
 }
 
-void _Context_stroke_rect(_Context* context, _RectF const* rect, double width, _Brush const* brush, _Transform const* transform) {
+void _Context_stroke_rect(_Context const* context, _RectF const* rect, double width, _Brush const* brush, _Transform const* transform) {
     _ASSERT(context != NULL);
     _ASSERT(rect != NULL);
     _ASSERT(brush != NULL);
@@ -469,15 +472,15 @@ void _Context_stroke_rect(_Context* context, _RectF const* rect, double width, _
     _Context_draw_vertices(context, vertices, (12 * 4), false, brush);
 }
 
-void _Context_stroke_path(_Context* context, _BezierPath const* path, double width, _Brush const* brush, _Transform const* transform) {
+void _Context_stroke_path(_Context const* context, _BezierPath const* path, double width, _Brush const* brush, _Transform const* transform) {
 
 }
 
-void _Context_stroke_ellipse(_Context* context, _RectF const* rect, double width, _Brush const* brush, _Transform const* transform) {
+void _Context_stroke_ellipse(_Context const* context, _RectF const* rect, double width, _Brush const* brush, _Transform const* transform) {
 
 }
 
-void _Context_fill_rect(_Context* context, _RectF const* rect, _Brush const* brush, _Transform const* transform) {
+void _Context_fill_rect(_Context const* context, _RectF const* rect, _Brush const* brush, _Transform const* transform) {
     _ASSERT(context != NULL);
     _ASSERT(rect != NULL);
     _ASSERT(brush != NULL);
@@ -493,10 +496,10 @@ void _Context_fill_rect(_Context* context, _RectF const* rect, _Brush const* bru
     _Context_draw_vertices(context, vertices, 8, true, brush);
 }
 
-void _Context_fill_path(_Context* context, _BezierPath const* path, _Brush const* brush, _Transform const* transform) {
+void _Context_fill_path(_Context const* context, _BezierPath const* path, _Brush const* brush, _Transform const* transform) {
 
 }
 
-void _Context_fill_ellipse(_Context* context, _RectF const* rect, _Brush const* brush, _Transform const* transform) {
+void _Context_fill_ellipse(_Context const* context, _RectF const* rect, _Brush const* brush, _Transform const* transform) {
 
 }

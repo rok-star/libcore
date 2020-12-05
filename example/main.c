@@ -44,8 +44,8 @@ void window_render(_Size const* size, float ratio) {
 	};
 
 	_Context_begin_paint(context);
-	_Context_fill_rect(context, &rect1, white_brush, &transform);
-	_Context_stroke_rect(context, &rect2, 2, red_brush, &transform);
+	_Context_fill_rect(context, &rect2, white_brush, &transform);
+	_Context_stroke_rect(context, &rect2, 1, red_brush, &transform);
 	_Context_end_paint(context);
 }
 

@@ -3,6 +3,7 @@
 
 #include <libcore/math.h>
 #include <libcore/brush.h>
+#include <libcore/line.h>
 #include <libcore/bezierpath.h>
 #include <libcore/texture.h>
 #include <libcore/window.h>
@@ -34,15 +35,15 @@ _Rect _Context_clip(_Context const*);
 _CONTEXT_ORIGIN _Context_origin(_Context const*);
 void _Context_set_clip(_Context*,_Rect const*);
 void _Context_set_origin(_Context*,_CONTEXT_ORIGIN);
-void _Context_draw_vertices(_Context*,float const*,int,bool,_Brush const*);
-void _Context_draw_texture(_Context*,_Texture const*,_RectF const*,_RectF const*,_Color const*);
-void _Context_stroke_line(_Context*,_PointF const*,_PointF const*,double,_Brush const*,_Transform const*);
-void _Context_stroke_rect(_Context*,_RectF const*,double,_Brush const*,_Transform const*);
-void _Context_stroke_path(_Context*,_BezierPath const*,double,_Brush const*,_Transform const*);
-void _Context_stroke_ellipse(_Context*,_RectF const*,double,_Brush const*,_Transform const*);
-void _Context_fill_rect(_Context*,_RectF const*,_Brush const*,_Transform const*);
-void _Context_fill_path(_Context*,_BezierPath const*,_Brush const*,_Transform const*);
-void _Context_fill_ellipse(_Context*,_RectF const*,_Brush const*,_Transform const*);
+void _Context_draw_vertices(_Context const*,float const*,int,bool,_Brush const*);
+void _Context_draw_texture(_Context const*,_Texture const*,_RectF const*,_RectF const*,_Color const*);
+void _Context_stroke_line(_Context const*,_PointF const*,_PointF const*,double,_LINE_CAP,_Brush const*,_Transform const*);
+void _Context_stroke_rect(_Context const*,_RectF const*,double,_Brush const*,_Transform const*);
+void _Context_stroke_path(_Context const*,_BezierPath const*,double,_Brush const*,_Transform const*);
+void _Context_stroke_ellipse(_Context const*,_RectF const*,double,_Brush const*,_Transform const*);
+void _Context_fill_rect(_Context const*,_RectF const*,_Brush const*,_Transform const*);
+void _Context_fill_path(_Context const*,_BezierPath const*,_Brush const*,_Transform const*);
+void _Context_fill_ellipse(_Context const*,_RectF const*,_Brush const*,_Transform const*);
 
 #ifdef __cplusplus
 }
