@@ -4,6 +4,8 @@
 
 #include "metal.h"
 
+#define _SAMPLE_COUNT 4
+
 #define _RECT_TRANSFORM(rect, transform) { \
     if ((transform).scale != 0) { \
         (rect).origin.x *= (transform).scale; \
@@ -60,6 +62,7 @@ typedef struct _Context {
     id<MTLRenderCommandEncoder> command_encoder;
     id<MTLRenderPipelineState> color_pipeline_state;
     id<MTLRenderPipelineState> texture_pipeline_state;
+    id<MTLTexture> msaa_texture;
     _CONTEXT_ORIGIN origin;
     _Size size;
     _Rect clip;
@@ -79,7 +82,7 @@ _Context* __Context_create(_Texture const* texture, _Window const* window) {
         [context->layer setPixelFormat: MTLPixelFormatBGRA8Unorm];
         [context->layer setMagnificationFilter: kCAFilterNearest];
         [context->layer setMinificationFilter: kCAFilterNearest];
-        [context->layer setFramebufferOnly: NO];
+        [context->layer setFramebufferOnly: YES];
         [context->layer setPresentsWithTransaction: YES];
         [context->window.contentView setWantsLayer: YES];
         [context->window.contentView.layer addSublayer: context->layer];
@@ -99,6 +102,7 @@ _Context* __Context_create(_Texture const* texture, _Window const* window) {
     pipeline_descriptor.colorAttachments[0].sourceAlphaBlendFactor      = MTLBlendFactorSourceAlpha;
     pipeline_descriptor.colorAttachments[0].destinationRGBBlendFactor   = MTLBlendFactorOneMinusSourceAlpha;
     pipeline_descriptor.colorAttachments[0].destinationAlphaBlendFactor = MTLBlendFactorOneMinusSourceAlpha;
+    pipeline_descriptor.sampleCount = _SAMPLE_COUNT;
 
     pipeline_descriptor.vertexFunction = [__metal_library newFunctionWithName: @"vertex_color_shader"];
     pipeline_descriptor.fragmentFunction = [__metal_library newFunctionWithName: @"fragment_color_shader"];
@@ -133,15 +137,16 @@ void _Context_destroy(_Context* context) {
     if (context->window != NULL)
         [context->layer removeFromSuperlayer];
 
-    context->layer = NULL;
-    context->window = NULL;
-    context->texture = NULL;
-    context->drawable = NULL;
-    context->command_queue = NULL;
-    context->command_buffer = NULL;
-    context->command_encoder = NULL;
-    context->color_pipeline_state = NULL;
-    context->texture_pipeline_state = NULL;
+    context->layer = nil;
+    context->window = nil;
+    context->texture = nil;
+    context->drawable = nil;
+    context->command_queue = nil;
+    context->command_buffer = nil;
+    context->command_encoder = nil;
+    context->color_pipeline_state = nil;
+    context->texture_pipeline_state = nil;
+    context->msaa_texture = nil;
 }
 
 void _Context_begin_paint(_Context* context) {
@@ -155,20 +160,19 @@ void _Context_begin_paint(_Context* context) {
     MTLRenderPassDescriptor* pass_descriptor = [MTLRenderPassDescriptor renderPassDescriptor];
     pass_descriptor.colorAttachments[0].clearColor = MTLClearColorMake(0, 0, 0, 0);
     pass_descriptor.colorAttachments[0].loadAction = MTLLoadActionClear;
-    pass_descriptor.colorAttachments[0].storeAction = MTLStoreActionStore;
 
     if (context->window != NULL) {
         _ASSERT(context->layer != NULL);
 
-        // context->size = (_Size){
-        //     .width = (context->window.contentView.frame.size.width * context->window.backingScaleFactor),
-        //     .height = (context->window.contentView.frame.size.height * context->window.backingScaleFactor),
-        // };
-
         context->size = (_Size){
-            .width = (context->window.contentView.frame.size.width * 0.25),
-            .height = (context->window.contentView.frame.size.height * 0.25),
+            .width = (context->window.contentView.frame.size.width * context->window.backingScaleFactor),
+            .height = (context->window.contentView.frame.size.height * context->window.backingScaleFactor),
         };
+
+        // context->size = (_Size){
+        //     .width = (context->window.contentView.frame.size.width * 0.25),
+        //     .height = (context->window.contentView.frame.size.height * 0.25),
+        // };
 
         _ASSERT(context->size.width > 0);
         _ASSERT(context->size.height > 0);
@@ -180,7 +184,24 @@ void _Context_begin_paint(_Context* context) {
         [CATransaction commit];
 
         context->drawable = [context->layer nextDrawable];
-        pass_descriptor.colorAttachments[0].texture = context->drawable.texture;
+
+        if ((context->msaa_texture == nil)
+        || (context->msaa_texture.width != (NSUInteger)context->size.width)
+        || (context->msaa_texture.height != (NSUInteger)context->size.height)) {
+            MTLTextureDescriptor* desc = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat: MTLPixelFormatBGRA8Unorm
+                                                                                            width: context->size.width
+                                                                                            height: context->size.height
+                                                                                        mipmapped: NO];
+            desc.storageMode = MTLStorageModePrivate;
+            desc.textureType = MTLTextureType2DMultisample;
+            desc.usage = MTLTextureUsageRenderTarget;
+            desc.sampleCount = _SAMPLE_COUNT;
+            context->msaa_texture = [__metal_device newTextureWithDescriptor: desc];
+        }
+
+        pass_descriptor.colorAttachments[0].texture = context->msaa_texture;
+        pass_descriptor.colorAttachments[0].resolveTexture = context->drawable.texture;
+        pass_descriptor.colorAttachments[0].storeAction = MTLStoreActionMultisampleResolve;
     } else {
     	context->size = _Texture_size(context->texture);
 
@@ -188,6 +209,7 @@ void _Context_begin_paint(_Context* context) {
         _ASSERT(context->size.height > 0);
 
         pass_descriptor.colorAttachments[0].texture = (__bridge id<MTLTexture>)_Texture_MTLTexture(context->texture);
+        pass_descriptor.colorAttachments[0].storeAction = MTLStoreActionStore;
     }
 
     context->command_buffer = [context->command_queue commandBuffer];
@@ -218,14 +240,14 @@ _Size _Context_size(_Context const* context) {
     _ASSERT(context != NULL);
     if (context->window != NULL) {
         _ASSERT(context->layer != NULL);
-        // return (_Size){
-        //     .width = (context->window.contentView.frame.size.width * context->window.backingScaleFactor),
-        //     .height = (context->window.contentView.frame.size.height * context->window.backingScaleFactor),
-        // };
         return (_Size){
-            .width = (context->window.contentView.frame.size.width * 0.25),
-            .height = (context->window.contentView.frame.size.height * 0.25),
+            .width = (context->window.contentView.frame.size.width * context->window.backingScaleFactor),
+            .height = (context->window.contentView.frame.size.height * context->window.backingScaleFactor),
         };
+        // return (_Size){
+        //     .width = (context->window.contentView.frame.size.width * 0.25),
+        //     .height = (context->window.contentView.frame.size.height * 0.25),
+        // };
     } else {
         return _Texture_size(context->texture);
     }
@@ -388,23 +410,21 @@ void _Context_stroke_rect(_Context* context, _RectF const* rect, double width, _
 
     /* NOTE: Borders are being generated clock-wise for TopLeft origin and opposite for BottomLeft */
 
-    double half = (width * 0.5);
-
     _RectF border1 = {
         .origin = {
-            .x = rect->origin.x - half,
-            .y = rect->origin.y - half
+            .x = (rect->origin.x - (width * 0.5)),
+            .y = (rect->origin.y - (width * 0.5))
         },
         .size = {
-            .width = rect->size.width,
+            .width = (rect->size.width + width),
             .height = width
         }
     };
 
     _RectF border2 = {
         .origin = {
-            .x = (_RECT_MAX_X(*rect) - width),
-            .y = rect->origin.y + width
+            .x = (_RECT_MAX_X(*rect) - (width * 0.5)),
+            .y = rect->origin.y + (width * 0.5)
         },
         .size = {
             .width = width,
@@ -413,22 +433,22 @@ void _Context_stroke_rect(_Context* context, _RectF const* rect, double width, _
     };
     _RectF border3 = {
         .origin = {
-            .x = rect->origin.x,
-            .y = (_RECT_MAX_Y(*rect) - width)
+            .x = (rect->origin.x - (width * 0.5)),
+            .y = (_RECT_MAX_Y(*rect) - (width * 0.5))
         },
         .size = {
-            .width = (rect->size.width - width),
+            .width = (rect->size.width + width),
             .height = width
         }
     };
     _RectF border4 = {
         .origin = {
-            .x = rect->origin.x,
-            .y = (rect->origin.y + width)
+            .x = rect->origin.x - (width * 0.5),
+            .y = (rect->origin.y + (width * 0.5))
         },
         .size = {
             .width = width,
-            .height = (rect->size.height - (width * 2))
+            .height = (rect->size.height - width)
         }
     };
 

@@ -23,22 +23,26 @@ _Brush* white_brush = NULL;
 void window_render(_Size const* size, float ratio) {
 	_RectF rect1 = {
 		.origin = { 0, 0 },
-		.size = _SIZE_MULT(_SIZE_F(*size), 0.25)
+		.size = _SIZE_MULT(_SIZE_F(*size), ratio)
 	};
 
-	_RectF rect2 = rect1;
-	rect2.origin.x += 1;
-	rect2.origin.y += 1;
-	rect2.size.width -= 2;
-	rect2.size.height -= 2;
+	_RectF rect2 = {
+		.origin = { 10, 10 },
+		.size = { 10, 10 }
+	};
+
+	// rect2.origin.x += 0.5;
+	// rect2.origin.y += 0.5;
+	// rect2.size.width -= 1;
+	// rect2.size.height -= 1;
 
 	_Transform transform = {
-		//.scale = ratio
+		.scale = ratio
 	};
 
 	_Context_begin_paint(context);
-	//_Context_fill_rect(context, &rect1, white_brush, &transform);
-	_Context_stroke_rect(context, &rect2, 1, red_brush, &transform);
+	_Context_fill_rect(context, &rect1, white_brush, &transform);
+	_Context_stroke_rect(context, &rect2, 2, red_brush, &transform);
 	_Context_end_paint(context);
 }
 
