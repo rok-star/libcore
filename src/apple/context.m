@@ -473,11 +473,11 @@ void _Context_stroke_rect(_Context const* context, _RectF const* rect, double wi
 }
 
 void _Context_stroke_path(_Context const* context, _BezierPath const* path, double width, _Brush const* brush, _Transform const* transform) {
-
+    _ABORT("_Context_stroke_path: Not implemented");
 }
 
 void _Context_stroke_ellipse(_Context const* context, _RectF const* rect, double width, _Brush const* brush, _Transform const* transform) {
-
+    _ABORT("_Context_stroke_ellipse: Not implemented");
 }
 
 void _Context_fill_rect(_Context const* context, _RectF const* rect, _Brush const* brush, _Transform const* transform) {
@@ -497,9 +497,9 @@ void _Context_fill_rect(_Context const* context, _RectF const* rect, _Brush cons
 }
 
 void _Context_fill_path(_Context const* context, _BezierPath const* path, _Brush const* brush, _Transform const* transform) {
-
+    _ABORT("_Context_fill_path: Not implemented");
 }
 
 void _Context_fill_ellipse(_Context const* context, _RectF const* rect, _Brush const* brush, _Transform const* transform) {
-
+    _ABORT("_Context_fill_ellipse: Not implemented");
 }

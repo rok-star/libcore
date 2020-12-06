@@ -1,6 +1,8 @@
 #ifndef _LIBCORE_BEZIERPATH_H
 #define _LIBCORE_BEZIERPATH_H
 
+#include <stdbool.h>
+#include <libcore/math.h>
 #include <libcore/line.h>
 
 typedef struct _BezierPath _BezierPath;

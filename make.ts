@@ -52,6 +52,7 @@ target.objcARC = true;
 target.output = out_lib;
 target.temp = temp;
 
+target.sources.push(`${project}/src/bezierpath.c`);
 target.sources.push(`${project}/src/unicode.c`);
 target.sources.push(`${project}/src/brush.c`);
 target.sources.push(`${project}/src/math.c`);
