@@ -32,11 +32,11 @@
 
 @end
 
-void (*__on_event)(_AppEvent const*,void*) = NULL;
+void (*__on_event)(_app_event_t const*,void*) = NULL;
 void* __param = NULL;
 bool __running = false;
 
-void _App_run() {
+void _app_run() {
 	_ASSERT(__running == false);
 	[[NSApplication sharedApplication]
 		setDelegate: [[__Delegate alloc]
@@ -52,11 +52,11 @@ void _App_run() {
 				[NSApp setActivationPolicy: NSApplicationActivationPolicyRegular];
 
 				if (__on_event != NULL)
-					__on_event(&(_AppEvent){ .type = _RUN_APP_EVENT }, __param);
+					__on_event(&(_app_event_t){ .type = _RUN_APP_EVENT }, __param);
 			}
 			onExit: ^{
 				if (__on_event != NULL)
-					__on_event(&(_AppEvent){ .type = _EXIT_APP_EVENT }, __param);
+					__on_event(&(_app_event_t){ .type = _EXIT_APP_EVENT }, __param);
 			}
 		]
 	];
@@ -69,7 +69,7 @@ void _App_run() {
 			0,
 			^(CFRunLoopObserverRef a, CFRunLoopActivity b) {
 				if (__on_event != NULL)
-					__on_event(&(_AppEvent){ .type = _SPIN_APP_EVENT }, __param);
+					__on_event(&(_app_event_t){ .type = _SPIN_APP_EVENT }, __param);
 			}
 		),
 		kCFRunLoopDefaultMode
@@ -92,7 +92,7 @@ void _App_run() {
 	[NSApp postEvent: e atStart: YES]; \
 }
 
-void _App_exit(void) {
+void _app_exit(void) {
 	_ASSERT(__running == true);
 	dispatch_async(dispatch_get_main_queue(), ^{
 		[NSApp stop: nil];
@@ -100,18 +100,18 @@ void _App_exit(void) {
 	});
 }
 
-void _App_wakeup(void) {
+void _app_wakeup(void) {
 	_ASSERT(__running == true);
 	dispatch_async(dispatch_get_main_queue(), ^{
 	    _POST_EVENT
 	});
 }
 
-bool _App_running(void) {
+bool _app_running(void) {
 	return __running;
 }
 
-void _App_on_event(void (*on_event)(_AppEvent const*,void*), void* param) {
+void _app_on_event(void (*on_event)(_app_event_t const*,void*), void* param) {
 	_ASSERT(on_event != NULL);
 	__on_event = on_event;
 	__param = param;

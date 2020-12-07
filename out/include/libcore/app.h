@@ -13,19 +13,19 @@ static char const* _APP_EVENT_NAME[3] = {
 	"RUN", "EXIT", "SPIN"
 };
 
-typedef struct _AppEvent {
+typedef struct _app_event_t {
 	_APP_EVENT type;
-} _AppEvent;
+} _app_event_t;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-void _App_run(void);
-void _App_exit(void);
-void _App_wakeup(void);
-bool _App_running(void);
-void _App_on_event(void (*)(_AppEvent const*,void*), void*);
+void _app_run(void);
+void _app_exit(void);
+void _app_wakeup(void);
+bool _app_running(void);
+void _app_on_event(void (*)(_app_event_t const*,void*), void*);
 
 #ifdef __cplusplus
 }

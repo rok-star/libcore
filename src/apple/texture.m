@@ -3,15 +3,15 @@
 
 #include "metal.h"
 
-typedef struct _Texture {
+typedef struct _texture_t {
     id<MTLTexture> texture;
     void const* data;
     int size;
     int width;
     int height;
-} _Texture;
+} _texture_t;
 
-_Texture* _Texture_create(void const* data, int size, int width, int height) {
+_texture_t* _texture_create(void const* data, int size, int width, int height) {
 	_ASSERT(__metal_device != NULL);
     _ASSERT(__metal_library != NULL);
 
@@ -36,7 +36,7 @@ _Texture* _Texture_create(void const* data, int size, int width, int height) {
                      withBytes: data
                    bytesPerRow: (width * 4)];
 
-    return _NEW(_Texture, {
+    return _NEW(_texture_t, {
         .texture = texture,
         .data = data,
         .size = size,
@@ -45,23 +45,20 @@ _Texture* _Texture_create(void const* data, int size, int width, int height) {
     });
 }
 
-void _Texture_destroy(_Texture* texture) {
+void _texture_destroy(_texture_t* texture) {
 	_ASSERT(texture != NULL);
-
     texture->texture = NULL;
 }
 
-_Size _Texture_size(_Texture const* texture) {
+_size_t _texture_size(_texture_t const* texture) {
 	_ASSERT(texture != NULL);
-
-	return (_Size){
+	return (_size_t){
 		.width = texture->width,
 		.height = texture->height
 	};
 }
 
-void* _Texture_MTLTexture(_Texture const* texture) {
+void* _texture_MTLTexture(_texture_t const* texture) {
 	_ASSERT(texture != NULL);
-
 	return (__bridge void*)texture->texture;
 }

@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <pthread.h>
+#include <string.h>
 #include <libcore/thread.h>
 #include <libcore/MACRO.h>
 
@@ -28,23 +29,23 @@
 		_ABORT("pthread_join() failed: %s\n", strerror(__err)); \
 }
 
-typedef struct _Thread {
+typedef struct _thread_t {
 	void(*proc)(void*);
 	void* param;
 	_Atomic uint64_t id;
 	pthread_t thread;
-} _Thread;
+} _thread_t;
 
 void* __thread_proc(void* param) {
 	_ASSERT(param != NULL);
-	_Thread* thread = (_Thread*)param;
+	_thread_t* thread = (_thread_t*)param;
 	thread->proc(thread->param);
 	return NULL;
 }
 
-_Thread* _Thread_create(void(*proc)(void*), void* param) {
+_thread_t* _thread_create(void(*proc)(void*), void* param) {
 	_ASSERT(proc != NULL);
-	_Thread* thread = _NEW(_Thread, {
+	_thread_t* thread = _NEW(_thread_t, {
 		.proc = proc,
 		.param = param
 	});
@@ -52,20 +53,21 @@ _Thread* _Thread_create(void(*proc)(void*), void* param) {
 	pthread_create_E(&thread->thread, NULL, __thread_proc, thread);
 	pthread_threadid_np_E(thread->thread, &id);
 	thread->id = id;
+	return thread;
 }
 
-void _Thread_destroy(_Thread* thread) {
+void _thread_destroy(_thread_t* thread) {
 	_ASSERT(thread != NULL);
 	pthread_cancel_E(thread->thread);
 	_FREE(thread);
 }
 
-void _Thread_join(_Thread* thread) {
+void _thread_join(_thread_t* thread) {
 	_ASSERT(thread != NULL);
 	pthread_join_E(thread->thread, NULL);
 }
 
-uint64_t _Thread_id(_Thread const* thread) {
+uint64_t _thread_id(_thread_t const* thread) {
 	_ASSERT(thread != NULL);
 	return thread->id;
 }

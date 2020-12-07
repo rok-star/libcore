@@ -1,22 +1,22 @@
 #ifndef _LIBCORE_DATE_H
 #define _LIBCORE_DATE_H
 
-typedef struct _Date _Date;
+typedef struct _date_t _date_t;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-_Date* _Date_create(double);
-void _Date_destroy(_Date*);
-double _Date_time(_Date const*);
-int _Date_year(_Date const*);
-int _Date_month(_Date const*);
-int _Date_date(_Date const*);
-int _Date_hour(_Date const*);
-int _Date_minute(_Date const*);
-int _Date_second(_Date const*);
-int _Date_millisecond(_Date const*);
+_date_t* _date_create(double);
+void _date_destroy(_date_t*);
+double _date_time(_date_t const*);
+int _date_year(_date_t const*);
+int _date_month(_date_t const*);
+int _date_date(_date_t const*);
+int _date_hour(_date_t const*);
+int _date_minute(_date_t const*);
+int _date_second(_date_t const*);
+int _date_millisecond(_date_t const*);
 
 #ifdef __cplusplus
 }

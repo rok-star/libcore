@@ -3,44 +3,44 @@
 #include <libcore/MACRO.h>
 #include <libcore/brush.h>
 
-typedef struct _Brush {
+typedef struct _brush_t {
 	_BRUSH_TYPE type;
-	_Color const* color;
-	_Texture const* texture;
-} _Brush;
+	_color_t const* color;
+	_texture_t const* texture;
+} _brush_t;
 
-_Brush* _Brush_create_color(_Color const* color) {
+_brush_t* _brush_create_color(_color_t const* color) {
 	_ASSERT(color != NULL);
-	return _NEW(_Brush, {
+	return _NEW(_brush_t, {
 		.type = _COLOR_BRUSH_TYPE,
 		.color = color
 	});
 }
 
-_Brush* _Brush_create_texture(_Texture const* texture) {
+_brush_t* _brush_create_texture(_texture_t const* texture) {
 	_ASSERT(texture != NULL);
-	return _NEW(_Brush, {
+	return _NEW(_brush_t, {
 		.type = _TEXTURE_BRUSH_TYPE,
 		.texture = texture
 	});
 }
 
-_BRUSH_TYPE _Brush_type(_Brush const* brush) {
+_BRUSH_TYPE _brush_type(_brush_t const* brush) {
 	_ASSERT(brush != NULL);
 	return brush->type;
 }
 
-_Color const* _Brush_color(_Brush const* brush) {
+_color_t const* _brush_color(_brush_t const* brush) {
 	_ASSERT(brush != NULL);
 	return brush->color;
 }
 
-_Texture const* _Brush_texture(_Brush const* brush) {
+_texture_t const* _brush_texture(_brush_t const* brush) {
 	_ASSERT(brush != NULL);
 	return brush->texture;
 }
 
-void _Brush_destroy(_Brush* brush) {
+void _brush_destroy(_brush_t* brush) {
 	_ASSERT(brush != NULL);
 	_FREE(brush);
 }

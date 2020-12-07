@@ -3,20 +3,20 @@
 
 #include <libcore/math.h>
 
-typedef struct _Texture _Texture;
+typedef struct _texture_t _texture_t;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-_Texture* _Texture_create(void const*,int,int,int);
-void _Texture_destroy(_Texture*);
-_Size _Texture_size(_Texture const*);
+_texture_t* _texture_create(void const*,int,int,int);
+void _texture_destroy(_texture_t*);
+_size_t _texture_size(_texture_t const*);
 
 #if _WIN32
 
 #elif __APPLE__
-    void* _Texture_MTLTexture(_Texture const*);
+    void* _texture_MTLTexture(_texture_t const*);
 #endif
 
 #ifdef __cplusplus

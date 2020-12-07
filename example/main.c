@@ -6,22 +6,22 @@
 #include <libcore/context.h>
 #include <libcore/MACRO.h>
 
-_Color RED_COLOR = { 255, 0, 0, 255 };
-_Color GREEN_COLOR = { 0, 255, 0, 255 };
-_Color BLUE_COLOR = { 0, 0, 255, 255 };
-_Color WHITE_COLOR = { 255, 255, 255, 255 };
+_color_t RED_COLOR = { 255, 0, 0, 255 };
+_color_t GREEN_COLOR = { 0, 255, 0, 255 };
+_color_t BLUE_COLOR = { 0, 0, 255, 255 };
+_color_t WHITE_COLOR = { 255, 255, 255, 255 };
 
-_Window* window = NULL;
-_Context* context = NULL;
-_Brush* red_brush = NULL;
-_Brush* green_brush = NULL;
-_Brush* blue_brush = NULL;
-_Brush* white_brush = NULL;
+_window_t* window = NULL;
+_context_t* context = NULL;
+_brush_t* red_brush = NULL;
+_brush_t* green_brush = NULL;
+_brush_t* blue_brush = NULL;
+_brush_t* white_brush = NULL;
 
-#define POINT_TO_RECT(a, b) ((_RectF){ { (a).x - (b), (a.y) - (b) }, { ((b) * 2), ((b) * 2) } })
+#define POINT_TO_RECT(a, b) ((_rectf_t){ { (a).x - (b), (a.y) - (b) }, { ((b) * 2), ((b) * 2) } })
 
-void window_render(_Size const* size, float ratio) {
-	_RectF rect1 = {
+void window_render(_size_t const* size, float ratio) {
+	_rectf_t rect1 = {
 		.origin = { 0, 0 },
 		.size = _SIZE_MULT(
 			_SIZE_F(*size),
@@ -29,7 +29,7 @@ void window_render(_Size const* size, float ratio) {
 		)
 	};
 
-	_RectF rect2 = {
+	_rectf_t rect2 = {
 		.origin = { 10, 10 },
 		.size = { 10, 10 }
 	};
@@ -39,57 +39,57 @@ void window_render(_Size const* size, float ratio) {
 	// rect2.size.width -= 1;
 	// rect2.size.height -= 1;
 
-	_Transform transform = {
+	_transform_t transform = {
 		.scale = ratio
 	};
 
-	_Context_begin_paint(context);
-	_Context_fill_rect(context, &rect2, white_brush, &transform);
-	_Context_stroke_rect(context, &rect2, 1, red_brush, &transform);
-	_Context_end_paint(context);
+	_context_begin_paint(context);
+	_context_fill_rect(context, &rect2, white_brush, &transform);
+	_context_stroke_rect(context, &rect2, 1, red_brush, &transform);
+	_context_end_paint(context);
 }
 
-void window_event(_WindowEvent const* event, void* param) {
+void window_event(_window_event_t const* event, void* param) {
 	_ASSERT(event != NULL);
 	if (event->type == _SIZE_WINDOW_EVENT) {
-		_Size size = _Window_size(window);
-		float ratio = _Window_pixelratio(window);
+		_size_t size = _window_size(window);
+		float ratio = _window_pixelratio(window);
 		window_render(&size, ratio);
 	} else if (event->type == _CLOSE_WINDOW_EVENT) {
-		_App_exit();
+		_app_exit();
 	}
 }
 
-void app_event(_AppEvent const* event, void* param) {
+void app_event(_app_event_t const* event, void* param) {
 	_ASSERT(event != NULL);
 	if (event->type == _RUN_APP_EVENT) {
-		red_brush = _Brush_create_color(&RED_COLOR);
-		green_brush = _Brush_create_color(&GREEN_COLOR);
-		blue_brush = _Brush_create_color(&BLUE_COLOR);
-		white_brush = _Brush_create_color(&WHITE_COLOR);
-		window = _Window_create();
-		context = _Context_create_window(window);
-		_Context_set_origin(context, _LEFTTOP_CONTEXT_ORIGIN);
-		_Window_on_event(window, window_event, NULL);
-		_Window_set_text(window, "Lorem ipsum привет рулет");
-		_Window_set_size(window, &(_Size){ 640, 480 });
-		_Window_set_closable(window, false);
-		_Window_set_sizable(window, true);
-		_Window_set_minimizable(window, true);
-		_Window_set_maximizable(window, true);
-		_Window_set_visible(window, true);
+		red_brush = _brush_create_color(&RED_COLOR);
+		green_brush = _brush_create_color(&GREEN_COLOR);
+		blue_brush = _brush_create_color(&BLUE_COLOR);
+		white_brush = _brush_create_color(&WHITE_COLOR);
+		window = _window_create();
+		context = _context_create_window(window);
+		_context_set_origin(context, _LEFTTOP_CONTEXT_ORIGIN);
+		_window_on_event(window, window_event, NULL);
+		_window_set_text(window, "Lorem ipsum привет рулет");
+		_window_set_size(window, &(_size_t){ 640, 480 });
+		_window_set_closable(window, false);
+		_window_set_sizable(window, true);
+		_window_set_minimizable(window, true);
+		_window_set_maximizable(window, true);
+		_window_set_visible(window, true);
 	} else if (event->type == _EXIT_APP_EVENT) {
-		_Brush_destroy(red_brush);
-		_Brush_destroy(green_brush);
-		_Brush_destroy(blue_brush);
-		_Brush_destroy(white_brush);
-		_Context_destroy(context);
-		_Window_destroy(window);
+		_brush_destroy(red_brush);
+		_brush_destroy(green_brush);
+		_brush_destroy(blue_brush);
+		_brush_destroy(white_brush);
+		_context_destroy(context);
+		_window_destroy(window);
 	}
 }
 
 int main(int argc, char const *argv[]) {
-	_App_on_event(app_event, NULL);
-	_App_run();
+	_app_on_event(app_event, NULL);
+	_app_run();
 	return 0;
 }

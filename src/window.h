@@ -5,7 +5,7 @@
 #include <libcore/math.h>
 #include <libcore/keyboard.h>
 
-typedef struct _Window _Window;
+typedef struct _window_t _window_t;
 
 typedef enum : int {
     _SHOW_WINDOW_EVENT        = 0,
@@ -33,59 +33,59 @@ static char const* _WINDOW_EVENT_NAME[15] = {
     "RBUTTONDOWN", "RBUTTONUP", "KEYDOWN", "KEYUP"
 };
 
-typedef struct _KeyInfo {
+typedef struct _key_info_t {
     _KEY key;
     bool shift;
     bool control;
     bool option;
     bool super;
-} _KeyInfo;
+} _key_info_t;
 
-typedef struct _MouseInfo {
-    _Point position;
+typedef struct _mouse_info_t {
+    _point_t position;
     int wheel;
-} _MouseInfo;
+} _mouse_info_t;
 
-typedef struct _WindowEvent {
+typedef struct _window_event_t {
     _WINDOW_EVENT type;
-    _Window* window;
-    _KeyInfo key_info;
-    _MouseInfo mouse_info;
-} _WindowEvent;
+    _window_t* window;
+    _key_info_t key_info;
+    _mouse_info_t mouse_info;
+} _window_event_t;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-_Window* _Window_create(void);
-void _Window_destroy(_Window*);
-void _Window_set_visible(_Window*, bool);
-void _Window_set_sizable(_Window*, bool);
-void _Window_set_closable(_Window*, bool);
-void _Window_set_maximizable(_Window*, bool);
-void _Window_set_minimizable(_Window*, bool);
-void _Window_set_maximized(_Window*, bool);
-void _Window_set_minimized(_Window*, bool);
-void _Window_set_topmost(_Window*, bool);
-void _Window_set_size(_Window*, _Size const*);
-void _Window_set_text(_Window*, char const*);
-bool _Window_visible(_Window const*);
-bool _Window_closable(_Window const*);
-bool _Window_sizable(_Window const*);
-bool _Window_maximizable(_Window const*);
-bool _Window_minimizable(_Window const*);
-bool _Window_maximized(_Window const*);
-bool _Window_minimized(_Window const*);
-bool _Window_topmost(_Window const*);
-_Size _Window_size(_Window const*);
-char* _Window_text(_Window const*);
-float _Window_pixelratio(_Window const*);
-void _Window_on_event(_Window*, void (*)(_WindowEvent const*,void*), void*);
+_window_t* _window_create(void);
+void _window_destroy(_window_t*);
+void _window_set_visible(_window_t*, bool);
+void _window_set_sizable(_window_t*, bool);
+void _window_set_closable(_window_t*, bool);
+void _window_set_maximizable(_window_t*, bool);
+void _window_set_minimizable(_window_t*, bool);
+void _window_set_maximized(_window_t*, bool);
+void _window_set_minimized(_window_t*, bool);
+void _window_set_topmost(_window_t*, bool);
+void _window_set_size(_window_t*, _size_t const*);
+void _window_set_text(_window_t*, char const*);
+bool _window_visible(_window_t const*);
+bool _window_closable(_window_t const*);
+bool _window_sizable(_window_t const*);
+bool _window_maximizable(_window_t const*);
+bool _window_minimizable(_window_t const*);
+bool _window_maximized(_window_t const*);
+bool _window_minimized(_window_t const*);
+bool _window_topmost(_window_t const*);
+_size_t _window_size(_window_t const*);
+char* _window_text(_window_t const*);
+float _window_pixelratio(_window_t const*);
+void _window_on_event(_window_t*, void (*)(_window_event_t const*,void*), void*);
 
 #if _WIN32
-    void* _Window_HWND(_Window const*);
+    void* _window_HWND(_window_t const*);
 #elif __APPLE__
-    void* _Window_NSWindow(_Window const*);
+    void* _window_NSWindow(_window_t const*);
 #endif
 
 #ifdef __cplusplus

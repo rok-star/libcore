@@ -9,18 +9,18 @@ typedef enum {
 	_TEXTURE_BRUSH_TYPE
 } _BRUSH_TYPE;
 
-typedef struct _Brush _Brush;
+typedef struct _brush_t _brush_t;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-_Brush* _Brush_create_color(_Color const*);
-_Brush* _Brush_create_texture(_Texture const*);
-_BRUSH_TYPE _Brush_type(_Brush const*);
-_Color const* _Brush_color(_Brush const*);
-_Texture const* _Brush_texture(_Brush const*);
-void _Brush_destroy(_Brush*);
+_brush_t* _brush_create_color(_color_t const*);
+_brush_t* _brush_create_texture(_texture_t const*);
+_BRUSH_TYPE _brush_type(_brush_t const*);
+_color_t const* _brush_color(_brush_t const*);
+_texture_t const* _brush_texture(_brush_t const*);
+void _brush_destroy(_brush_t*);
 
 #ifdef __cplusplus
 }

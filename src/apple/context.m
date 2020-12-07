@@ -52,9 +52,9 @@
     (data)[11] = (rect).origin.y; \
 }
 
-typedef struct _Context {
+typedef struct _context_t {
     NSWindow* window;
-    _Texture const* texture;
+    _texture_t const* texture;
     CAMetalLayer* layer;
     id<CAMetalDrawable> drawable;
     id<MTLCommandQueue> command_queue;
@@ -64,19 +64,19 @@ typedef struct _Context {
     id<MTLRenderPipelineState> texture_pipeline_state;
     id<MTLTexture> msaa_texture;
     _CONTEXT_ORIGIN origin;
-    _Size size;
-    _Rect clip;
+    _size_t size;
+    _rect_t clip;
     bool painting;
-} _Context;
+} _context_t;
 
-_Context* __Context_create(_Texture const* texture, _Window const* window) {
+_context_t* __context_create(_texture_t const* texture, _window_t const* window) {
 	_ASSERT(__metal_device != NULL);
     _ASSERT(__metal_library != NULL);
 
-    _Context* context = _NEW(_Context, {});
+    _context_t* context = _NEW(_context_t, {});
 
     if (window != NULL) {
-        context->window = (__bridge NSWindow*)_Window_NSWindow(window);
+        context->window = (__bridge NSWindow*)_window_NSWindow(window);
         context->layer = [[CAMetalLayer alloc] init];
         [context->layer setDevice: __metal_device];
         [context->layer setPixelFormat: MTLPixelFormatBGRA8Unorm];
@@ -121,17 +121,17 @@ _Context* __Context_create(_Texture const* texture, _Window const* window) {
     return context;
 }
 
-_Context* _Context_create_texture(_Texture const* texture) {
+_context_t* _context_create_texture(_texture_t const* texture) {
     _ASSERT(texture != NULL);
-    return __Context_create(texture, NULL);
+    return __context_create(texture, NULL);
 }
 
-_Context* _Context_create_window(_Window const* window) {
+_context_t* _context_create_window(_window_t const* window) {
     _ASSERT(window != NULL);
-    return __Context_create(NULL, window);
+    return __context_create(NULL, window);
 }
 
-void _Context_destroy(_Context* context) {
+void _context_destroy(_context_t* context) {
     _ASSERT(context != NULL);
 
     if (context->window != NULL)
@@ -149,7 +149,7 @@ void _Context_destroy(_Context* context) {
     context->msaa_texture = nil;
 }
 
-void _Context_begin_paint(_Context* context) {
+void _context_begin_paint(_context_t* context) {
 	_ASSERT(context != NULL);
     _ASSERT(context->command_queue != NULL);
     _ASSERT(context->color_pipeline_state != NULL);
@@ -164,12 +164,12 @@ void _Context_begin_paint(_Context* context) {
     if (context->window != NULL) {
         _ASSERT(context->layer != NULL);
 
-        context->size = (_Size){
+        context->size = (_size_t){
             .width = (context->window.contentView.frame.size.width * context->window.backingScaleFactor),
             .height = (context->window.contentView.frame.size.height * context->window.backingScaleFactor),
         };
 
-        // context->size = (_Size){
+        // context->size = (_size_t){
         //     .width = (context->window.contentView.frame.size.width * 0.25),
         //     .height = (context->window.contentView.frame.size.height * 0.25),
         // };
@@ -203,12 +203,12 @@ void _Context_begin_paint(_Context* context) {
         pass_descriptor.colorAttachments[0].resolveTexture = context->drawable.texture;
         pass_descriptor.colorAttachments[0].storeAction = MTLStoreActionMultisampleResolve;
     } else {
-    	context->size = _Texture_size(context->texture);
+    	context->size = _texture_size(context->texture);
 
         _ASSERT(context->size.width > 0);
         _ASSERT(context->size.height > 0);
 
-        pass_descriptor.colorAttachments[0].texture = (__bridge id<MTLTexture>)_Texture_MTLTexture(context->texture);
+        pass_descriptor.colorAttachments[0].texture = (__bridge id<MTLTexture>)_texture_MTLTexture(context->texture);
         pass_descriptor.colorAttachments[0].storeAction = MTLStoreActionStore;
     }
 
@@ -216,7 +216,7 @@ void _Context_begin_paint(_Context* context) {
     context->command_encoder = [context->command_buffer renderCommandEncoderWithDescriptor: pass_descriptor];
 }
 
-void _Context_end_paint(_Context* context) {
+void _context_end_paint(_context_t* context) {
     _ASSERT(context != NULL);
     _ASSERT(context->command_buffer != NULL);
     _ASSERT(context->painting == true);
@@ -236,51 +236,51 @@ void _Context_end_paint(_Context* context) {
     context->drawable = NULL;
 }
 
-_Size _Context_size(_Context const* context) {
+_size_t _context_size(_context_t const* context) {
     _ASSERT(context != NULL);
     if (context->window != NULL) {
         _ASSERT(context->layer != NULL);
-        return (_Size){
+        return (_size_t){
             .width = (context->window.contentView.frame.size.width * context->window.backingScaleFactor),
             .height = (context->window.contentView.frame.size.height * context->window.backingScaleFactor),
         };
-        // return (_Size){
+        // return (_size_t){
         //     .width = (context->window.contentView.frame.size.width * 0.25),
         //     .height = (context->window.contentView.frame.size.height * 0.25),
         // };
     } else {
-        return _Texture_size(context->texture);
+        return _texture_size(context->texture);
     }
 }
 
-_Rect _Context_clip(_Context const* context) {
+_rect_t _context_clip(_context_t const* context) {
     _ASSERT(context != NULL);
     return context->clip;
 }
 
-_CONTEXT_ORIGIN _Context_origin(_Context const* context) {
+_CONTEXT_ORIGIN _context_origin(_context_t const* context) {
     _ASSERT(context != NULL);
     return context->origin;
 }
 
-void _Context_set_clip(_Context* context, _Rect const* rect) {
+void _context_set_clip(_context_t* context, _rect_t const* rect) {
     _ASSERT(context != NULL);
 
     if ((rect == NULL)
     || (rect->size.width <= 0)
    	|| (rect->size.height <= 0)) {
-        context->clip = (_Rect){ { 0, 0 }, { 0, 0 } };
+        context->clip = (_rect_t){ { 0, 0 }, { 0, 0 } };
    	} else {
         context->clip = *rect;
    	}
 }
 
-void _Context_set_origin(_Context* context, _CONTEXT_ORIGIN origin) {
+void _context_set_origin(_context_t* context, _CONTEXT_ORIGIN origin) {
     _ASSERT(context != NULL);
     context->origin = origin;
 }
 
-void _Context_draw_vertices(_Context const* context, float const* array, int size, bool strip, _Brush const* brush) {
+void _context_draw_vertices(_context_t const* context, float const* array, int size, bool strip, _brush_t const* brush) {
     _ASSERT(context != NULL);
     _ASSERT(array != NULL);
     _ASSERT(size > 0);
@@ -289,7 +289,7 @@ void _Context_draw_vertices(_Context const* context, float const* array, int siz
     _ASSERT((context->size.width > 0) && (context->size.height > 0));
     _ASSERT(context->painting == true);
 
-    _Color const* color = _Brush_color(brush);
+    _color_t const* color = _brush_color(brush);
 
     float uniforms[8] = {
         color->red,
@@ -319,16 +319,16 @@ void _Context_draw_vertices(_Context const* context, float const* array, int siz
                                   vertexCount: (size / 2)];
 }
 
-void _Context_draw_texture(_Context const* context, _Texture const* texture, _RectF const* src, _RectF const* dst, _Color const* tint) {
+void _context_draw_texture(_context_t const* context, _texture_t const* texture, _rectf_t const* src, _rectf_t const* dst, _color_t const* tint) {
 	_ASSERT(src != NULL);
 	_ASSERT(dst != NULL);
 	_ASSERT(texture != NULL);
     _ASSERT(context != NULL);
     _ASSERT(context->command_encoder != NULL);
     _ASSERT(context->painting == true);
-    _ASSERT(_Texture_MTLTexture(texture) != NULL);
+    _ASSERT(_texture_MTLTexture(texture) != NULL);
 
-    _Size size = _Texture_size(texture);
+    _size_t size = _texture_size(texture);
     _ASSERT(size.width > 0);
     _ASSERT(size.height > 0);
 
@@ -385,7 +385,7 @@ void _Context_draw_texture(_Context const* context, _Texture const* texture, _Re
     [context->command_encoder setRenderPipelineState: context->texture_pipeline_state];
     [context->command_encoder setVertexBytes: &uniforms length: (sizeof(float) * 8) atIndex: 0];
     [context->command_encoder setVertexBytes: &array length: (sizeof(float) * 16) atIndex: 1];
-    [context->command_encoder setFragmentTexture: (__bridge id<MTLTexture>)_Texture_MTLTexture(texture) atIndex: 0];
+    [context->command_encoder setFragmentTexture: (__bridge id<MTLTexture>)_texture_MTLTexture(texture) atIndex: 0];
 
     if ((context->clip.size.width > 0)
     && (context->clip.size.height > 0)) {
@@ -399,21 +399,21 @@ void _Context_draw_texture(_Context const* context, _Texture const* texture, _Re
     [context->command_encoder drawPrimitives: MTLPrimitiveTypeTriangleStrip vertexStart: 0 vertexCount: 4];
 }
 
-void _Context_stroke_line(_Context const* context, _PointF const* from, _PointF const* to, double width, _LINE_CAP cap, _Brush const* brush, _Transform const* transform) {
+void _context_stroke_line(_context_t const* context, _pointf_t const* from, _pointf_t const* to, double width, _LINE_CAP cap, _brush_t const* brush, _transform_t const* transform) {
     _ASSERT(context != NULL);
     _ASSERT(from != NULL);
     _ASSERT(to != NULL);
     _ASSERT(brush != NULL);
 }
 
-void _Context_stroke_rect(_Context const* context, _RectF const* rect, double width, _Brush const* brush, _Transform const* transform) {
+void _context_stroke_rect(_context_t const* context, _rectf_t const* rect, double width, _brush_t const* brush, _transform_t const* transform) {
     _ASSERT(context != NULL);
     _ASSERT(rect != NULL);
     _ASSERT(brush != NULL);
 
     /* NOTE: Borders are being generated clock-wise for TopLeft origin and opposite for BottomLeft */
 
-    _RectF border1 = {
+    _rectf_t border1 = {
         .origin = {
             .x = (rect->origin.x - (width * 0.5)),
             .y = (rect->origin.y - (width * 0.5))
@@ -424,7 +424,7 @@ void _Context_stroke_rect(_Context const* context, _RectF const* rect, double wi
         }
     };
 
-    _RectF border2 = {
+    _rectf_t border2 = {
         .origin = {
             .x = (_RECT_MAX_X(*rect) - (width * 0.5)),
             .y = rect->origin.y + (width * 0.5)
@@ -434,7 +434,7 @@ void _Context_stroke_rect(_Context const* context, _RectF const* rect, double wi
             .height = (rect->size.height - width)
         }
     };
-    _RectF border3 = {
+    _rectf_t border3 = {
         .origin = {
             .x = (rect->origin.x - (width * 0.5)),
             .y = (_RECT_MAX_Y(*rect) - (width * 0.5))
@@ -444,7 +444,7 @@ void _Context_stroke_rect(_Context const* context, _RectF const* rect, double wi
             .height = width
         }
     };
-    _RectF border4 = {
+    _rectf_t border4 = {
         .origin = {
             .x = rect->origin.x - (width * 0.5),
             .y = (rect->origin.y + (width * 0.5))
@@ -469,23 +469,23 @@ void _Context_stroke_rect(_Context const* context, _RectF const* rect, double wi
     _RECT_TRIANGLES(border3, _dst); _dst += 12;
     _RECT_TRIANGLES(border4, _dst);
 
-    _Context_draw_vertices(context, vertices, (12 * 4), false, brush);
+    _context_draw_vertices(context, vertices, (12 * 4), false, brush);
 }
 
-void _Context_stroke_path(_Context const* context, _BezierPath const* path, double width, _Brush const* brush, _Transform const* transform) {
-    _ABORT("_Context_stroke_path: Not implemented");
+void _context_stroke_path(_context_t const* context, _bezier_path_t const* path, double width, _brush_t const* brush, _transform_t const* transform) {
+    _ABORT("_context_stroke_path: Not implemented");
 }
 
-void _Context_stroke_ellipse(_Context const* context, _RectF const* rect, double width, _Brush const* brush, _Transform const* transform) {
-    _ABORT("_Context_stroke_ellipse: Not implemented");
+void _context_stroke_ellipse(_context_t const* context, _rectf_t const* rect, double width, _brush_t const* brush, _transform_t const* transform) {
+    _ABORT("_context_stroke_ellipse: Not implemented");
 }
 
-void _Context_fill_rect(_Context const* context, _RectF const* rect, _Brush const* brush, _Transform const* transform) {
+void _context_fill_rect(_context_t const* context, _rectf_t const* rect, _brush_t const* brush, _transform_t const* transform) {
     _ASSERT(context != NULL);
     _ASSERT(rect != NULL);
     _ASSERT(brush != NULL);
 
-    _RectF rect_ = *rect;
+    _rectf_t rect_ = *rect;
 
     if (transform != NULL)
         _RECT_TRANSFORM(rect_, *transform);
@@ -493,13 +493,13 @@ void _Context_fill_rect(_Context const* context, _RectF const* rect, _Brush cons
     float vertices[8];
     _RECT_TRIANGLES_STRIP(rect_, vertices);
 
-    _Context_draw_vertices(context, vertices, 8, true, brush);
+    _context_draw_vertices(context, vertices, 8, true, brush);
 }
 
-void _Context_fill_path(_Context const* context, _BezierPath const* path, _Brush const* brush, _Transform const* transform) {
-    _ABORT("_Context_fill_path: Not implemented");
+void _context_fill_path(_context_t const* context, _bezier_path_t const* path, _brush_t const* brush, _transform_t const* transform) {
+    _ABORT("_context_fill_path: Not implemented");
 }
 
-void _Context_fill_ellipse(_Context const* context, _RectF const* rect, _Brush const* brush, _Transform const* transform) {
-    _ABORT("_Context_fill_ellipse: Not implemented");
+void _context_fill_ellipse(_context_t const* context, _rectf_t const* rect, _brush_t const* brush, _transform_t const* transform) {
+    _ABORT("_context_fill_ellipse: Not implemented");
 }

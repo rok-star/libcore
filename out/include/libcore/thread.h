@@ -3,16 +3,16 @@
 
 #include <stdint.h>
 
-typedef struct _Thread _Thread;
+typedef struct _thread_t _thread_t;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-_Thread* _Thread_create(void(*)(void*),void*);
-void _Thread_destroy(_Thread*);
-void _Thread_join(_Thread*);
-uint64_t _Thread_id(_Thread const*);
+_thread_t* _thread_create(void(*)(void*),void*);
+void _thread_destroy(_thread_t*);
+void _thread_join(_thread_t*);
+uint64_t _thread_id(_thread_t const*);
 
 #ifdef __cplusplus
 }

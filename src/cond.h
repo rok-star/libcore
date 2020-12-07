@@ -3,18 +3,18 @@
 
 #include <libcore/lock.h>
 
-typedef struct _Cond _Cond;
+typedef struct _cond_t _cond_t;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-_Cond* _Cond_create(void);
-void _Cond_destroy(_Cond*);
-void _Cond_notify(_Cond*);
-void _Cond_notify_all(_Cond*);
-void _Cond_wait(_Cond*, _Lock*);
-void _Cond_wait_timeout(_Cond*, _Lock*, double);
+_cond_t* _cond_create(void);
+void _cond_destroy(_cond_t*);
+void _cond_notify(_cond_t*);
+void _cond_notify_all(_cond_t*);
+void _cond_wait(_cond_t*, _lock_t*);
+void _cond_wait_timeout(_cond_t*, _lock_t*, double);
 
 #ifdef __cplusplus
 }

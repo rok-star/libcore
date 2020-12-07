@@ -5,22 +5,22 @@
 #include <libcore/math.h>
 #include <libcore/line.h>
 
-typedef struct _BezierPath _BezierPath;
+typedef struct _bezier_path_t _bezier_path_t;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-_BezierPath* _BezierPath_create(void);
-void _BezierPath_destroy(_BezierPath*);
-void _BezierPath_set_line_cap(_BezierPath*,_LINE_CAP);
-void _BezierPath_set_line_join(_BezierPath*,_LINE_JOIN);
-void _BezierPath_set_closed(_BezierPath*,bool);
-void _BezierPath_move_to(_BezierPath*,_PointF const*);
-void _BezierPath_line_to(_BezierPath*,_PointF const*);
-void _BezierPath_cubic_to(_BezierPath*,_PointF const*,_PointF const*,_PointF const*);
-void _BezierPath_quad_to(_BezierPath*,_PointF const*,_PointF const*);
-void _BezierPath_conic_to(_BezierPath*,_PointF const*,_PointF const*,double);
+_bezier_path_t* _bezier_path_create(void);
+void _bezier_path_destroy(_bezier_path_t*);
+void _bezier_path_set_line_cap(_bezier_path_t*,_LINE_CAP);
+void _bezier_path_set_line_join(_bezier_path_t*,_LINE_JOIN);
+void _bezier_path_set_closed(_bezier_path_t*,bool);
+void _bezier_path_move_to(_bezier_path_t*,_pointf_t const*);
+void _bezier_path_line_to(_bezier_path_t*,_pointf_t const*);
+void _bezier_path_cubic_to(_bezier_path_t*,_pointf_t const*,_pointf_t const*,_pointf_t const*);
+void _bezier_path_quad_to(_bezier_path_t*,_pointf_t const*,_pointf_t const*);
+void _bezier_path_conic_to(_bezier_path_t*,_pointf_t const*,_pointf_t const*,double);
 
 #ifdef __cplusplus
 }

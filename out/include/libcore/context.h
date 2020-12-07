@@ -13,37 +13,37 @@ typedef enum {
 	_LEFTBOTTOM_CONTEXT_ORIGIN
 } _CONTEXT_ORIGIN;
 
-typedef struct _Transform {
+typedef struct _transform_t {
 	double x;
 	double y;
 	double scale;
-} _Transform;
+} _transform_t;
 
-typedef struct _Context _Context;
+typedef struct _context_t _context_t;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-_Context* _Context_create_texture(_Texture const*);
-_Context* _Context_create_window(_Window const*);
-void _Context_destroy(_Context*);
-void _Context_begin_paint(_Context*);
-void _Context_end_paint(_Context*);
-_Size _Context_size(_Context const*);
-_Rect _Context_clip(_Context const*);
-_CONTEXT_ORIGIN _Context_origin(_Context const*);
-void _Context_set_clip(_Context*,_Rect const*);
-void _Context_set_origin(_Context*,_CONTEXT_ORIGIN);
-void _Context_draw_vertices(_Context const*,float const*,int,bool,_Brush const*);
-void _Context_draw_texture(_Context const*,_Texture const*,_RectF const*,_RectF const*,_Color const*);
-void _Context_stroke_line(_Context const*,_PointF const*,_PointF const*,double,_LINE_CAP,_Brush const*,_Transform const*);
-void _Context_stroke_rect(_Context const*,_RectF const*,double,_Brush const*,_Transform const*);
-void _Context_stroke_path(_Context const*,_BezierPath const*,double,_Brush const*,_Transform const*);
-void _Context_stroke_ellipse(_Context const*,_RectF const*,double,_Brush const*,_Transform const*);
-void _Context_fill_rect(_Context const*,_RectF const*,_Brush const*,_Transform const*);
-void _Context_fill_path(_Context const*,_BezierPath const*,_Brush const*,_Transform const*);
-void _Context_fill_ellipse(_Context const*,_RectF const*,_Brush const*,_Transform const*);
+_context_t* _context_create_texture(_texture_t const*);
+_context_t* _context_create_window(_window_t const*);
+void _context_destroy(_context_t*);
+void _context_begin_paint(_context_t*);
+void _context_end_paint(_context_t*);
+_size_t _context_size(_context_t const*);
+_rect_t _context_clip(_context_t const*);
+_CONTEXT_ORIGIN _context_origin(_context_t const*);
+void _context_set_clip(_context_t*,_rect_t const*);
+void _context_set_origin(_context_t*,_CONTEXT_ORIGIN);
+void _context_draw_vertices(_context_t const*,float const*,int,bool,_brush_t const*);
+void _context_draw_texture(_context_t const*,_texture_t const*,_rectf_t const*,_rectf_t const*,_color_t const*);
+void _context_stroke_line(_context_t const*,_pointf_t const*,_pointf_t const*,double,_LINE_CAP,_brush_t const*,_transform_t const*);
+void _context_stroke_rect(_context_t const*,_rectf_t const*,double,_brush_t const*,_transform_t const*);
+void _context_stroke_path(_context_t const*,_bezier_path_t const*,double,_brush_t const*,_transform_t const*);
+void _context_stroke_ellipse(_context_t const*,_rectf_t const*,double,_brush_t const*,_transform_t const*);
+void _context_fill_rect(_context_t const*,_rectf_t const*,_brush_t const*,_transform_t const*);
+void _context_fill_path(_context_t const*,_bezier_path_t const*,_brush_t const*,_transform_t const*);
+void _context_fill_ellipse(_context_t const*,_rectf_t const*,_brush_t const*,_transform_t const*);
 
 #ifdef __cplusplus
 }

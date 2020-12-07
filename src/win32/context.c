@@ -1,31 +1,22 @@
 #include <libcore/context.h>
 
-typedef struct _Context {
+typedef struct _context_t {
     HWND hwnd;
-    _Texture* texture;
-    ;
-    int width;
-    int height;
-    float origin;
-    bool clip_rect;
-    int clip_rect_x;
-    int clip_rect_y;
-    int clip_rect_width;
-    int clip_rect_height;
-} _Context;
+    _texture_t* texture;
+} _context_t;
 
-_Context* _Context_create(void) {
+_context_t* _context_create(void) {
 	_ASSERT();
 }
 
-void _Context_destroy(_Context* context) {
+void _context_destroy(_context_t* context) {
 	_ASSERT();
 }
 
-void _Context_begin_paint(_Context* context) {
+void _context_begin_paint(_context_t* context) {
 	_ASSERT();
 }
 
-void _Context_end_paint(_Context* context) {
+void _context_end_paint(_context_t* context) {
 	_ASSERT();
 }
