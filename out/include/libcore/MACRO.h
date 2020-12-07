@@ -53,17 +53,94 @@
 	((__aa < __bb) ? __aa : __bb); \
 })
 
-#define _PUSH(data, size, capacity, ...) { \
-	if (size == capacity) { \
-		__typeof__(data) __nd = _ALLOC(__typeof__(*data), ((size * 2) + 1)); \
+#define _RESERVE(data, size, capacity, reserve) { \
+	_ASSERT(size >= 0); \
+	_ASSERT(capacity >= 0); \
+	_ASSERT(reserve >= 0); \
+	_ASSERT(size <= capacity); \
+	if (reserve > capacity) { \
+		__typeof__(data) __data = _ALLOC(__typeof__(*data), reserve); \
 		if (data != NULL) { \
-			memcpy(__nd, data, size * sizeof(*data)); \
+			memcpy(__data, data, size * sizeof(*data)); \
 			_FREE(data); \
 		} \
-		data = __nd; \
-		capacity = ((size * 2) + 1); \
+		data = __data; \
+		capacity = reserve; \
+	} \
+}
+
+#define _PUSH(data, size, capacity, ...) { \
+	_ASSERT(size >= 0); \
+	_ASSERT(capacity >= 0); \
+	_ASSERT(size <= capacity); \
+	if (size == capacity) { \
+		__typeof__(capacity) __reserve = ((size * 2) + 1); \
+		_RESERVE(data, size, capacity, __reserve); \
 	} \
 	data[size++] = (__VA_ARGS__); \
 }
+
+#define _POP(data, size, capacity) ({ \
+	_ASSERT(data != NULL); \
+	_ASSERT(size > 0); \
+	_ASSERT(capacity > 0); \
+	_ASSERT(size <= capacity); \
+	__typeof__(*data) __ret = data[size - 1]; \
+	size -= 1; \
+	__ret; \
+})
+
+#define _UNSHIFT(data, size, capacity, ...) { \
+	_ASSERT(size >= 0); \
+	_ASSERT(capacity >= 0); \
+	_ASSERT(size <= capacity); \
+	if (size == capacity) { \
+		__typeof__(capacity) __reserve = ((size * 2) + 1); \
+		__typeof__(data) __data = _ALLOC(__typeof__(*data), __reserve); \
+		__data[0] = (__VA_ARGS__); \
+		if (data != NULL) { \
+			for (int __i = 0; __i < size; __i++) \
+				__data[__i + 1] = data[__i]; \
+			_FREE(data); \
+		} \
+		data = __data; \
+	} else { \
+		for (int __i = (size - 1); __i >= 0; __i--) \
+			data[__i + 1] = data[__i]; \
+		data[0] = (__VA_ARGS__); \
+	} \
+	size += 1; \
+}
+
+#define _SHIFT(data, size, capacity, ...) ({ \
+	_ASSERT(data != NULL); \
+	_ASSERT(size > 0); \
+	_ASSERT(capacity > 0); \
+	_ASSERT(size <= capacity); \
+	__typeof__(*data) __ret = data[0]; \
+	for (int __i = 1; __i < size; __i++) \
+		data[__i - 1] = data[__i]; \
+	size -= 1; \
+	__ret; \
+})
+
+#define _REMOVE(data, size, capacity, index) { \
+	_ASSERT(data != NULL); \
+	_ASSERT(size >= 0); \
+	_ASSERT(capacity >= 0); \
+	_ASSERT(size <= capacity); \
+	if ((index >= 0) && (index < size)) { \
+		for (int __i = (index + 1); __i < size; __i++) \
+			data[__i - 1] = data[__i]; \
+		size -= 1; \
+	} \
+}
+
+#define _RESERVE_A(array, reserve) _RESERVE((array).data, (array).size, (array).capacity, reserve)
+#define _PUSH_A(array, ...) _PUSH((array).data, (array).size, (array).capacity, __VA_ARGS__)
+#define _POP_A(array) _POP((array).data, (array).size, (array).capacity)
+#define _UNSHIFT_A(array, ...) _UNSHIFT((array).data, (array).size, (array).capacity, __VA_ARGS__)
+#define _SHIFT_A(array, ...) _SHIFT((array).data, (array).size, (array).capacity)
+#define _REMOVE_A(array, index) _REMOVE((array).data, (array).size, (array).capacity, index)
 
 #endif /* _LIBCORE_MACRO_H */

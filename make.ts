@@ -45,7 +45,8 @@ await Promise.all([ Deno.copyFile(`${project}/src/WINDOWS.h`, `${out_inc}/WINDOW
                     Deno.copyFile(`${project}/src/lock.h`, `${out_inc}/lock.h`),
                     Deno.copyFile(`${project}/src/sleep.h`, `${out_inc}/sleep.h`),
                     Deno.copyFile(`${project}/src/window.h`, `${out_inc}/window.h`),
-                    Deno.copyFile(`${project}/src/app.h`, `${out_inc}/app.h`) ]);
+                    Deno.copyFile(`${project}/src/app.h`, `${out_inc}/app.h`),
+                    Deno.copyFile(`${project}/src/dispatchqueue.h`, `${out_inc}/dispatchqueue.h`) ]);
 
 const target = new Target();
 target.type = TargetType.library;
@@ -56,6 +57,7 @@ target.objcARC = true;
 target.output = out_lib;
 target.temp = temp;
 
+target.sources.push(`${project}/src/dispatchqueue.c`);
 target.sources.push(`${project}/src/bezierpath.c`);
 target.sources.push(`${project}/src/unicode.c`);
 target.sources.push(`${project}/src/brush.c`);
