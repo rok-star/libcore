@@ -58,13 +58,15 @@ _thread_t* _thread_create(void(*proc)(void*), void* param) {
 
 void _thread_destroy(_thread_t* thread) {
 	_ASSERT(thread != NULL);
-	pthread_cancel_E(thread->thread);
+	if (thread->id != 0)
+		pthread_cancel_E(thread->thread);
 	_FREE(thread);
 }
 
 void _thread_join(_thread_t* thread) {
 	_ASSERT(thread != NULL);
 	pthread_join_E(thread->thread, NULL);
+	thread->id = 0;
 }
 
 uint64_t _thread_id(_thread_t const* thread) {
