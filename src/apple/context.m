@@ -319,7 +319,7 @@ void _context_draw_vertices(_context_t const* context, float const* array, int s
                                   vertexCount: (size / 2)];
 }
 
-void _context_draw_texture(_context_t const* context, _texture_t const* texture, _rectf_t const* src, _rectf_t const* dst, _color_t const* tint) {
+void _context_draw_texture(_context_t const* context, _texture_t const* texture, _rect_t const* src, _rect_t const* dst, _color_t const* tint) {
 	_ASSERT(src != NULL);
 	_ASSERT(dst != NULL);
 	_ASSERT(texture != NULL);
@@ -399,21 +399,21 @@ void _context_draw_texture(_context_t const* context, _texture_t const* texture,
     [context->command_encoder drawPrimitives: MTLPrimitiveTypeTriangleStrip vertexStart: 0 vertexCount: 4];
 }
 
-void _context_stroke_line(_context_t const* context, _pointf_t const* from, _pointf_t const* to, double width, _LINE_CAP cap, _brush_t const* brush, _transform_t const* transform) {
+void _context_stroke_line(_context_t const* context, _point_t const* from, _point_t const* to, double width, _LINE_CAP cap, _brush_t const* brush, _transform_t const* transform) {
     _ASSERT(context != NULL);
     _ASSERT(from != NULL);
     _ASSERT(to != NULL);
     _ASSERT(brush != NULL);
 }
 
-void _context_stroke_rect(_context_t const* context, _rectf_t const* rect, double width, _brush_t const* brush, _transform_t const* transform) {
+void _context_stroke_rect(_context_t const* context, _rect_t const* rect, double width, _brush_t const* brush, _transform_t const* transform) {
     _ASSERT(context != NULL);
     _ASSERT(rect != NULL);
     _ASSERT(brush != NULL);
 
     /* NOTE: Borders are being generated clock-wise for TopLeft origin and opposite for BottomLeft */
 
-    _rectf_t border1 = {
+    _rect_t border1 = {
         .origin = {
             .x = (rect->origin.x - (width * 0.5)),
             .y = (rect->origin.y - (width * 0.5))
@@ -424,7 +424,7 @@ void _context_stroke_rect(_context_t const* context, _rectf_t const* rect, doubl
         }
     };
 
-    _rectf_t border2 = {
+    _rect_t border2 = {
         .origin = {
             .x = (_RECT_MAX_X(*rect) - (width * 0.5)),
             .y = rect->origin.y + (width * 0.5)
@@ -434,7 +434,7 @@ void _context_stroke_rect(_context_t const* context, _rectf_t const* rect, doubl
             .height = (rect->size.height - width)
         }
     };
-    _rectf_t border3 = {
+    _rect_t border3 = {
         .origin = {
             .x = (rect->origin.x - (width * 0.5)),
             .y = (_RECT_MAX_Y(*rect) - (width * 0.5))
@@ -444,7 +444,7 @@ void _context_stroke_rect(_context_t const* context, _rectf_t const* rect, doubl
             .height = width
         }
     };
-    _rectf_t border4 = {
+    _rect_t border4 = {
         .origin = {
             .x = rect->origin.x - (width * 0.5),
             .y = (rect->origin.y + (width * 0.5))
@@ -476,16 +476,16 @@ void _context_stroke_path(_context_t const* context, _bezier_path_t const* path,
     _ABORT("_context_stroke_path: Not implemented");
 }
 
-void _context_stroke_ellipse(_context_t const* context, _rectf_t const* rect, double width, _brush_t const* brush, _transform_t const* transform) {
+void _context_stroke_ellipse(_context_t const* context, _rect_t const* rect, double width, _brush_t const* brush, _transform_t const* transform) {
     _ABORT("_context_stroke_ellipse: Not implemented");
 }
 
-void _context_fill_rect(_context_t const* context, _rectf_t const* rect, _brush_t const* brush, _transform_t const* transform) {
+void _context_fill_rect(_context_t const* context, _rect_t const* rect, _brush_t const* brush, _transform_t const* transform) {
     _ASSERT(context != NULL);
     _ASSERT(rect != NULL);
     _ASSERT(brush != NULL);
 
-    _rectf_t rect_ = *rect;
+    _rect_t rect_ = *rect;
 
     if (transform != NULL)
         _RECT_TRANSFORM(rect_, *transform);
@@ -500,6 +500,6 @@ void _context_fill_path(_context_t const* context, _bezier_path_t const* path, _
     _ABORT("_context_fill_path: Not implemented");
 }
 
-void _context_fill_ellipse(_context_t const* context, _rectf_t const* rect, _brush_t const* brush, _transform_t const* transform) {
+void _context_fill_ellipse(_context_t const* context, _rect_t const* rect, _brush_t const* brush, _transform_t const* transform) {
     _ABORT("_context_fill_ellipse: Not implemented");
 }

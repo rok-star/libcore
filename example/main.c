@@ -18,18 +18,18 @@ _brush_t* green_brush = NULL;
 _brush_t* blue_brush = NULL;
 _brush_t* white_brush = NULL;
 
-#define POINT_TO_RECT(a, b) ((_rectf_t){ { (a).x - (b), (a.y) - (b) }, { ((b) * 2), ((b) * 2) } })
+#define POINT_TO_RECT(a, b) ((_rect_t){ { (a).x - (b), (a.y) - (b) }, { ((b) * 2), ((b) * 2) } })
 
 void window_render(_size_t const* size, float ratio) {
-	_rectf_t rect1 = {
+	_rect_t rect1 = {
 		.origin = { 0, 0 },
 		.size = _SIZE_MULT(
-			_SIZE_F(*size),
+			*size,
 			ratio
 		)
 	};
 
-	_rectf_t rect2 = {
+	_rect_t rect2 = {
 		.origin = { 10, 10 },
 		.size = { 10, 10 }
 	};

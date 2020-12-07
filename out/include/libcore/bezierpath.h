@@ -16,11 +16,11 @@ void _bezier_path_destroy(_bezier_path_t*);
 void _bezier_path_set_line_cap(_bezier_path_t*,_LINE_CAP);
 void _bezier_path_set_line_join(_bezier_path_t*,_LINE_JOIN);
 void _bezier_path_set_closed(_bezier_path_t*,bool);
-void _bezier_path_move_to(_bezier_path_t*,_pointf_t const*);
-void _bezier_path_line_to(_bezier_path_t*,_pointf_t const*);
-void _bezier_path_cubic_to(_bezier_path_t*,_pointf_t const*,_pointf_t const*,_pointf_t const*);
-void _bezier_path_quad_to(_bezier_path_t*,_pointf_t const*,_pointf_t const*);
-void _bezier_path_conic_to(_bezier_path_t*,_pointf_t const*,_pointf_t const*,double);
+void _bezier_path_move_to(_bezier_path_t*,_point_t const*);
+void _bezier_path_line_to(_bezier_path_t*,_point_t const*);
+void _bezier_path_cubic_to(_bezier_path_t*,_point_t const*,_point_t const*,_point_t const*);
+void _bezier_path_quad_to(_bezier_path_t*,_point_t const*,_point_t const*);
+void _bezier_path_conic_to(_bezier_path_t*,_point_t const*,_point_t const*,double);
 
 #ifdef __cplusplus
 }
