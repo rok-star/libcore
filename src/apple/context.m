@@ -52,6 +52,8 @@
     (data)[11] = (rect).origin.y; \
 }
 
+extern void* _window_NSWindow(_window_t const*);
+
 typedef struct _context_t {
     NSWindow* window;
     _texture_t const* texture;

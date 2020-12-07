@@ -41,6 +41,8 @@ await Promise.all([ Deno.copyFile(`${project}/src/WINDOWS.h`, `${out_inc}/WINDOW
                     Deno.copyFile(`${project}/src/texture.h`, `${out_inc}/texture.h`),
                     Deno.copyFile(`${project}/src/context.h`, `${out_inc}/context.h`),
                     Deno.copyFile(`${project}/src/thread.h`, `${out_inc}/thread.h`),
+                    Deno.copyFile(`${project}/src/cond.h`, `${out_inc}/cond.h`),
+                    Deno.copyFile(`${project}/src/lock.h`, `${out_inc}/lock.h`),
                     Deno.copyFile(`${project}/src/sleep.h`, `${out_inc}/sleep.h`),
                     Deno.copyFile(`${project}/src/window.h`, `${out_inc}/window.h`),
                     Deno.copyFile(`${project}/src/app.h`, `${out_inc}/app.h`) ]);
@@ -68,6 +70,8 @@ if (Deno.build.os == 'windows') {
     target.sources.push(`${project}/src/apple/context.m`);
     target.sources.push(`${project}/src/apple/texture.m`);
     target.sources.push(`${project}/src/apple/metal.m`);
+    target.sources.push(`${project}/src/POSIX/cond.c`);
+    target.sources.push(`${project}/src/POSIX/lock.c`);
     target.sources.push(`${project}/src/POSIX/thread.c`);
     target.sources.push(`${project}/src/POSIX/sleep.c`);
 } else {

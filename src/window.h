@@ -82,12 +82,6 @@ char* _window_text(_window_t const*);
 float _window_pixelratio(_window_t const*);
 void _window_on_event(_window_t*, void (*)(_window_event_t const*,void*), void*);
 
-#if _WIN32
-    void* _window_HWND(_window_t const*);
-#elif __APPLE__
-    void* _window_NSWindow(_window_t const*);
-#endif
-
 #ifdef __cplusplus
 }
 #endif
