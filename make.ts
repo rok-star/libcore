@@ -61,6 +61,7 @@ target.sources.push(`${project}/src/dispatchqueue.c`);
 target.sources.push(`${project}/src/bezierpath.c`);
 target.sources.push(`${project}/src/unicode.c`);
 target.sources.push(`${project}/src/brush.c`);
+target.sources.push(`${project}/src/color.c`);
 target.sources.push(`${project}/src/math.c`);
 
 if (Deno.build.os == 'windows') {
