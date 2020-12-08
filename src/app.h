@@ -25,7 +25,7 @@ void _app_run(void);
 void _app_exit(void);
 void _app_wakeup(void);
 bool _app_running(void);
-void _app_on_event(void (*)(_app_event_t const*,void*), void*);
+void _app_on_event(void(*)(_app_event_t const*,void*),void*);
 
 #ifdef __cplusplus
 }

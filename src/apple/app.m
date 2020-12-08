@@ -32,9 +32,9 @@
 
 @end
 
-void (*__on_event)(_app_event_t const*,void*) = NULL;
-void* __param = NULL;
-bool __running = false;
+static void (*__event_proc)(_app_event_t const*,void*) = NULL;
+static void* __event_param = NULL;
+static bool __running = false;
 
 void _app_run() {
 	_ASSERT(__running == false);
@@ -51,12 +51,12 @@ void _app_run() {
 				[NSApp setMainMenu: mainMenu];
 				[NSApp setActivationPolicy: NSApplicationActivationPolicyRegular];
 
-				if (__on_event != NULL)
-					__on_event(&(_app_event_t){ .type = _RUN_APP_EVENT }, __param);
+				if (__event_proc != NULL)
+					__event_proc(&(_app_event_t){ .type = _RUN_APP_EVENT }, __event_param);
 			}
 			onExit: ^{
-				if (__on_event != NULL)
-					__on_event(&(_app_event_t){ .type = _EXIT_APP_EVENT }, __param);
+				if (__event_proc != NULL)
+					__event_proc(&(_app_event_t){ .type = _EXIT_APP_EVENT }, __event_param);
 			}
 		]
 	];
@@ -68,8 +68,8 @@ void _app_run() {
 			YES,
 			0,
 			^(CFRunLoopObserverRef a, CFRunLoopActivity b) {
-				if (__on_event != NULL)
-					__on_event(&(_app_event_t){ .type = _SPIN_APP_EVENT }, __param);
+				if (__event_proc != NULL)
+					__event_proc(&(_app_event_t){ .type = _SPIN_APP_EVENT }, __event_param);
 			}
 		),
 		kCFRunLoopDefaultMode
@@ -111,8 +111,8 @@ bool _app_running(void) {
 	return __running;
 }
 
-void _app_on_event(void (*on_event)(_app_event_t const*,void*), void* param) {
-	_ASSERT(on_event != NULL);
-	__on_event = on_event;
-	__param = param;
+void _app_on_event(void (*proc)(_app_event_t const*,void*), void* param) {
+	_ASSERT(proc != NULL);
+	__event_proc = proc;
+	__event_param = param;
 }
