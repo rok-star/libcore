@@ -34,11 +34,6 @@ void window_render(_size_t const* size, float ratio) {
 		.size = { 10, 10 }
 	};
 
-	// rect2.origin.x += 0.5;
-	// rect2.origin.y += 0.5;
-	// rect2.size.width -= 1;
-	// rect2.size.height -= 1;
-
 	_transform_t transform = {
 		.scale = ratio
 	};
