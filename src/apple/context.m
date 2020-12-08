@@ -71,7 +71,7 @@ typedef struct _context_t {
     bool painting;
 } _context_t;
 
-_context_t* __context_create(_texture_t const* texture, _window_t const* window) {
+static _context_t* __create(_texture_t const* texture, _window_t const* window) {
 	_ASSERT(__metal_device != NULL);
     _ASSERT(__metal_library != NULL);
 
@@ -125,12 +125,12 @@ _context_t* __context_create(_texture_t const* texture, _window_t const* window)
 
 _context_t* _context_create_texture(_texture_t const* texture) {
     _ASSERT(texture != NULL);
-    return __context_create(texture, NULL);
+    return __create(texture, NULL);
 }
 
 _context_t* _context_create_window(_window_t const* window) {
     _ASSERT(window != NULL);
-    return __context_create(NULL, window);
+    return __create(NULL, window);
 }
 
 void _context_destroy(_context_t* context) {

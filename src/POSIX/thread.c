@@ -36,7 +36,7 @@ typedef struct _thread_t {
 	pthread_t thread;
 } _thread_t;
 
-void* __thread_proc(void* param) {
+static void* __thread_proc(void* param) {
 	_ASSERT(param != NULL);
 	_thread_t* thread = (_thread_t*)param;
 	thread->proc(thread->param);
