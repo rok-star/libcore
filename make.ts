@@ -41,6 +41,7 @@ await Promise.all([ Deno.copyFile(`${project}/src/WINDOWS.h`, `${out_inc}/WINDOW
                     Deno.copyFile(`${project}/src/texture.h`, `${out_inc}/texture.h`),
                     Deno.copyFile(`${project}/src/context.h`, `${out_inc}/context.h`),
                     Deno.copyFile(`${project}/src/thread.h`, `${out_inc}/thread.h`),
+                    Deno.copyFile(`${project}/src/timer.h`, `${out_inc}/timer.h`),
                     Deno.copyFile(`${project}/src/cond.h`, `${out_inc}/cond.h`),
                     Deno.copyFile(`${project}/src/lock.h`, `${out_inc}/lock.h`),
                     Deno.copyFile(`${project}/src/sleep.h`, `${out_inc}/sleep.h`),
@@ -63,6 +64,7 @@ target.sources.push(`${project}/src/unicode.c`);
 target.sources.push(`${project}/src/brush.c`);
 target.sources.push(`${project}/src/color.c`);
 target.sources.push(`${project}/src/math.c`);
+target.sources.push(`${project}/src/timer.c`);
 
 if (Deno.build.os == 'windows') {
     target.sources.push(`${project}/src/win32/app.c`);
