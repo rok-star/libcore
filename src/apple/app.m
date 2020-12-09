@@ -1,5 +1,7 @@
 #include <Cocoa/Cocoa.h>
 #include <libcore/MACRO.h>
+#include <libcore/sleep.h>
+#include <libcore/time.h>
 #include <libcore/app.h>
 
 @interface __Delegate : NSObject<NSApplicationDelegate>
@@ -38,7 +40,7 @@ static void* __event_param = NULL;
 static bool __running = false;
 static bool __exiting = false;
 
-void _app_run(_APP_MODE mode) {
+void _app_run(_APP_MODE mode, double value) {
 	_ASSERT(__running == false);
 
 	__mode = mode;
@@ -67,23 +69,25 @@ void _app_run(_APP_MODE mode) {
 		__event_proc(&(_app_event_t){ .type = _RUN_APP_EVENT }, __event_param);
 
 	if (__mode == _DEFAULT_APP_MODE) {
-			CFRunLoopAddObserver(
-				CFRunLoopGetCurrent(),
-				CFRunLoopObserverCreateWithHandler(
-					kCFAllocatorDefault,
-					kCFRunLoopBeforeWaiting,
-					YES,
-					0,
-					^(CFRunLoopObserverRef a, CFRunLoopActivity b) {
-						if (__event_proc != NULL)
-							__event_proc(&(_app_event_t){ .type = _SPIN_APP_EVENT }, __event_param);
-					}
-				),
-				kCFRunLoopDefaultMode
-			);
+		CFRunLoopAddObserver(
+			CFRunLoopGetCurrent(),
+			CFRunLoopObserverCreateWithHandler(
+				kCFAllocatorDefault,
+				kCFRunLoopBeforeWaiting,
+				YES,
+				0,
+				^(CFRunLoopObserverRef a, CFRunLoopActivity b) {
+					if (__event_proc != NULL)
+						__event_proc(&(_app_event_t){ .type = _SPIN_APP_EVENT }, __event_param);
+				}
+			),
+			kCFRunLoopDefaultMode
+		);
 
-			[NSApp run];
-	} else if (__mode == _RUNLOOP_APP_MODE) {
+		[NSApp run];
+	} else if (__mode == _SLEEP_APP_MODE) {
+		_ASSERT(value >= 0);
+
 		for (;;) {
 			for (;;) {
 				NSEvent* event = [NSApp nextEventMatchingMask: NSEventMaskAny
@@ -106,7 +110,42 @@ void _app_run(_APP_MODE mode) {
 
 			if (__exiting)
 				break;
+
+			if (value > 0)
+				_sleep(value);
 		}
+	} else if (__mode == _FPS_APP_MODE) {
+		_ASSERT(value > 0);
+
+		for (;;) {
+			double time = _time();
+
+			for (;;) {
+				NSEvent* event = [NSApp nextEventMatchingMask: NSEventMaskAny
+	                                    			untilDate: nil
+	                                       		       inMode: NSDefaultRunLoopMode
+	                                      			  dequeue: YES];
+				if (event == nil)
+					break;
+
+				[NSApp sendEvent: event];
+
+				if (__exiting)
+					break;
+			}
+			if (__exiting)
+				break;
+
+			if (__event_proc != NULL)
+				__event_proc(&(_app_event_t){ .type = _SPIN_APP_EVENT }, __event_param);
+
+			if (__exiting)
+				break;
+
+			_sleep((1000.0L / value) - (_time() - time));
+		}
+	} else {
+		_ABORT("_app_run: mode not supported.");
 	}
 
 	if (__event_proc != NULL)
@@ -145,7 +184,7 @@ void _app_exit(void) {
 				_POST_EVENT
 			});
 		}
-	} else if (__mode == _RUNLOOP_APP_MODE) {
+	} else {
 		__exiting = true;
 	}
 }

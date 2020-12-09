@@ -13,9 +13,11 @@
 }
 
 void _sleep(double ms) {
-	struct timespec ts = {
-		.tv_sec = (ms / 1000),
-		.tv_nsec = fmod(ms, 1000.0) * 1000000L
-	};
-	nanospeep_E(&ts, NULL);
+	if (ms > 0) {
+		struct timespec ts = {
+			.tv_sec = (ms / 1000),
+			.tv_nsec = fmod(ms, 1000.0) * 1000000L
+		};
+		nanospeep_E(&ts, NULL);
+	}
 }
