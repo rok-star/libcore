@@ -4,10 +4,15 @@
 #include <stdbool.h>
 
 typedef enum {
-	_RUN_APP_EVENT,
-	_EXIT_APP_EVENT,
-	_SPIN_APP_EVENT
+	_RUN_APP_EVENT  = 0,
+	_EXIT_APP_EVENT = 1,
+	_SPIN_APP_EVENT = 2
 } _APP_EVENT;
+
+typedef enum {
+	_DEFAULT_APP_MODE  = 0,
+	_RUNLOOP_APP_MODE = 1
+} _APP_MODE;
 
 static char const* _APP_EVENT_NAME[3] = {
 	"RUN", "EXIT", "SPIN"
@@ -21,7 +26,7 @@ typedef struct _app_event_t {
 extern "C" {
 #endif
 
-void _app_run(void);
+void _app_run(_APP_MODE);
 void _app_exit(void);
 void _app_wakeup(void);
 bool _app_running(void);
