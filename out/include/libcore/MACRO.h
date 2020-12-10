@@ -136,11 +136,25 @@
 	} \
 }
 
+#define _INDEX_OF(data, size, item) ({ \
+	_ASSERT(data != NULL); \
+	_ASSERT(size >= 0); \
+	int __ret = -1; \
+	for (int __i = 0; __i < size; __i++) { \
+		if (data[__i] == item) { \
+			__ret = __i; \
+			break; \
+		} \
+	} \
+	__ret; \
+})
+
 #define _RESERVE_A(array, reserve) _RESERVE((array).data, (array).size, (array).capacity, reserve)
 #define _PUSH_A(array, ...) _PUSH((array).data, (array).size, (array).capacity, __VA_ARGS__)
 #define _POP_A(array) _POP((array).data, (array).size, (array).capacity)
 #define _UNSHIFT_A(array, ...) _UNSHIFT((array).data, (array).size, (array).capacity, __VA_ARGS__)
 #define _SHIFT_A(array, ...) _SHIFT((array).data, (array).size, (array).capacity)
 #define _REMOVE_A(array, index) _REMOVE((array).data, (array).size, (array).capacity, index)
+#define _INDEX_OF_A(array, item) _INDEX_OF((array).data, (array).size, item)
 
 #endif /* _LIBCORE_MACRO_H */

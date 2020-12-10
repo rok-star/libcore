@@ -98,7 +98,7 @@ if (Deno.args.includes('--release')) {
 const res = await target.make({ output: true, threads: 8, log: false });
 if (res.type == 'error') {
     console.log(red('Unable to build libcore'));
-    Deno.exit();
+    Deno.exit(1);
 }
 
 if (Deno.args.includes('--example')) {
