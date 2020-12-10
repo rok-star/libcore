@@ -4,6 +4,12 @@
 #include <libcore/time.h>
 #include <libcore/app.h>
 
+static _APP_MODE __mode = _DEFAULT_APP_MODE;
+static void (*__event_proc)(_app_event_t const*,void*) = NULL;
+static void* __event_param = NULL;
+static bool __running = false;
+static bool __exiting = false;
+
 @interface __Delegate : NSObject<NSApplicationDelegate>
 
 - (id)initWithOnRun:(void(^)(void))onRun onExit:(void(^)(void))onExit;
@@ -32,13 +38,12 @@
 	_onExit();
 }
 
-@end
+- (void)stop {
+	[NSApp stop: self];
+	__exiting = true;
+}
 
-static _APP_MODE __mode = _DEFAULT_APP_MODE;
-static void (*__event_proc)(_app_event_t const*,void*) = NULL;
-static void* __event_param = NULL;
-static bool __running = false;
-static bool __exiting = false;
+@end
 
 void _app_run(_APP_MODE mode, double value) {
 	_ASSERT(__running == false);
@@ -49,20 +54,21 @@ void _app_run(_APP_MODE mode, double value) {
 
 	[[NSApplication sharedApplication]
 		setDelegate: [[__Delegate alloc]
-			initWithOnRun: ^{}
+			initWithOnRun: ^{
+				id mainMenu = [[NSMenu alloc] init];
+				id appMenu = [[NSMenu alloc] init];
+				id appItem = [mainMenu addItemWithTitle: [NSString stringWithCString: "123" encoding: NSUTF8StringEncoding] action: nil keyEquivalent: @""];
+				id quitItem = [appMenu addItemWithTitle: @"Quit" action: nil keyEquivalent: @"q"];
+				[quitItem setTarget: [NSApp delegate]];
+				[quitItem setAction: @selector(stop)];
+				[appItem setSubmenu: appMenu];
+				[NSApp setMainMenu: mainMenu];
+				[NSApp setActivationPolicy: NSApplicationActivationPolicyRegular];
+			}
 			onExit: ^{}
 		]
 	];
 
-	id mainMenu = [[NSMenu alloc] init];
-	id appMenu = [[NSMenu alloc] init];
-	id appMenuItem = [mainMenu addItemWithTitle: [NSString stringWithCString: "123" encoding: NSUTF8StringEncoding]
-												  action: nil
-										   keyEquivalent: @""];
-	[appMenuItem setSubmenu: appMenu];
-	[appMenu addItemWithTitle: @"Quit" action: @selector(stop:) keyEquivalent: @"q"];
-	[NSApp setMainMenu: mainMenu];
-	[NSApp setActivationPolicy: NSApplicationActivationPolicyRegular];
 	[NSApp finishLaunching];
 
 	if (__event_proc != NULL)
@@ -134,6 +140,7 @@ void _app_run(_APP_MODE mode, double value) {
 				if (__exiting)
 					break;
 			}
+
 			if (__exiting)
 				break;
 
