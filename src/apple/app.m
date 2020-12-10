@@ -98,6 +98,7 @@ void _app_run(_APP_MODE mode, double value) {
 					break;
 
 				[NSApp sendEvent: event];
+				[NSApp updateWindows];
 
 				if (__exiting)
 					break;
@@ -111,8 +112,7 @@ void _app_run(_APP_MODE mode, double value) {
 			if (__exiting)
 				break;
 
-			if (value > 0)
-				_sleep(value);
+			_sleep(value);
 		}
 	} else if (__mode == _FPS_APP_MODE) {
 		_ASSERT(value > 0);
@@ -129,6 +129,7 @@ void _app_run(_APP_MODE mode, double value) {
 					break;
 
 				[NSApp sendEvent: event];
+				[NSApp updateWindows];
 
 				if (__exiting)
 					break;
