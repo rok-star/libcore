@@ -6,6 +6,7 @@ extern "C" {
 #endif
 
 double _time(void);
+double _time_local(void);
 
 #ifdef __cplusplus
 }
