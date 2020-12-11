@@ -322,8 +322,6 @@ void _context_draw_vertices(_context_t const* context, float const* array, int s
 }
 
 void _context_draw_texture(_context_t const* context, _texture_t const* texture, _rect_t const* src, _rect_t const* dst, _color_t const* tint) {
-	_ASSERT(src != NULL);
-	_ASSERT(dst != NULL);
 	_ASSERT(texture != NULL);
     _ASSERT(context != NULL);
     _ASSERT(context->command_encoder != NULL);
@@ -334,10 +332,13 @@ void _context_draw_texture(_context_t const* context, _texture_t const* texture,
     _ASSERT(size.width > 0);
     _ASSERT(size.height > 0);
 
-    if ((dst->origin.x > context->size.width)
-    || (dst->origin.y > context->size.height)
-    || ((dst->origin.x + dst->size.width) < 0)
-    || ((dst->origin.y + dst->size.height) < 0))
+    _rect_t src_ = ((src != NULL) ? *src : (_rect_t){ { 0, 0 }, size });
+    _rect_t dst_ = ((dst != NULL) ? *dst : (_rect_t){ { 0, 0 }, size });
+
+    if ((dst_.origin.x > context->size.width)
+    || (dst_.origin.y > context->size.height)
+    || ((dst_.origin.x + dst_.size.width) < 0)
+    || ((dst_.origin.y + dst_.size.height) < 0))
         return;
 
     float uniforms[8] = {
@@ -351,10 +352,10 @@ void _context_draw_texture(_context_t const* context, _texture_t const* texture,
         ((tint != NULL) ? 1.0f : 0.0f)
     };
 
-    float uv_x = (src->origin.x / (float)size.width);
-    float uv_y = (src->origin.y / (float)size.height);
-    float uv_max_x = ((src->origin.x + src->size.width) / (float)size.width);
-    float uv_max_y = ((src->origin.y + src->size.height) / (float)size.height);
+    float uv_x = (src_.origin.x / (float)size.width);
+    float uv_y = (src_.origin.y / (float)size.height);
+    float uv_max_x = ((src_.origin.x + src_.size.width) / (float)size.width);
+    float uv_max_y = ((src_.origin.y + src_.size.height) / (float)size.height);
 
     if (context->origin == 1.0f) {
         uv_y = (1 - uv_y);
@@ -362,23 +363,23 @@ void _context_draw_texture(_context_t const* context, _texture_t const* texture,
     }
 
     float array[16] = {
-        dst->origin.x,
-        dst->origin.y,
+        dst_.origin.x,
+        dst_.origin.y,
         uv_x,
         uv_y,
 
-        (dst->origin.x + dst->size.width),
-        dst->origin.y,
+        (dst_.origin.x + dst_.size.width),
+        dst_.origin.y,
         uv_max_x,
         uv_y,
 
-        dst->origin.x,
-        (dst->origin.y + dst->size.height),
+        dst_.origin.x,
+        (dst_.origin.y + dst_.size.height),
         uv_x,
         uv_max_y,
 
-        (dst->origin.x + dst->size.width),
-        (dst->origin.y + dst->size.height),
+        (dst_.origin.x + dst_.size.width),
+        (dst_.origin.y + dst_.size.height),
         uv_max_x,
         uv_max_y
 

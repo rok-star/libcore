@@ -22,7 +22,9 @@ _texture_t* _texture_create(void const* data, int size, int width, int height) {
 
 	MTLTextureDescriptor* descriptor = [[MTLTextureDescriptor alloc] init];
     descriptor.sampleCount = 4;
-    descriptor.storageMode = MTLStorageModeManaged;
+    descriptor.textureType = MTLTextureType2DMultisample;
+    descriptor.storageMode = MTLStorageModePrivate;
+    //descriptor.storageMode = MTLStorageModeManaged;
     descriptor.pixelFormat = MTLPixelFormatRGBA8Unorm;
     descriptor.width = width;
     descriptor.height = height;

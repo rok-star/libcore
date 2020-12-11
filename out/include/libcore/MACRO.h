@@ -11,8 +11,8 @@
 	#define _ASSERT(a)
 	#define _ASSERT_M(a, b)
 #else
-	#define _ASSERT(a) if (!(a)) _ABORT("libcore: Assertion failed: (%s) in file \"%s\" at line %d\n", #a, __FILE__, __LINE__)
-	#define _ASSERT_M(a, b) if (!(a)) _ABORT("libcore: Assertion failed: %s, (%s) in file \"%s\" at line %d\n", #b, #a, __FILE__, __LINE__)
+	#define _ASSERT(a) if (!(a)) _ABORT("libcore: assertion failed: (%s) in file \"%s\" at line %d\n", #a, __FILE__, __LINE__)
+	#define _ASSERT_M(a, b) if (!(a)) _ABORT("libcore: assertion failed: %s, (%s) in file \"%s\" at line %d\n", #b, #a, __FILE__, __LINE__)
 #endif
 
 #define _FREE(a) { \
