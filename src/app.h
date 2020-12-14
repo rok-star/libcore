@@ -4,17 +4,17 @@
 #include <stdbool.h>
 
 typedef enum {
-	_RUN_APP_EVENT  = 0,
-	_EXIT_APP_EVENT = 1,
-	_SPIN_APP_EVENT = 2
+    _RUN_APP_EVENT  = 0,
+    _EXIT_APP_EVENT = 1,
+    _SPIN_APP_EVENT = 2
 } _APP_EVENT;
 
 static char const* _APP_EVENT_NAME[3] = {
-	"RUN", "EXIT", "SPIN"
+    "RUN", "EXIT", "SPIN"
 };
 
 typedef struct _app_event_t {
-	_APP_EVENT type;
+    _APP_EVENT type;
 } _app_event_t;
 
 #ifdef __cplusplus

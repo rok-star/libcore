@@ -2,17 +2,17 @@
 #define _LIBCORE_PATH_H
 
 #ifdef _WIN32
-	static char const* const _PATH_SEPARATOR = "\\";
+    static char const* const _PATH_SEPARATOR = "\\";
 #else
-	static char const* const _PATH_SEPARATOR = "/";
+    static char const* const _PATH_SEPARATOR = "/";
 #endif
 
 typedef struct _path_stat_t {
-	bool exists;
-	bool file;
-	bool directory;
-	double modified;
-	size_t size;
+    bool exists;
+    bool file;
+    bool directory;
+    double modified;
+    size_t size;
 } _path_stat_t;
 
 #ifdef __cplusplus

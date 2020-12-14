@@ -72,7 +72,7 @@ typedef struct _context_t {
 } _context_t;
 
 static _context_t* __create(_texture_t const* texture, _window_t const* window) {
-	_ASSERT(__metal_device != NULL);
+    _ASSERT(__metal_device != NULL);
     _ASSERT(__metal_library != NULL);
 
     _context_t* context = _NEW(_context_t, {});
@@ -152,7 +152,7 @@ void _context_destroy(_context_t* context) {
 }
 
 void _context_begin_paint(_context_t* context) {
-	_ASSERT(context != NULL);
+    _ASSERT(context != NULL);
     _ASSERT(context->command_queue != NULL);
     _ASSERT(context->color_pipeline_state != NULL);
     _ASSERT(context->painting == false);
@@ -205,7 +205,7 @@ void _context_begin_paint(_context_t* context) {
         pass_descriptor.colorAttachments[0].resolveTexture = context->drawable.texture;
         pass_descriptor.colorAttachments[0].storeAction = MTLStoreActionMultisampleResolve;
     } else {
-    	context->size = _texture_size(context->texture);
+        context->size = _texture_size(context->texture);
 
         _ASSERT(context->size.width > 0);
         _ASSERT(context->size.height > 0);
@@ -270,11 +270,11 @@ void _context_set_clip(_context_t* context, _rect_t const* rect) {
 
     if ((rect == NULL)
     || (rect->size.width <= 0)
-   	|| (rect->size.height <= 0)) {
+    || (rect->size.height <= 0)) {
         context->clip = (_rect_t){ { 0, 0 }, { 0, 0 } };
-   	} else {
+    } else {
         context->clip = *rect;
-   	}
+    }
 }
 
 void _context_set_origin(_context_t* context, _CONTEXT_ORIGIN origin) {
@@ -322,7 +322,7 @@ void _context_draw_vertices(_context_t const* context, float const* array, int s
 }
 
 void _context_draw_texture(_context_t const* context, _texture_t const* texture, _rect_t const* src, _rect_t const* dst, _color_t const* tint) {
-	_ASSERT(texture != NULL);
+    _ASSERT(texture != NULL);
     _ASSERT(context != NULL);
     _ASSERT(context->painting == true);
     _ASSERT(context->command_encoder != NULL);
@@ -393,7 +393,7 @@ void _context_draw_texture(_context_t const* context, _texture_t const* texture,
     if ((context->clip.size.width > 0)
     && (context->clip.size.height > 0)) {
         [context->command_encoder setScissorRect: (MTLScissorRect){
-        	context->clip.origin.x,
+            context->clip.origin.x,
             context->clip.origin.y,
             context->clip.size.width,
             context->clip.size.height

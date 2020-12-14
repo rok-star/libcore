@@ -4,8 +4,8 @@
 #define _STATUS_MAX_MESSAGE 255
 
 typedef struct _status_t {
-	int code;
-	char message[_STATUS_MAX_MESSAGE];
+    int code;
+    char message[_STATUS_MAX_MESSAGE];
 } _status_t;
 
 #ifdef __cplusplus

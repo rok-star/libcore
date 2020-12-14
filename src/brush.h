@@ -5,8 +5,8 @@
 #include <libcore/texture.h>
 
 typedef enum {
-	_COLOR_BRUSH_TYPE,
-	_TEXTURE_BRUSH_TYPE
+    _COLOR_BRUSH_TYPE,
+    _TEXTURE_BRUSH_TYPE
 } _BRUSH_TYPE;
 
 typedef struct _brush_t _brush_t;

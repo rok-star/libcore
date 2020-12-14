@@ -9,14 +9,14 @@
 #include <libcore/window.h>
 
 typedef enum {
-	_LEFTTOP_CONTEXT_ORIGIN,
-	_LEFTBOTTOM_CONTEXT_ORIGIN
+    _LEFTTOP_CONTEXT_ORIGIN,
+    _LEFTBOTTOM_CONTEXT_ORIGIN
 } _CONTEXT_ORIGIN;
 
 typedef struct _transform_t {
-	double x;
-	double y;
-	double scale;
+    double x;
+    double y;
+    double scale;
 } _transform_t;
 
 typedef struct _context_t _context_t;
