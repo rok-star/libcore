@@ -30,6 +30,10 @@ typedef struct _rect_t {
 #define _RECT_MAX_X(a) ((a).origin.x + (a).size.width)
 #define _RECT_MAX_Y(a) ((a).origin.y + (a).size.height)
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 _point_t _cubic_point(_point_t const*,_point_t const*,_point_t const*,_point_t const*,double);
 void _cubic_points(_point_t const*,_point_t const*,_point_t const*,_point_t const*,double,_point_t**,int*);
 
@@ -38,5 +42,9 @@ void _quad_points(_point_t const*,_point_t const*,_point_t const*,double,_point_
 
 _point_t _conic_point(_point_t const*,_point_t const*,_point_t const*,double,double);
 void _conic_points(_point_t const*,_point_t const*,_point_t const*,double,double,_point_t**,int*);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* _LIBCORE_MATH_H */

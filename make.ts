@@ -48,6 +48,9 @@ await Promise.all([ Deno.copyFile(`${project}/src/WINDOWS.h`, `${out_inc}/WINDOW
                     Deno.copyFile(`${project}/src/sleep.h`, `${out_inc}/sleep.h`),
                     Deno.copyFile(`${project}/src/window.h`, `${out_inc}/window.h`),
                     Deno.copyFile(`${project}/src/app.h`, `${out_inc}/app.h`),
+                    Deno.copyFile(`${project}/src/path.h`, `${out_inc}/path.h`),
+                    Deno.copyFile(`${project}/src/file.h`, `${out_inc}/file.h`),
+                    Deno.copyFile(`${project}/src/directory.h`, `${out_inc}/directory.h`),
                     Deno.copyFile(`${project}/src/dispatchqueue.h`, `${out_inc}/dispatchqueue.h`) ]);
 
 const target = new Target();
@@ -65,6 +68,7 @@ target.sources.push(`${project}/src/unicode.c`);
 target.sources.push(`${project}/src/brush.c`);
 target.sources.push(`${project}/src/color.c`);
 target.sources.push(`${project}/src/math.c`);
+target.sources.push(`${project}/src/path.c`);
 //target.sources.push(`${project}/src/timer.c`);
 
 if (Deno.build.os == 'windows') {
@@ -82,6 +86,7 @@ if (Deno.build.os == 'windows') {
     target.sources.push(`${project}/src/POSIX/thread.c`);
     target.sources.push(`${project}/src/POSIX/sleep.c`);
     target.sources.push(`${project}/src/POSIX/time.c`);
+    target.sources.push(`${project}/src/POSIX/path.c`);
 } else {
     throw new Error(`${Deno.build.os} not supported for build target`);
 }
