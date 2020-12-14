@@ -6,13 +6,6 @@
 #include <string.h>
 #include <execinfo.h>
 
-#define _ABORT(...) { \
-	fprintf(stderr, __VA_ARGS__); \
-	fflush(stderr); \
-	_BACKTRACE(); \
-	exit(1); \
-}
-
 #define _BACKTRACE() { \
 	void* __buffer[10]; \
 	int __nentries = backtrace(__buffer, 10); \
@@ -23,6 +16,13 @@
 		fflush(stderr); \
 		free(__entries); \
 	} \
+}
+
+#define _ABORT(...) { \
+	fprintf(stderr, __VA_ARGS__); \
+	fflush(stderr); \
+	_BACKTRACE(); \
+	exit(1); \
 }
 
 #ifdef NDEBUG
