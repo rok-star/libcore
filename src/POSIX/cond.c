@@ -1,7 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
 #include <pthread.h>
-#include <string.h>
 #include <libcore/lock.h>
 #include <libcore/cond.h>
 #include <libcore/MACRO.h>

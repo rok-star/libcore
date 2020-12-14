@@ -1,6 +1,6 @@
+#include <libcore/MACRO.h>
 #include <libcore/window.h>
 #include <libcore/context.h>
-#include <libcore/MACRO.h>
 
 #include "metal.h"
 
@@ -287,9 +287,9 @@ void _context_draw_vertices(_context_t const* context, float const* array, int s
     _ASSERT(array != NULL);
     _ASSERT(size > 0);
     _ASSERT(brush != NULL);
+    _ASSERT(context->painting == true);
     _ASSERT(context->command_encoder != NULL);
     _ASSERT((context->size.width > 0) && (context->size.height > 0));
-    _ASSERT(context->painting == true);
 
     _color_t const* color = _brush_color(brush);
 
@@ -324,8 +324,8 @@ void _context_draw_vertices(_context_t const* context, float const* array, int s
 void _context_draw_texture(_context_t const* context, _texture_t const* texture, _rect_t const* src, _rect_t const* dst, _color_t const* tint) {
 	_ASSERT(texture != NULL);
     _ASSERT(context != NULL);
-    _ASSERT(context->command_encoder != NULL);
     _ASSERT(context->painting == true);
+    _ASSERT(context->command_encoder != NULL);
     _ASSERT(_texture_MTLTexture(texture) != NULL);
 
     _size_t size = _texture_size(texture);

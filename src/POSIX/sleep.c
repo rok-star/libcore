@@ -1,8 +1,5 @@
-#include <stdio.h>
-#include <stdlib.h>
 #include <math.h>
 #include <pthread.h>
-#include <string.h>
 #include <libcore/sleep.h>
 #include <libcore/MACRO.h>
 

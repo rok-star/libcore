@@ -1,6 +1,3 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 #include <libcore/MACRO.h>
 #include <libcore/math.h>
 
@@ -26,8 +23,8 @@ static void __cubic_points_add(_point_t const** points, double tolerance, _point
 	_ASSERT(num != NULL);
 	_ASSERT(cap != NULL);
 	if (__cubic_flatness(points[0], points[1], points[2], points[3]) < tolerance) {
-		_PUSH((*out), (*num), (*cap), *points[0]);
-		_PUSH((*out), (*num), (*cap), *points[3]);
+		_PUSH_V((*out), (*num), (*cap), *points[0]);
+		_PUSH_V((*out), (*num), (*cap), *points[3]);
 	} else {
 		double t = 0.5;
 		_point_t q1 = _POINT_LERP(*points[0], *points[1], t);

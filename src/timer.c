@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
+#include <execinfo.h>
 #include <libcore/MACRO.h>
 #include <libcore/thread.h>
 #include <libcore/sleep.h>

@@ -1,7 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
 #include <stdbool.h>
-#include <string.h>
 #include <libcore/MACRO.h>
 #include <libcore/cond.h>
 #include <libcore/lock.h>
@@ -42,7 +39,7 @@ void _dispatch_queue_post(_dispatch_queue_t* queue, void(*proc)(void*), void* pa
 	_ASSERT(queue != NULL);
 	_ASSERT(proc != NULL);
 	_lock_acquire(queue->lock);
-	_PUSH_A(queue->items, (_dispatch_queue_item_t){ proc, param });
+	_PUSH(queue->items, (_dispatch_queue_item_t){ proc, param });
 	_lock_release(queue->lock);
 	if (queue->wakeup != NULL)
 		queue->wakeup();
@@ -56,7 +53,7 @@ bool _dispatch_queue_remove(_dispatch_queue_t* queue, void(*proc)(void*), void* 
 	for (int i = (queue->items.size - 1); i >= 0; i--) {
 		if ((queue->items.data[i].proc == proc)
 		&& (queue->items.data[i].param == param)) {
-			_REMOVE_A(queue->items, i);
+			_REMOVE(queue->items, i);
 			ret = true;
 		}
 	}
@@ -70,7 +67,7 @@ bool _dispatch_queue_remove_proc(_dispatch_queue_t* queue, void(*proc)(void*)) {
 	_lock_acquire(queue->lock);
 	for (int i = (queue->items.size - 1); i >= 0; i--) {
 		if (queue->items.data[i].proc == proc) {
-			_REMOVE_A(queue->items, i);
+			_REMOVE(queue->items, i);
 			ret = true;
 		}
 	}
@@ -84,7 +81,7 @@ bool _dispatch_queue_remove_param(_dispatch_queue_t* queue, void* param) {
 	_lock_acquire(queue->lock);
 	for (int i = (queue->items.size - 1); i >= 0; i--) {
 		if (queue->items.data[i].param == param) {
-			_REMOVE_A(queue->items, i);
+			_REMOVE(queue->items, i);
 			ret = true;
 		}
 	}
@@ -98,7 +95,7 @@ void _dispatch_queue_process(_dispatch_queue_t* queue) {
 	for (;;) {
 		if (queue->items.size == 0) break;
 		else {
-			_dispatch_queue_item_t item = _SHIFT_A(queue->items);
+			_dispatch_queue_item_t item = _SHIFT(queue->items);
 			_lock_release(queue->lock);
 			item.proc(item.param);
 			_lock_acquire(queue->lock);
@@ -115,7 +112,7 @@ void _dispatch_queue_runloop(_dispatch_queue_t* queue, bool* exit_) {
 		if (exit_)
 			break;
 		if (queue->items.size > 0) {
-			_dispatch_queue_item_t item = _SHIFT_A(queue->items);
+			_dispatch_queue_item_t item = _SHIFT(queue->items);
 			_lock_release(queue->lock);
 			item.proc(item.param);
 			_lock_acquire(queue->lock);

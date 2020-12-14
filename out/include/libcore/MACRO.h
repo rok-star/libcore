@@ -1,18 +1,36 @@
 #ifndef _LIBCORE_MACRO_H
 #define _LIBCORE_MACRO_H
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <execinfo.h>
+
 #define _ABORT(...) { \
 	fprintf(stderr, __VA_ARGS__); \
 	fflush(stderr); \
+	_BACKTRACE(); \
 	exit(1); \
+}
+
+#define _BACKTRACE() { \
+	void* __buffer[10]; \
+	int __nentries = backtrace(__buffer, 10); \
+	char** __entries = backtrace_symbols(__buffer, __nentries); \
+	if (__entries != NULL) { \
+		for (int i = 0; i < __nentries; i++) \
+			fprintf(stderr, "%s\n", __entries[i]); \
+		fflush(stderr); \
+		free(__entries); \
+	} \
 }
 
 #ifdef NDEBUG
 	#define _ASSERT(a)
 	#define _ASSERT_M(a, b)
 #else
-	#define _ASSERT(a) if (!(a)) _ABORT("libcore: assertion failed: (%s) in file \"%s\" at line %d\n", #a, __FILE__, __LINE__)
-	#define _ASSERT_M(a, b) if (!(a)) _ABORT("libcore: assertion failed: %s, (%s) in file \"%s\" at line %d\n", #b, #a, __FILE__, __LINE__)
+	#define _ASSERT(a) if (!(a)) _ABORT("Assertion failed: (%s) in function \"%s\" in file \"%s\" at line %d\n", #a, __FUNCTION__, __FILE__, __LINE__)
+	#define _ASSERT_M(a, b) if (!(a)) _ABORT("Assertion failed: %s, (%s) in function \"%s\" in file \"%s\" at line %d\n", #b, #a, __FUNCTION__, __FILE__, __LINE__)
 #endif
 
 #define _FREE(a) { \
@@ -53,7 +71,7 @@
 	((__aa < __bb) ? __aa : __bb); \
 })
 
-#define _RESERVE(data, size, capacity, reserve) { \
+#define _RESERVE_V(data, size, capacity, reserve) { \
 	_ASSERT(size >= 0); \
 	_ASSERT(capacity >= 0); \
 	_ASSERT(reserve >= 0); \
@@ -69,18 +87,18 @@
 	} \
 }
 
-#define _PUSH(data, size, capacity, ...) { \
+#define _PUSH_V(data, size, capacity, ...) { \
 	_ASSERT(size >= 0); \
 	_ASSERT(capacity >= 0); \
 	_ASSERT(size <= capacity); \
 	if (size == capacity) { \
 		__typeof__(capacity) __reserve = ((size * 2) + 1); \
-		_RESERVE(data, size, capacity, __reserve); \
+		_RESERVE_V(data, size, capacity, __reserve); \
 	} \
 	data[size++] = (__VA_ARGS__); \
 }
 
-#define _POP(data, size, capacity) ({ \
+#define _POP_V(data, size, capacity) ({ \
 	_ASSERT(data != NULL); \
 	_ASSERT(size > 0); \
 	_ASSERT(capacity > 0); \
@@ -90,7 +108,7 @@
 	__ret; \
 })
 
-#define _UNSHIFT(data, size, capacity, ...) { \
+#define _UNSHIFT_V(data, size, capacity, ...) { \
 	_ASSERT(size >= 0); \
 	_ASSERT(capacity >= 0); \
 	_ASSERT(size <= capacity); \
@@ -112,7 +130,7 @@
 	size += 1; \
 }
 
-#define _SHIFT(data, size, capacity, ...) ({ \
+#define _SHIFT_V(data, size, capacity, ...) ({ \
 	_ASSERT(data != NULL); \
 	_ASSERT(size > 0); \
 	_ASSERT(capacity > 0); \
@@ -124,7 +142,7 @@
 	__ret; \
 })
 
-#define _REMOVE(data, size, capacity, index) { \
+#define _REMOVE_V(data, size, capacity, index) { \
 	_ASSERT(data != NULL); \
 	_ASSERT(size >= 0); \
 	_ASSERT(capacity >= 0); \
@@ -136,7 +154,7 @@
 	} \
 }
 
-#define _INDEX_OF(data, size, item) ({ \
+#define _INDEX_OF_V(data, size, item) ({ \
 	_ASSERT(data != NULL); \
 	_ASSERT(size >= 0); \
 	int __ret = -1; \
@@ -149,12 +167,28 @@
 	__ret; \
 })
 
-#define _RESERVE_A(array, reserve) _RESERVE((array).data, (array).size, (array).capacity, reserve)
-#define _PUSH_A(array, ...) _PUSH((array).data, (array).size, (array).capacity, __VA_ARGS__)
-#define _POP_A(array) _POP((array).data, (array).size, (array).capacity)
-#define _UNSHIFT_A(array, ...) _UNSHIFT((array).data, (array).size, (array).capacity, __VA_ARGS__)
-#define _SHIFT_A(array, ...) _SHIFT((array).data, (array).size, (array).capacity)
-#define _REMOVE_A(array, index) _REMOVE((array).data, (array).size, (array).capacity, index)
-#define _INDEX_OF_A(array, item) _INDEX_OF((array).data, (array).size, item)
+#define _FIRST_V(data, size) ({ \
+	_ASSERT(data != NULL); \
+	_ASSERT(size > 0); \
+	__typeof__(*data) __ret = data[0]; \
+	__ret; \
+})
+
+#define _LAST_v(data, size) ({ \
+	_ASSERT(data != NULL); \
+	_ASSERT(size > 0); \
+	__typeof__(*data) __ret = data[size - 1]; \
+	__ret; \
+})
+
+#define _RESERVE(array, reserve) _RESERVE_V((array).data, (array).size, (array).capacity, reserve)
+#define _PUSH(array, ...) _PUSH_V((array).data, (array).size, (array).capacity, __VA_ARGS__)
+#define _POP(array) _POP_V((array).data, (array).size, (array).capacity)
+#define _UNSHIFT(array, ...) _UNSHIFT_V((array).data, (array).size, (array).capacity, __VA_ARGS__)
+#define _SHIFT(array, ...) _SHIFT_V((array).data, (array).size, (array).capacity)
+#define _REMOVE(array, index) _REMOVE_V((array).data, (array).size, (array).capacity, index)
+#define _INDEX_OF(array, item) _INDEX_OF_V((array).data, (array).size, item)
+#define _FIRST(array) _FIRST_V((array).data, (array).size);
+#define _LAST(array) _LAST_v((array).data, (array).size);
 
 #endif /* _LIBCORE_MACRO_H */
