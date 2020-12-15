@@ -2,10 +2,10 @@
 #define _LIBCORE_COLOR_H
 
 typedef struct _color_t {
-	unsigned char red;
-	unsigned char green;
-	unsigned char blue;
-	unsigned char alpha;
+    unsigned char red;
+    unsigned char green;
+    unsigned char blue;
+    unsigned char alpha;
 } _color_t;
 
 extern _color_t const _ALICEBLUE_COLOR;
