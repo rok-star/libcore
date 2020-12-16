@@ -100,7 +100,7 @@ static _context_t* __create(_texture_t const* texture, _window_t const* window) 
     pipeline_descriptor.colorAttachments[0].blendingEnabled             = YES;
     pipeline_descriptor.colorAttachments[0].rgbBlendOperation           = MTLBlendOperationAdd;
     pipeline_descriptor.colorAttachments[0].alphaBlendOperation         = MTLBlendOperationAdd;
-    pipeline_descriptor.colorAttachments[0].sourceRGBBlendFactor        = MTLBlendFactorSourceAlpha;
+    pipeline_descriptor.colorAttachments[0].sourceRGBBlendFactor        = MTLBlendFactorOne;
     pipeline_descriptor.colorAttachments[0].sourceAlphaBlendFactor      = MTLBlendFactorSourceAlpha;
     pipeline_descriptor.colorAttachments[0].destinationRGBBlendFactor   = MTLBlendFactorOneMinusSourceAlpha;
     pipeline_descriptor.colorAttachments[0].destinationAlphaBlendFactor = MTLBlendFactorOneMinusSourceAlpha;
