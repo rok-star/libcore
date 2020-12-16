@@ -21,8 +21,6 @@ _texture_t* _texture_create(void const* data, int size, int width, int height) {
         _ASSERT_M(size == ((width * height) * 4), "texture \"width\" and \"height\" must be correlated with \"size\"");
 
     MTLTextureDescriptor* descriptor = [[MTLTextureDescriptor alloc] init];
-    descriptor.sampleCount = 4;
-    descriptor.textureType = MTLTextureType2DMultisample;
     descriptor.storageMode = MTLStorageModePrivate;
     descriptor.pixelFormat = MTLPixelFormatRGBA8Unorm;
     descriptor.width = width;

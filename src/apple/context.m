@@ -163,6 +163,8 @@ void _context_begin_paint(_context_t* context) {
     pass_descriptor.colorAttachments[0].clearColor = MTLClearColorMake(0, 0, 0, 0);
     pass_descriptor.colorAttachments[0].loadAction = MTLLoadActionClear;
 
+    id<MTLTexture> resolve_texture = nil;
+
     if (context->window != NULL) {
         _ASSERT(context->layer != NULL);
 
@@ -181,33 +183,32 @@ void _context_begin_paint(_context_t* context) {
         [CATransaction commit];
 
         context->drawable = [context->layer nextDrawable];
-
-        if ((context->msaa_texture == nil)
-        || (context->msaa_texture.width != (NSUInteger)context->size.width)
-        || (context->msaa_texture.height != (NSUInteger)context->size.height)) {
-            MTLTextureDescriptor* desc = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat: MTLPixelFormatBGRA8Unorm
-                                                                                            width: context->size.width
-                                                                                            height: context->size.height
-                                                                                         mipmapped: NO];
-            desc.storageMode = MTLStorageModePrivate;
-            desc.textureType = MTLTextureType2DMultisample;
-            desc.usage = MTLTextureUsageRenderTarget;
-            desc.sampleCount = _SAMPLE_COUNT;
-            context->msaa_texture = [__metal_device newTextureWithDescriptor: desc];
-        }
-
-        pass_descriptor.colorAttachments[0].texture = context->msaa_texture;
-        pass_descriptor.colorAttachments[0].resolveTexture = context->drawable.texture;
-        pass_descriptor.colorAttachments[0].storeAction = MTLStoreActionMultisampleResolve;
+        resolve_texture = context->drawable.texture;
     } else {
         context->size = _texture_size(context->texture);
 
         _ASSERT(context->size.width > 0);
         _ASSERT(context->size.height > 0);
 
-        pass_descriptor.colorAttachments[0].texture = (__bridge id<MTLTexture>)_texture_MTLTexture(context->texture);
-        pass_descriptor.colorAttachments[0].storeAction = MTLStoreActionStore;
+        resolve_texture = (__bridge id<MTLTexture>)_texture_MTLTexture(context->texture);
     }
+
+    if ((context->msaa_texture == nil)
+    || (context->msaa_texture.width != (NSUInteger)context->size.width)
+    || (context->msaa_texture.height != (NSUInteger)context->size.height)) {
+        MTLTextureDescriptor* desc = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat: MTLPixelFormatRGBA8Unorm
+                                                                                        width: context->size.width
+                                                                                        height: context->size.height
+                                                                                     mipmapped: NO];
+        desc.storageMode = MTLStorageModePrivate;
+        desc.textureType = MTLTextureType2DMultisample;
+        desc.sampleCount = _SAMPLE_COUNT;
+        context->msaa_texture = [__metal_device newTextureWithDescriptor: desc];
+    }
+
+    pass_descriptor.colorAttachments[0].texture = context->msaa_texture;
+    pass_descriptor.colorAttachments[0].resolveTexture = resolve_texture;
+    pass_descriptor.colorAttachments[0].storeAction = MTLStoreActionMultisampleResolve;
 
     context->command_buffer = [context->command_queue commandBuffer];
     context->command_encoder = [context->command_buffer renderCommandEncoderWithDescriptor: pass_descriptor];
