@@ -96,7 +96,7 @@ static _context_t* __create(_texture_t const* texture, _window_t const* window) 
 
     NSError* _err = NULL;
     MTLRenderPipelineDescriptor* pipeline_descriptor = [[MTLRenderPipelineDescriptor alloc] init];
-    pipeline_descriptor.colorAttachments[0].pixelFormat                 = MTLPixelFormatBGRA8Unorm;
+    pipeline_descriptor.colorAttachments[0].pixelFormat                 = MTLPixelFormatRGBA8Unorm;
     pipeline_descriptor.colorAttachments[0].blendingEnabled             = YES;
     pipeline_descriptor.colorAttachments[0].rgbBlendOperation           = MTLBlendOperationAdd;
     pipeline_descriptor.colorAttachments[0].alphaBlendOperation         = MTLBlendOperationAdd;
@@ -202,6 +202,7 @@ void _context_begin_paint(_context_t* context) {
                                                                                      mipmapped: NO];
         desc.storageMode = MTLStorageModePrivate;
         desc.textureType = MTLTextureType2DMultisample;
+        desc.usage = MTLTextureUsageRenderTarget;
         desc.sampleCount = _SAMPLE_COUNT;
         context->msaa_texture = [__metal_device newTextureWithDescriptor: desc];
     }
