@@ -171,11 +171,6 @@ void _context_begin_paint(_context_t* context) {
             .height = (context->window.contentView.frame.size.height * context->window.backingScaleFactor),
         };
 
-        // context->size = (_size_t){
-        //     .width = (context->window.contentView.frame.size.width * 0.25),
-        //     .height = (context->window.contentView.frame.size.height * 0.25),
-        // };
-
         _ASSERT(context->size.width > 0);
         _ASSERT(context->size.height > 0);
 
@@ -193,7 +188,7 @@ void _context_begin_paint(_context_t* context) {
             MTLTextureDescriptor* desc = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat: MTLPixelFormatBGRA8Unorm
                                                                                             width: context->size.width
                                                                                             height: context->size.height
-                                                                                        mipmapped: NO];
+                                                                                         mipmapped: NO];
             desc.storageMode = MTLStorageModePrivate;
             desc.textureType = MTLTextureType2DMultisample;
             desc.usage = MTLTextureUsageRenderTarget;

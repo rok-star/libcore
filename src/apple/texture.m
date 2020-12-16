@@ -24,7 +24,6 @@ _texture_t* _texture_create(void const* data, int size, int width, int height) {
     descriptor.sampleCount = 4;
     descriptor.textureType = MTLTextureType2DMultisample;
     descriptor.storageMode = MTLStorageModePrivate;
-    //descriptor.storageMode = MTLStorageModeManaged;
     descriptor.pixelFormat = MTLPixelFormatRGBA8Unorm;
     descriptor.width = width;
     descriptor.height = height;
@@ -32,11 +31,27 @@ _texture_t* _texture_create(void const* data, int size, int width, int height) {
     id<MTLTexture> texture = [__metal_device newTextureWithDescriptor: descriptor];
     _ASSERT(texture != NULL);
 
-    if ((data != NULL) && (size > 0))
-        [texture replaceRegion: (MTLRegion){ { 0, 0, 0 }, { width, height, 1 } }
-                   mipmapLevel: 0
-                     withBytes: data
-                   bytesPerRow: (width * 4)];
+    if ((data != NULL) && (size > 0)) {
+        id<MTLCommandQueue> command_queue = [__metal_device newCommandQueue];
+        id<MTLCommandBuffer> command_buffer = [command_queue commandBuffer];
+        id<MTLBlitCommandEncoder> command_encoder = [command_buffer blitCommandEncoder];
+        id<MTLBuffer> buffer = [__metal_device newBufferWithBytes: data
+                                                           length: size
+                                                          options: MTLResourceStorageModeShared];
+        [command_encoder copyFromBuffer: buffer
+                           sourceOffset: 0
+                      sourceBytesPerRow: (width * 4)
+                    sourceBytesPerImage: ((width * height) * 4)
+                             sourceSize: (MTLSize){ width, height, 1 }
+                              toTexture: texture
+                       destinationSlice: 0
+                       destinationLevel: 0
+                      destinationOrigin: (MTLOrigin){ 0, 0, 0 }];
+
+        [command_encoder endEncoding];
+        [command_buffer commit];
+        [command_buffer waitUntilCompleted];
+    }
 
     return _NEW(_texture_t, {
         .texture = texture,
@@ -63,4 +78,9 @@ _size_t _texture_size(_texture_t const* texture) {
 void* _texture_MTLTexture(_texture_t const* texture) {
     _ASSERT(texture != NULL);
     return (__bridge void*)texture->texture;
+}
+
+void _texture_set_msaa(_texture_t* texture, bool msaa) {
+    _ASSERT(texture != NULL);
+    ;
 }
