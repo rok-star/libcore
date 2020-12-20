@@ -22,8 +22,6 @@ extern "C" {
 #endif
 
 void _app_run(void);
-void _app_run_FPS(int);
-void _app_run_sleep(double);
 void _app_exit(void);
 void _app_wakeup(void);
 bool _app_running(void);

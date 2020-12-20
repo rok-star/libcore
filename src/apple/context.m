@@ -185,7 +185,7 @@ void _context_begin_paint(_context_t* context) {
         context->drawable = [context->layer nextDrawable];
         resolve_texture = context->drawable.texture;
     } else {
-        context->size = _texture_size(context->texture);
+        context->size = *_texture_size(context->texture);
 
         _ASSERT(context->size.width > 0);
         _ASSERT(context->size.height > 0);
@@ -235,22 +235,24 @@ void _context_end_paint(_context_t* context) {
     context->drawable = NULL;
 }
 
-_size_t _context_size(_context_t const* context) {
+_size_t const* _context_size(_context_t const* context) {
     _ASSERT(context != NULL);
     if (context->window != NULL) {
         _ASSERT(context->layer != NULL);
-        return (_size_t){
+        // ¯\_(ツ)_/¯
+        ((_context_t*)context)->size = (_size_t){
             .width = (context->window.contentView.frame.size.width * context->window.backingScaleFactor),
             .height = (context->window.contentView.frame.size.height * context->window.backingScaleFactor),
         };
+        return &context->size;
     } else {
         return _texture_size(context->texture);
     }
 }
 
-_rect_t _context_clip(_context_t const* context) {
+_rect_t const* _context_clip(_context_t const* context) {
     _ASSERT(context != NULL);
-    return context->clip;
+    return &context->clip;
 }
 
 _CONTEXT_ORIGIN _context_origin(_context_t const* context) {
@@ -321,7 +323,7 @@ void _context_draw_texture(_context_t const* context, _texture_t const* texture,
     _ASSERT(context->command_encoder != NULL);
     _ASSERT(_texture_MTLTexture(texture) != NULL);
 
-    _size_t size = _texture_size(texture);
+    _size_t size = *_texture_size(texture);
     _ASSERT(size.width > 0);
     _ASSERT(size.height > 0);
 

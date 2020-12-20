@@ -5,10 +5,11 @@
 
 typedef struct _texture_t {
     id<MTLTexture> texture;
-    void const* data;
-    int size;
-    int width;
-    int height;
+    struct {
+        void const* data;
+        int size;
+    } data;
+    _size_t size;
 } _texture_t;
 
 _texture_t* _texture_create(void const* data, int size, int width, int height) {
@@ -53,10 +54,8 @@ _texture_t* _texture_create(void const* data, int size, int width, int height) {
 
     return _NEW(_texture_t, {
         .texture = texture,
-        .data = data,
-        .size = size,
-        .width = width,
-        .height = height
+        .data = { data, size },
+        .size = { width, height }
     });
 }
 
@@ -65,12 +64,9 @@ void _texture_destroy(_texture_t* texture) {
     texture->texture = NULL;
 }
 
-_size_t _texture_size(_texture_t const* texture) {
+_size_t const* _texture_size(_texture_t const* texture) {
     _ASSERT(texture != NULL);
-    return (_size_t){
-        .width = texture->width,
-        .height = texture->height
-    };
+    return &texture->size;
 }
 
 void* _texture_MTLTexture(_texture_t const* texture) {

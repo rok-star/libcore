@@ -40,6 +40,7 @@ await Promise.all([ Deno.copyFile(`${project}/src/WINDOWS.h`, `${out_inc}/WINDOW
                     Deno.copyFile(`${project}/src/bezierpath.h`, `${out_inc}/bezierpath.h`),
                     Deno.copyFile(`${project}/src/texture.h`, `${out_inc}/texture.h`),
                     Deno.copyFile(`${project}/src/context.h`, `${out_inc}/context.h`),
+                    Deno.copyFile(`${project}/src/layer.h`, `${out_inc}/layer.h`),
                     Deno.copyFile(`${project}/src/thread.h`, `${out_inc}/thread.h`),
                     Deno.copyFile(`${project}/src/timer.h`, `${out_inc}/timer.h`),
                     Deno.copyFile(`${project}/src/time.h`, `${out_inc}/time.h`),
@@ -66,10 +67,10 @@ target.sources.push(`${project}/src/dispatchqueue.c`);
 target.sources.push(`${project}/src/bezierpath.c`);
 target.sources.push(`${project}/src/unicode.c`);
 target.sources.push(`${project}/src/brush.c`);
+target.sources.push(`${project}/src/layer.c`);
 target.sources.push(`${project}/src/color.c`);
 target.sources.push(`${project}/src/math.c`);
 target.sources.push(`${project}/src/path.c`);
-//target.sources.push(`${project}/src/timer.c`);
 
 if (Deno.build.os == 'windows') {
     target.sources.push(`${project}/src/win32/app.c`);

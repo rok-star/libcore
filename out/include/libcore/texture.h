@@ -11,7 +11,7 @@ extern "C" {
 
 _texture_t* _texture_create(void const*,int,int,int);
 void _texture_destroy(_texture_t*);
-_size_t _texture_size(_texture_t const*);
+_size_t const* _texture_size(_texture_t const*);
 
 #if _WIN32
 
