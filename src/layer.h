@@ -25,7 +25,16 @@ typedef enum {
 	_COVER_CENTER_END_TEXTURE_LAYOUT,
 	_COVER_END_BEGIN_TEXTURE_LAYOUT,
 	_COVER_END_CENTER_TEXTURE_LAYOUT,
-	_COVER_END_END_TEXTURE_LAYOUT
+	_COVER_END_END_TEXTURE_LAYOUT,
+	_REPEAT_BEGIN_BEGIN_TEXTURE_LAYOUT,
+	_REPEAT_BEGIN_CENTER_TEXTURE_LAYOUT,
+	_REPEAT_BEGIN_END_TEXTURE_LAYOUT,
+	_REPEAT_CENTER_BEGIN_TEXTURE_LAYOUT,
+	_REPEAT_CENTER_CENTER_TEXTURE_LAYOUT,
+	_REPEAT_CENTER_END_TEXTURE_LAYOUT,
+	_REPEAT_END_BEGIN_TEXTURE_LAYOUT,
+	_REPEAT_END_CENTER_TEXTURE_LAYOUT,
+	_REPEAT_END_END_TEXTURE_LAYOUT
 } _TEXTURE_LAYOUT;
 
 typedef struct _layer_t _layer_t;
@@ -36,13 +45,17 @@ extern "C" {
 
 _layer_t* _layer_create(void);
 void _layer_destroy(_layer_t*);
+void _layer_set_center(_layer_t*,_point_t const*);
 void _layer_set_origin(_layer_t*,_point_t const*);
 void _layer_set_size(_layer_t*,_size_t const*);
 void _layer_set_texture(_layer_t*,_texture_t const*);
 void _layer_set_texture_layout(_layer_t*,_TEXTURE_LAYOUT);
+void _layer_set_texture_scale(_layer_t*,double);
+void _layer_set_texture_stretch_indent(_layer_t*,int,int);
 void _layer_set_frame_width(_layer_t*,double);
 void _layer_set_frame_color(_layer_t*,_color_t const*);
 void _layer_set_background_color(_layer_t*,_color_t const*);
+_point_t const* _layer_center(_layer_t const*);
 _point_t const* _layer_origin(_layer_t const*);
 _size_t const* _layer_size(_layer_t const*);
 _texture_t const* _layer_texture(_layer_t const*);

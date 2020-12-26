@@ -353,8 +353,8 @@ void _context_draw_texture(_context_t const* context, _texture_t const* texture,
     float uv_max_y = ((src_.origin.y + src_.size.height) / (float)size.height);
 
     if (context->origin == 1.0f) {
-        uv_y = (1 - uv_y);
-        uv_max_y = (1 - uv_max_y);
+        uv_y = (1.0 - uv_y);
+        uv_max_y = (1.0 - uv_max_y);
     }
 
     float array[16] = {

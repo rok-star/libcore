@@ -344,9 +344,9 @@ _size_t _window_size(_window_t const* window) {
     };
 }
 
-char* _window_text(_window_t const* window) {
+char const* _window_text(_window_t const* window) {
     _ASSERT(window != NULL);
-    return _FORMAT("%s", [window->pNSWindow.title cStringUsingEncoding: NSUTF8StringEncoding]);
+    return [window->pNSWindow.title cStringUsingEncoding: NSUTF8StringEncoding];
 }
 
 float _window_pixelratio(_window_t const* window) {

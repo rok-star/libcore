@@ -78,7 +78,7 @@ bool _window_maximized(_window_t const*);
 bool _window_minimized(_window_t const*);
 bool _window_topmost(_window_t const*);
 _size_t _window_size(_window_t const*);
-char* _window_text(_window_t const*);
+char const* _window_text(_window_t const*);
 float _window_pixelratio(_window_t const*);
 void _window_on_event(_window_t*, void (*)(_window_event_t const*,void*), void*);
 
