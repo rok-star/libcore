@@ -12,6 +12,8 @@ typedef struct _window_t {
     __Window* pNSWindow;
     void (*on_event)(_window_event_t const*,void*);
     void* param;
+    _size_t size;
+    _point_t origin;
 } _window_t;
 
 @implementation __Window {
@@ -280,6 +282,12 @@ void _window_set_topmost(_window_t* window, bool value) {
     [window->pNSWindow setLevel: value ? NSStatusWindowLevel : NSNormalWindowLevel];
 }
 
+void _window_set_origin(_window_t* window, _point_t const* value) {
+    _ASSERT(window != NULL);
+    _ASSERT(value != NULL);
+    ;
+}
+
 void _window_set_size(_window_t* window, _size_t const* value) {
     _ASSERT(window != NULL);
     _ASSERT(value != NULL);
@@ -336,12 +344,22 @@ bool _window_topmost(_window_t const* window) {
     return window->pNSWindow.level == NSStatusWindowLevel;
 }
 
-_size_t _window_size(_window_t const* window) {
+_point_t const* _window_origin(_window_t const* window) {
     _ASSERT(window != NULL);
-    return (_size_t){
+    window->origin = (_point_t){
+        .width = window->pNSWindow.contentView.frame.origin.x,
+        .height = window->pNSWindow.contentView.frame.origin.y
+    };
+    return &window->origin;
+}
+
+_size_t const* _window_size(_window_t const* window) {
+    _ASSERT(window != NULL);
+    window->size = (_size_t){
         .width = window->pNSWindow.contentView.frame.size.width,
         .height = window->pNSWindow.contentView.frame.size.height
     };
+    return &window->size;
 }
 
 char const* _window_text(_window_t const* window) {
