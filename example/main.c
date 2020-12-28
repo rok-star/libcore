@@ -47,9 +47,10 @@ void window_render(_size_t const* size, float ratio) {
 void window_event(_window_event_t const* event, void* param) {
 	_ASSERT(event != NULL);
 	if (event->type == _SIZE_WINDOW_EVENT) {
-		_size_t size = _window_size(window);
-		float ratio = _window_pixelratio(window);
-		window_render(&size, ratio);
+		window_render(
+			_window_size(window),
+			_window_pixelratio(window)
+		);
 	} else if (event->type == _CLOSE_WINDOW_EVENT) {
 		_app_exit();
 	}

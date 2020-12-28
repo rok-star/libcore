@@ -346,16 +346,16 @@ bool _window_topmost(_window_t const* window) {
 
 _point_t const* _window_origin(_window_t const* window) {
     _ASSERT(window != NULL);
-    window->origin = (_point_t){
-        .width = window->pNSWindow.contentView.frame.origin.x,
-        .height = window->pNSWindow.contentView.frame.origin.y
+    ((_window_t*)window)->origin = (_point_t){
+        .x = window->pNSWindow.contentView.frame.origin.x,
+        .y = window->pNSWindow.contentView.frame.origin.y
     };
     return &window->origin;
 }
 
 _size_t const* _window_size(_window_t const* window) {
     _ASSERT(window != NULL);
-    window->size = (_size_t){
+    ((_window_t*)window)->size = (_size_t){
         .width = window->pNSWindow.contentView.frame.size.width,
         .height = window->pNSWindow.contentView.frame.size.height
     };
