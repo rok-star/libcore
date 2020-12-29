@@ -168,7 +168,7 @@ int _layer_children_count(_layer_t const* layer) {
 	return layer->children.size;
 }
 
-void _layer_add_child(_layer_t* layer, _layer_t* child) {
+void _layer_append_child(_layer_t* layer, _layer_t* child) {
 	_ASSERT(layer != NULL);
 	_ASSERT(child != NULL);
 	_layer_remove_from_parent(child);

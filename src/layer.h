@@ -62,13 +62,21 @@ _texture_t const* _layer_texture(_layer_t const*);
 double _layer_frame_width(_layer_t const*);
 _color_t const* _layer_frame_color(_layer_t const*);
 _color_t const* _layer_background_color(_layer_t const*);
+_layer_t* _layer_next(_layer_t const*);
+_layer_t* _layer_prev(_layer_t const*);
 _layer_t* _layer_parent(_layer_t const*);
 _layer_t* _layer_children_item(_layer_t const*,int);
 int _layer_children_count(_layer_t const*);
-void _layer_add_child(_layer_t*,_layer_t*);
+void _layer_append_child(_layer_t*,_layer_t*);
+void _layer_prepend_child(_layer_t*,_layer_t*);
+void _layer_insert_after(_layer_t*,_layer_t*,_layer_t const*);
+void _layer_insert_before(_layer_t*,_layer_t*,_layer_t const*);
 bool _layer_remove_child(_layer_t*,_layer_t*);
 bool _layer_remove_from_parent(_layer_t*);
+void _layer_path(_layer_t const*,_layer_t**,int*);
 void _layer_paint(_layer_t const*,_context_t const*,_point_t const*);
+_layer_t* _layer_hittest(_layer_t const*,_point_t const*);
+
 
 #ifdef __cplusplus
 }

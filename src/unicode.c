@@ -115,59 +115,65 @@ bool _codepoint_is_digital(uint32_t codepoint) {
 }
 
 int _codepoint_write_utf8(uint32_t codepoint, char* utf8_string, int capacity) {
-    _ASSERT(utf8_string != NULL);
-    if (capacity == 0) {
-        return 0;
-    } else if (codepoint >= 0xD800 && codepoint <= 0xDFFF) {
+    if (codepoint >= 0xD800 && codepoint <= 0xDFFF) {
         return 0;
     } else if (codepoint >= 0xD800 && codepoint <= 0xDFFF) {
         return 0;
     } else if (codepoint <= 0x7F) {
-        if (capacity < 2)
-            return 0;
-        utf8_string[0] = (char)codepoint;
+        if (utf8_string != NULL) {
+            if (capacity < 1)
+                return 0;
+            utf8_string[0] = (char)codepoint;
+        }
         return 1;
     } else if (codepoint <= 0x7FF) {
-        if (capacity < 3)
-            return 0;
-        utf8_string[0] = ((codepoint >> 6) & 037) | 0300;
-        utf8_string[1] = ((codepoint & 077) | 0200);
+        if (utf8_string != NULL) {
+            if (capacity < 2)
+                return 0;
+            utf8_string[0] = ((codepoint >> 6) & 037) | 0300;
+            utf8_string[1] = ((codepoint & 077) | 0200);
+        }
         return 2;
     } else if (codepoint <= 0xFFFF) {
-        if (capacity < 4)
-            return 0;
-        utf8_string[0] = ((codepoint >> 12) & 017) | 0340;
-        utf8_string[1] = ((codepoint >> 6) & 077) | 0200;
-        utf8_string[2] = ((codepoint & 077) | 0200);
+        if (utf8_string != NULL) {
+            if (capacity < 3)
+                return 0;
+            utf8_string[0] = ((codepoint >> 12) & 017) | 0340;
+            utf8_string[1] = ((codepoint >> 6) & 077) | 0200;
+            utf8_string[2] = ((codepoint & 077) | 0200);
+        }
         return 3;
     } else if (codepoint <= 0x10FFFF) {
-        if (capacity < 5)
-            return 0;
-        utf8_string[0] = ((codepoint >> 18) & 070) | 0360;
-        utf8_string[1] = ((codepoint >> 12) & 077) | 0200;
-        utf8_string[2] = ((codepoint >> 6) & 077) | 0200;
-        utf8_string[3] = ((codepoint & 077) | 0200);
+        if (utf8_string != NULL) {
+            if (capacity < 4)
+                return 0;
+            utf8_string[0] = ((codepoint >> 18) & 070) | 0360;
+            utf8_string[1] = ((codepoint >> 12) & 077) | 0200;
+            utf8_string[2] = ((codepoint >> 6) & 077) | 0200;
+            utf8_string[3] = ((codepoint & 077) | 0200);
+        }
         return 4;
     } else return 0;
 }
 
 int _codepoint_write_utf16(uint32_t codepoint, uint16_t* utf16_string, int capacity) {
-    _ASSERT(utf16_string != NULL);
-    if (capacity == 0) {
-        return 0;
-    } else if (codepoint >= 0xD800 && codepoint <= 0xDFFF)
+    if (codepoint >= 0xD800 && codepoint <= 0xDFFF)
         return 0;
     else if (codepoint <= 0xFFFF) {
-        if (capacity < 2)
-            return 0;
-        utf16_string[0] = (uint16_t)codepoint;
+        if (utf16_string != NULL) {
+            if (capacity < 1)
+                return 0;
+            utf16_string[0] = (uint16_t)codepoint;
+        }
         return 1;
     } else if (codepoint <= 0x10FFFF) {
-        if (capacity < 3)
-            return 0;
-        codepoint &= 0xFFFF;
-        utf16_string[0] = (uint16_t)((codepoint >> 10) | 0xD800);
-        utf16_string[1] = (codepoint & 0x3FF) | 0xDC00;
+        if (utf16_string != NULL) {
+            if (capacity < 2)
+                return 0;
+            codepoint &= 0xFFFF;
+            utf16_string[0] = (uint16_t)((codepoint >> 10) | 0xD800);
+            utf16_string[1] = (codepoint & 0x3FF) | 0xDC00;
+        }
         return 2;
     } else return 0;
 }
