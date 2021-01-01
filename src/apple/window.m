@@ -301,6 +301,7 @@ void _window_set_size(_window_t* window, _size_t const* value) {
 
 void _window_set_text(_window_t* window, char const* value) {
     _ASSERT(window != NULL);
+    _ASSERT(value != NULL);
     [window->pNSWindow setTitle: [NSString stringWithUTF8String: value]];
 }
 
