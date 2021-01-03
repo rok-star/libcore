@@ -6,24 +6,13 @@
 
 #define _SAMPLE_COUNT 4
 
-#define _RECT_TRANSFORM(rect, transform) { \
-    if ((transform).scale != 0) { \
-        (rect).origin.x *= (transform).scale; \
-        (rect).origin.y *= (transform).scale; \
-        (rect).size.width *= (transform).scale; \
-        (rect).size.height *= (transform).scale; \
+#define _RECT_SCALE(rect, scale) { \
+    if (scale != 0) { \
+        (rect).origin.x *= scale; \
+        (rect).origin.y *= scale; \
+        (rect).size.width *= scale; \
+        (rect).size.height *= scale; \
     } \
-    (rect).origin.x += (transform).x; \
-    (rect).origin.y += (transform).y; \
-}
-
-#define _POINT_TRANSFORM(point, transform) { \
-    if ((transform).scale != 0) { \
-        (point).x *= (transform).scale; \
-        (point).y *= (transform).scale; \
-    } \
-    (point).x += (transform).x; \
-    (point).y += (transform).y; \
 }
 
 #define _RECT_TRIANGLES_STRIP(rect, data) { \
@@ -68,6 +57,7 @@ typedef struct _context_t {
     _CONTEXT_ORIGIN origin;
     _size_t size;
     _rect_t clip;
+    float scale;
     bool painting;
 } _context_t;
 
@@ -75,7 +65,7 @@ static _context_t* __create(_texture_t const* texture, _window_t const* window) 
     _ASSERT(__metal_device != NULL);
     _ASSERT(__metal_library != NULL);
 
-    _context_t* context = _NEW(_context_t, {});
+    _context_t* context = _NEW(_context_t, { .scale = 1.0 });
 
     if (window != NULL) {
         context->window = (__bridge NSWindow*)_window_NSWindow(window);
@@ -235,6 +225,11 @@ void _context_end_paint(_context_t* context) {
     context->drawable = NULL;
 }
 
+float _context_scale(_context_t const* context) {
+    _ASSERT(context != NULL);
+    return context->scale;
+}
+
 _size_t const* _context_size(_context_t const* context) {
     _ASSERT(context != NULL);
     if (context->window != NULL) {
@@ -258,6 +253,11 @@ _rect_t const* _context_clip(_context_t const* context) {
 _CONTEXT_ORIGIN _context_origin(_context_t const* context) {
     _ASSERT(context != NULL);
     return context->origin;
+}
+
+void _context_set_scale(_context_t* context, float scale) {
+    _ASSERT(context != NULL);
+    context->scale = scale;
 }
 
 void _context_set_clip(_context_t* context, _rect_t const* rect) {
@@ -397,14 +397,14 @@ void _context_draw_texture(_context_t const* context, _texture_t const* texture,
     [context->command_encoder drawPrimitives: MTLPrimitiveTypeTriangleStrip vertexStart: 0 vertexCount: 4];
 }
 
-void _context_stroke_line(_context_t const* context, _point_t const* from, _point_t const* to, double width, _LINE_CAP cap, _brush_t const* brush, _transform_t const* transform) {
+void _context_stroke_line(_context_t const* context, _point_t const* from, _point_t const* to, double width, _LINE_CAP cap, _brush_t const* brush) {
     _ASSERT(context != NULL);
     _ASSERT(from != NULL);
     _ASSERT(to != NULL);
     _ASSERT(brush != NULL);
 }
 
-void _context_stroke_rect(_context_t const* context, _rect_t const* rect, double width, _brush_t const* brush, _transform_t const* transform) {
+void _context_stroke_rect(_context_t const* context, _rect_t const* rect, double width, _brush_t const* brush) {
     _ASSERT(context != NULL);
     _ASSERT(rect != NULL);
     _ASSERT(brush != NULL);
@@ -453,12 +453,10 @@ void _context_stroke_rect(_context_t const* context, _rect_t const* rect, double
         }
     };
 
-    if (transform != NULL) {
-        _RECT_TRANSFORM(border1, *transform);
-        _RECT_TRANSFORM(border2, *transform);
-        _RECT_TRANSFORM(border3, *transform);
-        _RECT_TRANSFORM(border4, *transform);
-    }
+    _RECT_SCALE(border1, context->scale);
+    _RECT_SCALE(border2, context->scale);
+    _RECT_SCALE(border3, context->scale);
+    _RECT_SCALE(border4, context->scale);
 
     float vertices[(12 * 4)];
     float* _dst = vertices;
@@ -470,23 +468,22 @@ void _context_stroke_rect(_context_t const* context, _rect_t const* rect, double
     _context_draw_vertices(context, vertices, (12 * 4), false, brush);
 }
 
-void _context_stroke_path(_context_t const* context, _bezier_path_t const* path, double width, _brush_t const* brush, _transform_t const* transform) {
+void _context_stroke_path(_context_t const* context, _bezier_path_t const* path, double width, _brush_t const* brush) {
     _ABORT("_context_stroke_path: Not implemented");
 }
 
-void _context_stroke_ellipse(_context_t const* context, _rect_t const* rect, double width, _brush_t const* brush, _transform_t const* transform) {
+void _context_stroke_ellipse(_context_t const* context, _rect_t const* rect, double width, _brush_t const* brush) {
     _ABORT("_context_stroke_ellipse: Not implemented");
 }
 
-void _context_fill_rect(_context_t const* context, _rect_t const* rect, _brush_t const* brush, _transform_t const* transform) {
+void _context_fill_rect(_context_t const* context, _rect_t const* rect, _brush_t const* brush) {
     _ASSERT(context != NULL);
     _ASSERT(rect != NULL);
     _ASSERT(brush != NULL);
 
     _rect_t rect_ = *rect;
 
-    if (transform != NULL)
-        _RECT_TRANSFORM(rect_, *transform);
+    _RECT_SCALE(rect_, context->scale);
 
     float vertices[8];
     _RECT_TRIANGLES_STRIP(rect_, vertices);
@@ -494,10 +491,10 @@ void _context_fill_rect(_context_t const* context, _rect_t const* rect, _brush_t
     _context_draw_vertices(context, vertices, 8, true, brush);
 }
 
-void _context_fill_path(_context_t const* context, _bezier_path_t const* path, _brush_t const* brush, _transform_t const* transform) {
+void _context_fill_path(_context_t const* context, _bezier_path_t const* path, _brush_t const* brush) {
     _ABORT("_context_fill_path: Not implemented");
 }
 
-void _context_fill_ellipse(_context_t const* context, _rect_t const* rect, _brush_t const* brush, _transform_t const* transform) {
+void _context_fill_ellipse(_context_t const* context, _rect_t const* rect, _brush_t const* brush) {
     _ABORT("_context_fill_ellipse: Not implemented");
 }

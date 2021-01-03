@@ -6,11 +6,6 @@
 #include <libcore/context.h>
 #include <libcore/MACRO.h>
 
-_color_t RED_COLOR = { 255, 0, 0, 255 };
-_color_t GREEN_COLOR = { 0, 255, 0, 255 };
-_color_t BLUE_COLOR = { 0, 0, 255, 255 };
-_color_t WHITE_COLOR = { 255, 255, 255, 255 };
-
 _window_t* window = NULL;
 _context_t* context = NULL;
 _brush_t* red_brush = NULL;
@@ -59,10 +54,10 @@ void window_event(_window_event_t const* event, void* param) {
 void app_event(_app_event_t const* event, void* param) {
 	_ASSERT(event != NULL);
 	if (event->type == _RUN_APP_EVENT) {
-		red_brush = _brush_create_color(&RED_COLOR);
-		green_brush = _brush_create_color(&GREEN_COLOR);
-		blue_brush = _brush_create_color(&BLUE_COLOR);
-		white_brush = _brush_create_color(&WHITE_COLOR);
+		red_brush = _brush_create_color(&_RED_COLOR);
+		green_brush = _brush_create_color(&_GREEN_COLOR);
+		blue_brush = _brush_create_color(&_BLUE_COLOR);
+		white_brush = _brush_create_color(&_WHITE_COLOR);
 		window = _window_create();
 		context = _context_create_window(window);
 		_context_set_origin(context, _LEFTTOP_CONTEXT_ORIGIN);

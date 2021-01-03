@@ -200,7 +200,7 @@ bool _layer_remove_from_parent(_layer_t* layer) {
 	}
 }
 
-void _layer_paint(_layer_t const* layer, _context_t const* context, _point_t const* point) {
+void _layer_paint(_layer_t const* layer, _context_t* context, _point_t const* point) {
 	_ASSERT(layer != NULL);
 	_ASSERT(context != NULL);
 	_rect_t rect = {
@@ -214,7 +214,7 @@ void _layer_paint(_layer_t const* layer, _context_t const* context, _point_t con
 	rect.size.height = round(rect.size.height);
 
 	if (layer->background_brush != NULL) {
-		_context_fill_rect(context, &rect, layer->background_brush, NULL);
+		_context_fill_rect(context, &rect, layer->background_brush);
 	}
 	if ((layer->frame_brush != NULL)
 	&& (layer->frame_width > 0)) {
@@ -223,7 +223,7 @@ void _layer_paint(_layer_t const* layer, _context_t const* context, _point_t con
 		rect_.origin.y += (layer->frame_width / 2);
 		rect_.size.width -= layer->frame_width;
 		rect_.size.height -= layer->frame_width;
-		_context_stroke_rect(context, &rect_, layer->frame_width, layer->frame_brush, NULL);
+		_context_stroke_rect(context, &rect_, layer->frame_width, layer->frame_brush);
 	}
 	if ((layer->texture != NULL)
 	&& (rect.size.width > 0)

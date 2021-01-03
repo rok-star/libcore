@@ -74,7 +74,7 @@ void _layer_insert_before(_layer_t*,_layer_t*,_layer_t const*);
 bool _layer_remove_child(_layer_t*,_layer_t*);
 bool _layer_remove_from_parent(_layer_t*);
 void _layer_path(_layer_t const*,_layer_t**,int*);
-void _layer_paint(_layer_t const*,_context_t const*,_point_t const*);
+void _layer_paint(_layer_t const*,_context_t*,_point_t const*);
 _layer_t* _layer_hittest(_layer_t const*,_point_t const*);
 
 

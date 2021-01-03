@@ -31,6 +31,7 @@ await Promise.all([ Deno.mkdir(Path.dirname(out_lib), { recursive: true }),
 
 await Promise.all([ Deno.copyFile(`${project}/src/WINDOWS.h`, `${out_inc}/WINDOWS.h`),
                     Deno.copyFile(`${project}/src/MACRO.h`, `${out_inc}/MACRO.h`),
+                    Deno.copyFile(`${project}/src/status.h`, `${out_inc}/status.h`),
                     Deno.copyFile(`${project}/src/math.h`, `${out_inc}/math.h`),
                     Deno.copyFile(`${project}/src/line.h`, `${out_inc}/line.h`),
                     Deno.copyFile(`${project}/src/unicode.h`, `${out_inc}/unicode.h`),
