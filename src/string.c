@@ -217,13 +217,13 @@ void _string_split(char const* pchar, int64_t len, char const* separator, char c
 	_ABORT("not implemented");
 }
 
-bool _string_is_whitespace(char const* pchar, int64_t len) {
+bool _string_whitespace(char const* pchar, int64_t len) {
 	_ASSERT(pchar != NULL);
 	_ASSERT(len >= 0);
 	return __all_included(pchar, len, __whitespace, 25);
 }
 
-bool _string_is_digital(char const* pchar, int64_t len) {
+bool _string_digital(char const* pchar, int64_t len) {
 	_ASSERT(pchar != NULL);
 	_ASSERT(len >= 0);
 	return __all_included(pchar, len, __digital, 10);
