@@ -35,6 +35,7 @@ await Promise.all([ Deno.copyFile(`${project}/src/WINDOWS.h`, `${out_inc}/WINDOW
                     Deno.copyFile(`${project}/src/math.h`, `${out_inc}/math.h`),
                     Deno.copyFile(`${project}/src/line.h`, `${out_inc}/line.h`),
                     Deno.copyFile(`${project}/src/unicode.h`, `${out_inc}/unicode.h`),
+                    Deno.copyFile(`${project}/src/string.h`, `${out_inc}/string.h`),
                     Deno.copyFile(`${project}/src/keyboard.h`, `${out_inc}/keyboard.h`),
                     Deno.copyFile(`${project}/src/color.h`, `${out_inc}/color.h`),
                     Deno.copyFile(`${project}/src/brush.h`, `${out_inc}/brush.h`),
@@ -67,6 +68,7 @@ target.temp = temp;
 target.sources.push(`${project}/src/dispatchqueue.c`);
 target.sources.push(`${project}/src/bezierpath.c`);
 target.sources.push(`${project}/src/unicode.c`);
+target.sources.push(`${project}/src/string.c`);
 target.sources.push(`${project}/src/brush.c`);
 target.sources.push(`${project}/src/layer.c`);
 target.sources.push(`${project}/src/color.c`);

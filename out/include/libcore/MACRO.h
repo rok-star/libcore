@@ -174,7 +174,7 @@
     __ret; \
 })
 
-#define _LAST_v(data, size) ({ \
+#define _LAST_V(data, size) ({ \
     _ASSERT(data != NULL); \
     _ASSERT(size > 0); \
     __typeof__(*data) __ret = data[size - 1]; \
@@ -189,6 +189,6 @@
 #define _REMOVE(array, index) _REMOVE_V((array).data, (array).size, (array).capacity, index)
 #define _INDEX_OF(array, item) _INDEX_OF_V((array).data, (array).size, item)
 #define _FIRST(array) _FIRST_V((array).data, (array).size);
-#define _LAST(array) _LAST_v((array).data, (array).size);
+#define _LAST(array) _LAST_V((array).data, (array).size);
 
 #endif /* _LIBCORE_MACRO_H */
