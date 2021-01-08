@@ -39,7 +39,13 @@ void _value_array_push(_value_t*,_value_t const*);
 void _value_array_unshift(_value_t*,_value_t const*);
 _value_t* _value_array_pop(_value_t*);
 _value_t* _value_array_shift(_value_t*);
-
+void _value_array_clear(_value_t*);
+int64_t _value_map_keys_count(_value_t const*);
+char const* _value_map_key_item(_value_t const*,int64_t);
+void _value_map_set(_value_t*,char const*,_value_t*);
+bool _value_map_has(_value_t*,char const*);
+_value_t* _value_map_get(_value_t*,char const*);
+void _value_map_clear(_value_t*);
 
 #ifdef __cplusplus
 }

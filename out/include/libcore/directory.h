@@ -7,7 +7,7 @@
 extern "C" {
 #endif
 
-void _dir_scan(char const*,char***,int*,_status_t*);
+void _dir_read(char const*,char***,int*,_status_t*);
 void _dir_remove(char const*,bool,_status_t*);
 
 #ifdef __cplusplus

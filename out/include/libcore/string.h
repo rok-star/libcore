@@ -1,5 +1,5 @@
-#ifndef _STRING_H
-#define _STRING_H
+#ifndef _LIBCORE_STRING_H
+#define _LIBCORE_STRING_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -18,4 +18,4 @@ bool _string_digital(char const*,int64_t);
 }
 #endif
 
-#endif /* _STRING_H */
+#endif /* _LIBCORE_STRING_H */
