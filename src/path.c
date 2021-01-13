@@ -12,9 +12,26 @@ char* _path_normalize(char const* path) {
     return NULL;
 }
 
-char* _path_join(char const** parts) {
+char* _path_join(char const** parts, int64_t num) {
     _ASSERT(parts != NULL);
-    return NULL;
+    int64_t size = 0;
+    for (int64_t i = 0; i < num; i++) {
+    	size += (strlen(parts[i]) + 1);
+    }
+    char* ret = _ALLOC(char, size);
+    char* dst = ret;
+    for (int64_t i = 0; i < num; i++) {
+    	int64_t len = strlen(parts[i]);
+    	memcpy(dst, parts[i], len);
+    	dst += len;
+    	if (i < (num - 1)) {
+    		memcpy(dst, _PATH_SEPARATOR, 1);
+    		dst += 1;
+    	}
+    }
+    _OUTPUT("%d\n", size);
+    _OUTPUT("%s\n", ret);
+    return ret;
 }
 
 bool _path_exists(char const* path) {

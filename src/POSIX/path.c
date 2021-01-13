@@ -8,7 +8,7 @@
 #include <libcore/path.h>
 
 #define getcwd_E(a, b) { \
-    if (getcwd(a, b) == NULL)  \
+    if (getcwd(a, b) == NULL) \
         _ABORT("getcwd() failed: %s\n", strerror(errno)); \
 }
 

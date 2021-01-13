@@ -4,7 +4,7 @@
 #include <libcore/MACRO.h>
 #include <libcore/file.h>
 
-static void __file_write(char const* path, uint8_t* data, int64_t size, bool append, _status_t* status) {
+static void __file_write(char const* path, uint8_t const* data, int64_t size, bool append, _status_t* status) {
 	_ASSERT(path != NULL);
 	_ASSERT(data != NULL);
 	FILE* file = fopen(path, (append ? "a" : "w"));
@@ -24,13 +24,13 @@ static void __file_write(char const* path, uint8_t* data, int64_t size, bool app
 	}
 }
 
-void _file_write(char const* path, uint8_t* data, int64_t size, _status_t* status) {
+void _file_write(char const* path, uint8_t const* data, int64_t size, _status_t* status) {
 	_ASSERT(path != NULL);
 	_ASSERT(data != NULL);
 	__file_write(path, data, size, false, status);
 }
 
-void _file_append(char const* path, uint8_t* data, int64_t size, _status_t* status) {
+void _file_append(char const* path, uint8_t const* data, int64_t size, _status_t* status) {
 	_ASSERT(path != NULL);
 	_ASSERT(data != NULL);
 	__file_write(path, data, size, true, status);

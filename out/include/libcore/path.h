@@ -25,7 +25,7 @@ extern "C" {
 char* _path_cwd(void);
 char* _path_resolve(char const*);
 char* _path_normalize(char const*);
-char* _path_join(char const**);
+char* _path_join(char const**,int64_t);
 void _path_stat(char const*,_path_stat_t*);
 bool _path_exists(char const*);
 bool _path_is_file(char const*);
