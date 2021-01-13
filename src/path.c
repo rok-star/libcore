@@ -29,8 +29,6 @@ char* _path_join(char const** parts, int64_t num) {
     		dst += 1;
     	}
     }
-    _OUTPUT("%d\n", size);
-    _OUTPUT("%s\n", ret);
     return ret;
 }
 
