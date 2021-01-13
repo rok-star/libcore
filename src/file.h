@@ -7,9 +7,9 @@
 extern "C" {
 #endif
 
-void _file_read(char const*,void**,size_t*,_status_t*);
-void _file_write(char const*,void*,size_t,_status_t*);
-void _file_append(char const*,void*,size_t,_status_t*);
+void _file_read(char const*,uint8_t**,int64_t*,_status_t*);
+void _file_write(char const*,uint8_t*,int64_t,_status_t*);
+void _file_append(char const*,uint8_t*,int64_t,_status_t*);
 void _file_remove(char const*,_status_t*);
 
 #ifdef __cplusplus

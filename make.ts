@@ -69,6 +69,7 @@ target.sources.push(`${project}/src/dispatchqueue.c`);
 target.sources.push(`${project}/src/bezierpath.c`);
 target.sources.push(`${project}/src/unicode.c`);
 target.sources.push(`${project}/src/string.c`);
+target.sources.push(`${project}/src/status.c`);
 target.sources.push(`${project}/src/brush.c`);
 target.sources.push(`${project}/src/layer.c`);
 target.sources.push(`${project}/src/color.c`);
@@ -91,6 +92,7 @@ if (Deno.build.os == 'windows') {
     target.sources.push(`${project}/src/POSIX/sleep.c`);
     target.sources.push(`${project}/src/POSIX/time.c`);
     target.sources.push(`${project}/src/POSIX/path.c`);
+    target.sources.push(`${project}/src/POSIX/file.c`);
 } else {
     throw new Error(`${Deno.build.os} not supported for build target`);
 }

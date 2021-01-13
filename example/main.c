@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <libcore/path.h>
 #include <libcore/app.h>
 #include <libcore/window.h>
 #include <libcore/context.h>
@@ -29,13 +30,9 @@ void window_render(_size_t const* size, float ratio) {
 		.size = { 10, 10 }
 	};
 
-	_transform_t transform = {
-		.scale = ratio
-	};
-
 	_context_begin_paint(context);
-	_context_fill_rect(context, &rect2, white_brush, &transform);
-	_context_stroke_rect(context, &rect2, 1, red_brush, &transform);
+	_context_fill_rect(context, &rect2, white_brush);
+	_context_stroke_rect(context, &rect2, 1, red_brush);
 	_context_end_paint(context);
 }
 

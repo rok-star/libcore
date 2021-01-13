@@ -1,6 +1,8 @@
 #ifndef _LIBCORE_STRING_H
 #define _LIBCORE_STRING_H
 
+#include <stdbool.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif

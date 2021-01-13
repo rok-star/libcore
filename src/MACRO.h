@@ -6,6 +6,16 @@
 #include <string.h>
 #include <execinfo.h>
 
+#define _OUTPUT(...) { \
+    fprintf(stdout, __VA_ARGS__); \
+    fflush(stdout); \
+}
+
+#define _ERROR(...) { \
+    fprintf(stderr, __VA_ARGS__); \
+    fflush(stderr); \
+}
+
 #define _BACKTRACE() { \
     void* __buffer[10]; \
     int __nentries = backtrace(__buffer, 10); \
@@ -19,8 +29,7 @@
 }
 
 #define _ABORT(...) { \
-    fprintf(stderr, __VA_ARGS__); \
-    fflush(stderr); \
+    _ERROR(__VA_ARGS__); \
     _BACKTRACE(); \
     exit(1); \
 }
