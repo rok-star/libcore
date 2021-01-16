@@ -30,7 +30,8 @@ static char const* _WINDOW_EVENT_NAME[15] = {
     "SHOW", "HIDE", "SIZE", "CLOSE", "MAXIMIZE",
     "MINIMIZE", "DEMAXIMIZE", "DEMINIMIZE",
     "MOUSEMOVE", "LBUTTONDOWN", "LBUTTONUP",
-    "RBUTTONDOWN", "RBUTTONUP", "KEYDOWN", "KEYUP"
+    "RBUTTONDOWN", "RBUTTONUP", "KEYDOWN", "KEYUP",
+    "PIXELRATIO"
 };
 
 typedef struct _key_info_t {
