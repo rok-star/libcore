@@ -26,7 +26,7 @@ typedef enum : int {
     _PIXELRATIO_WINDOW_EVENT  = 15
 } _WINDOW_EVENT;
 
-static char const* _WINDOW_EVENT_NAME[15] = {
+static char const* _WINDOW_EVENT_NAME[16] = {
     "SHOW", "HIDE", "SIZE", "CLOSE", "MAXIMIZE",
     "MINIMIZE", "DEMAXIMIZE", "DEMINIMIZE",
     "MOUSEMOVE", "LBUTTONDOWN", "LBUTTONUP",
