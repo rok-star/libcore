@@ -149,3 +149,31 @@ void _app_on_event(void (*proc)(_app_event_t const*,void*), void* param) {
     __event_proc = proc;
     __event_param = param;
 }
+
+
+
+
+
+typedef struct _app_t {
+    _dispatch_queue_t* queue;
+    void (*proc)(_app_event_t const*, void*);
+    void* param;
+} _app_t;
+
+_app_t* _app_create(void) {
+    return _NEW(_app_t, {});
+}
+
+void _app_destroy(_app_t* app) {
+    _ASSERT(app != NULL);
+    _FREE(app);
+}
+
+void _app_process(_app_t* app) {
+    _ASSERT(app != NULL);
+    ;
+}
+
+void _app_on_event(_app_t* app, _dispatch_queue_t* queue, void(*proc)(_app_event_t const*,void*), void* param) {
+
+}

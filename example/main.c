@@ -77,6 +77,29 @@ void app_event(_app_event_t const* event, void* param) {
 }
 
 int main(int argc, char const *argv[]) {
+
+
+	_app_t* app = _app_create();
+	_listener_t* listener = _listener_create();
+	_dispatch_queue_t* queue = _dispatch_queue_create();
+
+	_app_on_event(app, queue, app_event, NULL);
+	_listener_on_event(listener, queue, listener_event, NULL);
+
+	for (;;) {
+		_app_process(app);
+		_listener_process(listener);
+		_dispatch_queue_process(queue);
+		if (exit) {
+			break;
+		}
+	}
+
+	_dispatch_queue_destroy(queue);
+	_listener_destroy(listener);
+	_app_destroy(app);
+
+
 	_app_on_event(app_event, NULL);
 	_app_run();
 	return 0;

@@ -15,7 +15,7 @@ typedef enum : int {
     _DATA_SERVER_EVENT  = 2,
 } _SERVER_EVENT;
 
-static char const* _SERVER_EVENT_NAME[15] = {
+static char const* _SERVER_EVENT_NAME[3] = {
     "OPEN", "CLOSE", "DATA"
 };
 
@@ -32,12 +32,11 @@ typedef struct _server_event_t {
 extern "C" {
 #endif
 
-_server_t* _server_create(void);
+_server_t* _server_create(_server_info_t const*,_status_t*);
 void _server_destroy(_server_t*);
-void _server_on_event(_server_t*,void(*)(_server_event_t const*,void*),void*);
+void _server_run(_server_t*);
 bool _server_running(_server_t const*);
-void _server_start(_server_t*,_server_info_t const*,_status_t*);
-void _server_stop(_server_t*);
+void _server_on_event(_server_t*,void(*)(_server_event_t const*,void*),void*);
 
 #ifdef __cplusplus
 }
