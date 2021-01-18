@@ -50,57 +50,53 @@ void window_event(_window_event_t const* event, void* param) {
 
 void app_event(_app_event_t const* event, void* param) {
 	_ASSERT(event != NULL);
-	if (event->type == _RUN_APP_EVENT) {
-		red_brush = _brush_create_color(&_RED_COLOR);
-		green_brush = _brush_create_color(&_GREEN_COLOR);
-		blue_brush = _brush_create_color(&_BLUE_COLOR);
-		white_brush = _brush_create_color(&_WHITE_COLOR);
-		window = _window_create();
-		context = _context_create_window(window);
-		_context_set_origin(context, _LEFTTOP_CONTEXT_ORIGIN);
-		_window_on_event(window, window_event, NULL);
-		_window_set_text(window, "Lorem ipsum привет рулет");
-		_window_set_size(window, &(_size_t){ 640, 480 });
-		_window_set_closable(window, false);
-		_window_set_sizable(window, true);
-		_window_set_minimizable(window, true);
-		_window_set_maximizable(window, true);
-		_window_set_visible(window, true);
-	} else if (event->type == _EXIT_APP_EVENT) {
-		_brush_destroy(red_brush);
-		_brush_destroy(green_brush);
-		_brush_destroy(blue_brush);
-		_brush_destroy(white_brush);
-		_context_destroy(context);
-		_window_destroy(window);
+	if (event->type == _SPIN_APP_EVENT) {
+		;
 	}
 }
 
 int main(int argc, char const *argv[]) {
 
-
 	_app_t* app = _app_create();
-	_listener_t* listener = _listener_create();
+	_window_t* window = _window_create();
 	_dispatch_queue_t* queue = _dispatch_queue_create();
 
 	_app_on_event(app, queue, app_event, NULL);
-	_listener_on_event(listener, queue, listener_event, NULL);
+	_window_on_event(window, queue, window_event, NULL);
+
+	red_brush = _brush_create_color(&_RED_COLOR);
+	green_brush = _brush_create_color(&_GREEN_COLOR);
+	blue_brush = _brush_create_color(&_BLUE_COLOR);
+	white_brush = _brush_create_color(&_WHITE_COLOR);
+	window = _window_create();
+	context = _context_create_window(window);
+	_context_set_origin(context, _LEFTTOP_CONTEXT_ORIGIN);
+	_window_on_event(window, queue, window_event, NULL);
+	_window_set_text(window, "Lorem ipsum привет рулет");
+	_window_set_size(window, &(_size_t){ 640, 480 });
+	_window_set_closable(window, false);
+	_window_set_sizable(window, true);
+	_window_set_minimizable(window, true);
+	_window_set_maximizable(window, true);
+	_window_set_visible(window, true);
 
 	for (;;) {
 		_app_process(app);
-		_listener_process(listener);
 		_dispatch_queue_process(queue);
 		if (exit) {
 			break;
 		}
 	}
 
+	_brush_destroy(red_brush);
+	_brush_destroy(green_brush);
+	_brush_destroy(blue_brush);
+	_brush_destroy(white_brush);
+	_context_destroy(context);
+	_window_destroy(window);
+
 	_dispatch_queue_destroy(queue);
-	_listener_destroy(listener);
 	_app_destroy(app);
 
-
-	_app_on_event(app_event, NULL);
-	_app_run();
 	return 0;
 }
