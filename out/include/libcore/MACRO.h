@@ -126,13 +126,13 @@
         __typeof__(data) __data = _ALLOC(__typeof__(*data), __reserve); \
         __data[0] = (__VA_ARGS__); \
         if (data != NULL) { \
-            for (int __i = 0; __i < size; __i++) \
+            for (int64_t __i = 0; __i < size; __i++) \
                 __data[__i + 1] = data[__i]; \
             _FREE(data); \
         } \
         data = __data; \
     } else { \
-        for (int __i = (size - 1); __i >= 0; __i--) \
+        for (int64_t __i = (size - 1); __i >= 0; __i--) \
             data[__i + 1] = data[__i]; \
         data[0] = (__VA_ARGS__); \
     } \
@@ -145,7 +145,7 @@
     _ASSERT(capacity > 0); \
     _ASSERT(size <= capacity); \
     __typeof__(*data) __ret = data[0]; \
-    for (int __i = 1; __i < size; __i++) \
+    for (int64_t __i = 1; __i < size; __i++) \
         data[__i - 1] = data[__i]; \
     size -= 1; \
     __ret; \
@@ -156,8 +156,27 @@
     _ASSERT(size >= 0); \
     _ASSERT(capacity >= 0); \
     _ASSERT(size <= capacity); \
+    int64_t __index = -1; \
+    for (int64_t __i = 0; __i < size; __i++) { \
+        if (data[__i] == item) { \
+            __index = __i; \
+            break; \
+        } \
+    } \
+    if ((__index >= 0) && (__index < size)) { \
+        for (int64_t __i = (__index + 1); __i < size; __i++) \
+            data[__i - 1] = data[__i]; \
+        size -= 1; \
+    } \
+}
+
+#define _REMOVE_INDEX_V(data, size, capacity, index) { \
+    _ASSERT(data != NULL); \
+    _ASSERT(size >= 0); \
+    _ASSERT(capacity >= 0); \
+    _ASSERT(size <= capacity); \
     if ((index >= 0) && (index < size)) { \
-        for (int __i = (index + 1); __i < size; __i++) \
+        for (int64_t __i = (index + 1); __i < size; __i++) \
             data[__i - 1] = data[__i]; \
         size -= 1; \
     } \
@@ -166,8 +185,8 @@
 #define _INDEX_OF_V(data, size, item) ({ \
     _ASSERT(data != NULL); \
     _ASSERT(size >= 0); \
-    int __ret = -1; \
-    for (int __i = 0; __i < size; __i++) { \
+    int64_t __ret = -1; \
+    for (int64_t __i = 0; __i < size; __i++) { \
         if (data[__i] == item) { \
             __ret = __i; \
             break; \
@@ -195,7 +214,8 @@
 #define _POP(array) _POP_V((array).data, (array).size, (array).capacity)
 #define _UNSHIFT(array, ...) _UNSHIFT_V((array).data, (array).size, (array).capacity, __VA_ARGS__)
 #define _SHIFT(array, ...) _SHIFT_V((array).data, (array).size, (array).capacity)
-#define _REMOVE(array, index) _REMOVE_V((array).data, (array).size, (array).capacity, index)
+#define _REMOVE(array, item) _REMOVE_V((array).data, (array).size, (array).capacity, item)
+#define _REMOVE_INDEX(array, index) _REMOVE_INDEX_V((array).data, (array).size, (array).capacity, index)
 #define _INDEX_OF(array, item) _INDEX_OF_V((array).data, (array).size, item)
 #define _FIRST(array) _FIRST_V((array).data, (array).size);
 #define _LAST(array) _LAST_V((array).data, (array).size);

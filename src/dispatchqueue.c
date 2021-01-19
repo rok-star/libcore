@@ -53,7 +53,7 @@ bool _dispatch_queue_remove(_dispatch_queue_t* queue, void(*proc)(void*), void* 
     for (int i = (queue->items.size - 1); i >= 0; i--) {
         if ((queue->items.data[i].proc == proc)
         && (queue->items.data[i].param == param)) {
-            _REMOVE(queue->items, i);
+            _REMOVE_INDEX(queue->items, i);
             ret = true;
         }
     }
@@ -67,7 +67,7 @@ bool _dispatch_queue_remove_proc(_dispatch_queue_t* queue, void(*proc)(void*)) {
     _lock_acquire(queue->lock);
     for (int i = (queue->items.size - 1); i >= 0; i--) {
         if (queue->items.data[i].proc == proc) {
-            _REMOVE(queue->items, i);
+            _REMOVE_INDEX(queue->items, i);
             ret = true;
         }
     }
@@ -81,7 +81,7 @@ bool _dispatch_queue_remove_param(_dispatch_queue_t* queue, void* param) {
     _lock_acquire(queue->lock);
     for (int i = (queue->items.size - 1); i >= 0; i--) {
         if (queue->items.data[i].param == param) {
-            _REMOVE(queue->items, i);
+            _REMOVE_INDEX(queue->items, i);
             ret = true;
         }
     }

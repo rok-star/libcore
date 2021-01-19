@@ -180,7 +180,7 @@ bool _layer_remove_child(_layer_t* layer, _layer_t* child) {
 	_ASSERT(child != NULL);
 	int index = _INDEX_OF(layer->children, child);
 	if (index > -1) {
-		_REMOVE(layer->children, index);
+		_REMOVE_INDEX(layer->children, index);
 		child->parent = NULL;
 		return true;
 	} else {
@@ -192,7 +192,7 @@ bool _layer_remove_from_parent(_layer_t* layer) {
 	_ASSERT(layer != NULL);
 	if (layer->parent != NULL) {
 		int index = _INDEX_OF(layer->parent->children, layer);
-		_REMOVE(layer->parent->children, index);
+		_REMOVE_INDEX(layer->parent->children, index);
 		layer->parent = NULL;
 		return true;
 	} else {

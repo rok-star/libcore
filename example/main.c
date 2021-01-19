@@ -68,6 +68,10 @@ int main(int argc, char const *argv[]) {
 	app = _app_create();
 	window = _window_create();
 	context = _context_create_window(window);
+
+	_app_on_event(app, app_event, NULL);
+	_window_on_event(window, window_event, NULL);
+
 	_context_set_origin(context, _LEFTTOP_CONTEXT_ORIGIN);
 	_window_set_text(window, "Lorem ipsum привет рулет");
 	_window_set_size(window, &(_size_t){ 640, 480 });
@@ -77,16 +81,12 @@ int main(int argc, char const *argv[]) {
 	_window_set_maximizable(window, true);
 	_window_set_visible(window, true);
 
-	_app_on_event(app, app_event, NULL);
-	_window_on_event(window, window_event, NULL);
-
 	for (;;) {
 		_app_process(app);
 		if (exit_) {
 			break;
 		}
 	}
-
 
 	_context_destroy(context);
 	_window_destroy(window);

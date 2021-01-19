@@ -27,9 +27,7 @@ extern "C" {
 
 _listener_t* _listener_create(_listener_info_t const*,_status_t*);
 void _listener_destroy(_listener_t*);
-void _listener_run(_listener_t*);
-void _listener_exit(_listener_t*);
-bool _listener_running(_listener_t const*);
+void _listener_process(_listener_t*);
 void _listener_on_event(_listener_t*,void(*)(_listener_event_t const*,void*),void*);
 
 #ifdef __cplusplus
