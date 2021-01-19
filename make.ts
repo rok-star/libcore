@@ -12,10 +12,10 @@ import { Target, TargetType, Standard, red, green, yellow, remove, tempPath } fr
 
 const mode: string = Deno.args.includes('--release') ? 'release' : 'debug';
 const temp: string = Path.join(tempPath(), 'libcore', mode);
-const project: string = Path.resolve(Deno.cwd());
-const library: string = Path.resolve(Path.join(Deno.cwd(), '..'));
-const platform: string = ({ windows: 'win32', darwin: 'macos', linux: 'linux' })[Deno.build.os];
-const out_lib: string = Path.resolve(Path.join(`${project}`, 'out', 'lib', platform, mode, (platform == 'win32' ? 'core.lib' : 'libcore.a')));
+const dirname: string = Path.dirname(Path.fromFileUrl(import.meta.url));
+const project: string = Path.resolve(dirname);
+const library: string = Path.resolve(Path.join(dirname, '..'));
+const out_lib: string = Path.resolve(Path.join(`${project}`, 'out', 'lib', Deno.build.os, mode, (Deno.build.os == 'windows' ? 'core.lib' : 'libcore.a')));
 const out_inc: string = Path.resolve(Path.join(`${project}`, 'out', 'include', 'libcore'));
 const clean: boolean = (Deno.args.includes('--clean') || Deno.args.includes('--release'));
 
@@ -86,6 +86,14 @@ if (Deno.build.os == 'windows') {
     target.sources.push(`${project}/src/apple/texture.m`);
     target.sources.push(`${project}/src/apple/metal.m`);
     target.sources.push(`${project}/src/apple/timer.m`);
+    target.sources.push(`${project}/src/POSIX/cond.c`);
+    target.sources.push(`${project}/src/POSIX/lock.c`);
+    target.sources.push(`${project}/src/POSIX/thread.c`);
+    target.sources.push(`${project}/src/POSIX/sleep.c`);
+    target.sources.push(`${project}/src/POSIX/time.c`);
+    target.sources.push(`${project}/src/POSIX/path.c`);
+    target.sources.push(`${project}/src/POSIX/file.c`);
+} else if (Deno.build.os == 'linux') {
     target.sources.push(`${project}/src/POSIX/cond.c`);
     target.sources.push(`${project}/src/POSIX/lock.c`);
     target.sources.push(`${project}/src/POSIX/thread.c`);

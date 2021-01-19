@@ -1,3 +1,7 @@
+#ifdef __linux__
+    #define _POSIX_C_SOURCE 200809L
+#endif
+
 #include <unistd.h>
 #include <stdbool.h>
 #include <limits.h>
@@ -27,8 +31,13 @@ void _path_stat(char const* path, _path_stat_t* stat_) {
     		.exists = true,
     		.file = S_ISREG(st.st_mode),
     		.directory = S_ISDIR(st.st_mode),
+#if __linux__
+            .modified = ((st.st_mtim.tv_sec * 1000.0)
+                        + (st.st_mtim.tv_nsec / 1000000.0)),
+#else
     		.modified = ((st.st_mtimespec.tv_sec * 1000.0)
                         + (st.st_mtimespec.tv_nsec / 1000000.0)),
+#endif
     		.size = st.st_size
     	};
     } else {

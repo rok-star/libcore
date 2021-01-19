@@ -1,3 +1,7 @@
+#ifdef __linux__
+    #define _POSIX_C_SOURCE 200809L
+#endif
+
 #include <pthread.h>
 #include <libcore/lock.h>
 #include <libcore/MACRO.h>

@@ -1,3 +1,4 @@
+#include <ctype.h>
 #include <libcore/MACRO.h>
 #include <libcore/unicode.h>
 #include <libcore/string.h>

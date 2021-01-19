@@ -1,4 +1,9 @@
+#ifdef __linux__
+    #define _POSIX_C_SOURCE 200809L
+#endif
+
 #include <math.h>
+#include <time.h>
 #include <sys/time.h>
 #include <libcore/MACRO.h>
 #include <libcore/time.h>

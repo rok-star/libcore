@@ -1,12 +1,11 @@
+#ifdef __linux__
+    #define _POSIX_C_SOURCE 200809L
+#endif
+
 #include <pthread.h>
 #include <libcore/thread.h>
 #include <libcore/MACRO.h>
 
-#define pthread_threadid_np_E(a, b) { \
-    int __err = pthread_threadid_np(a, b); \
-    if (__err != 0)  \
-        _ABORT("pthread_threadid_np() failed: %s\n", strerror(__err)); \
-}
 
 #define pthread_create_E(a, b, c, d) { \
     int __err = pthread_create(a, b, c, d); \
@@ -29,7 +28,6 @@
 typedef struct _thread_t {
     void(*proc)(void*);
     void* param;
-    _Atomic uint64_t id;
     pthread_t thread;
 } _thread_t;
 
@@ -46,27 +44,17 @@ _thread_t* _thread_create(void(*proc)(void*), void* param) {
         .proc = proc,
         .param = param
     });
-    uint64_t id = 0;
     pthread_create_E(&thread->thread, NULL, __thread_proc, thread);
-    pthread_threadid_np_E(thread->thread, &id);
-    thread->id = id;
     return thread;
 }
 
 void _thread_destroy(_thread_t* thread) {
     _ASSERT(thread != NULL);
-    if (thread->id != 0)
-        pthread_cancel_E(thread->thread);
+    pthread_cancel_E(thread->thread);
     _FREE(thread);
 }
 
 void _thread_join(_thread_t* thread) {
     _ASSERT(thread != NULL);
     pthread_join_E(thread->thread, NULL);
-    thread->id = 0;
-}
-
-uint64_t _thread_id(_thread_t const* thread) {
-    _ASSERT(thread != NULL);
-    return thread->id;
 }

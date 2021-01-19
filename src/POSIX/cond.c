@@ -1,3 +1,9 @@
+#ifdef __linux__
+    #define _POSIX_C_SOURCE 200809L
+#endif
+
+#include <time.h>
+#include <stdint.h>
 #include <pthread.h>
 #include <libcore/lock.h>
 #include <libcore/cond.h>

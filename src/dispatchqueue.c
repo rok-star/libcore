@@ -1,4 +1,5 @@
 #include <stdbool.h>
+#include <stdint.h>
 #include <libcore/MACRO.h>
 #include <libcore/cond.h>
 #include <libcore/lock.h>
