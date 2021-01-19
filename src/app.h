@@ -2,16 +2,16 @@
 #define _LIBCORE_APP_H
 
 #include <stdbool.h>
-#include <libcore/dispatchqueue.h>
 
 typedef struct _app_t _app_t;
 
 typedef enum : int {
-    _SPIN_APP_EVENT = 0
+    _SPIN_APP_EVENT = 0,
+    _EXIT_APP_EVENT = 1
 } _APP_EVENT;
 
-static char const* _APP_EVENT_NAME[1] = {
-    "SPIN"
+static char const* _APP_EVENT_NAME[2] = {
+    "SPIN", "EXIT"
 };
 
 typedef struct _app_event_t {
@@ -25,7 +25,7 @@ extern "C" {
 _app_t* _app_create(void);
 void _app_destroy(_app_t*);
 void _app_process(_app_t*);
-void _app_on_event(_app_t*, _dispatch_queue_t*, void(*)(_app_event_t const*,void*),void*);
+void _app_on_event(_app_t*, void(*)(_app_event_t const*,void*),void*);
 
 #ifdef __cplusplus
 }

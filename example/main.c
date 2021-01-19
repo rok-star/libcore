@@ -7,6 +7,9 @@
 #include <libcore/context.h>
 #include <libcore/MACRO.h>
 
+bool exit_ = false;
+
+_app_t* app = NULL;
 _window_t* window = NULL;
 _context_t* context = NULL;
 _brush_t* red_brush = NULL;
@@ -44,7 +47,7 @@ void window_event(_window_event_t const* event, void* param) {
 			_window_pixelratio(window)
 		);
 	} else if (event->type == _CLOSE_WINDOW_EVENT) {
-		_app_exit();
+		exit_ = true;
 	}
 }
 
@@ -52,26 +55,22 @@ void app_event(_app_event_t const* event, void* param) {
 	_ASSERT(event != NULL);
 	if (event->type == _SPIN_APP_EVENT) {
 		;
+	} else if (event->type == _EXIT_APP_EVENT) {
+		exit_ = true;
 	}
 }
 
 int main(int argc, char const *argv[]) {
 
-	_app_t* app = _app_create();
-	_window_t* window = _window_create();
-	_dispatch_queue_t* queue = _dispatch_queue_create();
-
-	_app_on_event(app, queue, app_event, NULL);
-	_window_on_event(window, queue, window_event, NULL);
-
+	app = _app_create();
+	window = _window_create();
 	red_brush = _brush_create_color(&_RED_COLOR);
 	green_brush = _brush_create_color(&_GREEN_COLOR);
 	blue_brush = _brush_create_color(&_BLUE_COLOR);
 	white_brush = _brush_create_color(&_WHITE_COLOR);
-	window = _window_create();
 	context = _context_create_window(window);
 	_context_set_origin(context, _LEFTTOP_CONTEXT_ORIGIN);
-	_window_on_event(window, queue, window_event, NULL);
+	_window_on_event(window, window_event, NULL);
 	_window_set_text(window, "Lorem ipsum привет рулет");
 	_window_set_size(window, &(_size_t){ 640, 480 });
 	_window_set_closable(window, false);
@@ -80,10 +79,12 @@ int main(int argc, char const *argv[]) {
 	_window_set_maximizable(window, true);
 	_window_set_visible(window, true);
 
+	_app_on_event(app, app_event, NULL);
+	_window_on_event(window, window_event, NULL);
+
 	for (;;) {
 		_app_process(app);
-		_dispatch_queue_process(queue);
-		if (exit) {
+		if (exit_) {
 			break;
 		}
 	}
@@ -94,8 +95,6 @@ int main(int argc, char const *argv[]) {
 	_brush_destroy(white_brush);
 	_context_destroy(context);
 	_window_destroy(window);
-
-	_dispatch_queue_destroy(queue);
 	_app_destroy(app);
 
 	return 0;

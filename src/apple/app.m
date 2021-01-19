@@ -28,41 +28,20 @@
     _onRun();
 }
 
-- (void)applicationWillTerminate:(NSNotification*)notification {
+- (void)exit {
     _onExit();
-}
-
-- (void)stop {
-    [NSApp stop: self];
-    __exiting = true;
 }
 
 @end
 
 typedef struct _app_t {
-    _dispatch_queue_t* queue;
     void (*proc)(_app_event_t const*, void*);
     void* param;
 } _app_t;
 
-typedef struct __dispatch_event_t {
-    _app_t* app;
-    _app_event_t event;
-} __dispatch_event_t;
-
-static void __dispatch_event(__dispatch_event_t* event) {
-    _ASSERT(event != NULL);
-    _ASSERT(event->app != NULL);
-    if (event->app->proc != NULL) {
-        event->app->proc(
-            &event->event,
-            event->app->param
-        );
-    }
-    _FREE(event);
-}
-
 _app_t* _app_create(void) {
+    _app_t* app = _NEW(_app_t, {});
+
     [[NSApplication sharedApplication]
         setDelegate: [[__Delegate alloc]
             initWithOnRun: ^{
@@ -71,17 +50,26 @@ _app_t* _app_create(void) {
                 id appItem = [mainMenu addItemWithTitle: [NSString stringWithCString: "123" encoding: NSUTF8StringEncoding] action: nil keyEquivalent: @""];
                 id quitItem = [appMenu addItemWithTitle: @"Quit" action: nil keyEquivalent: @"q"];
                 [quitItem setTarget: [NSApp delegate]];
-                [quitItem setAction: @selector(stop)];
+                [quitItem setAction: @selector(exit)];
                 [appItem setSubmenu: appMenu];
                 [NSApp setMainMenu: mainMenu];
                 [NSApp setActivationPolicy: NSApplicationActivationPolicyRegular];
             }
-            onExit: ^{}
+            onExit: ^{
+                if (app->proc != NULL) {
+                    app->proc(
+                        &(_app_event_t){
+                            .type = _EXIT_APP_EVENT
+                        },
+                        app->param
+                    );
+                }
+            }
         ]
     ];
     [NSApp finishLaunching];
 
-    return _NEW(_app_t, {});
+    return app;
 }
 
 void _app_destroy(_app_t* app) {
@@ -108,31 +96,17 @@ void _app_process(_app_t* app) {
     }
 
     if (app->proc != NULL) {
-        if (app->queue != NULL) {
-            _dispatch_queue_post(
-                app->queue,
-                __dispatch_event,
-                _NEW(__dispatch_event_t, {
-                    .app = app,
-                    .event = {
-                        .type = _SPIN_APP_EVENT
-                    }
-                });
-            );
-        } else {
-            app->proc(
-                &(_app_event_t){
-                    .type = _SPIN_APP_EVENT
-                },
-                app->param
-            );
-        }
+        app->proc(
+            &(_app_event_t){
+                .type = _SPIN_APP_EVENT
+            },
+            app->param
+        );
     }
 }
 
-void _app_on_event(_app_t* app, _dispatch_queue_t* queue, void(*proc)(_app_event_t const*,void*), void* param) {
+void _app_on_event(_app_t* app, void(*proc)(_app_event_t const*,void*), void* param) {
     _ASSERT(app != NULL);
-    app->queue = queue;
     app->proc = proc;
     app->param = param;
 }
