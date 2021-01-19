@@ -6,12 +6,11 @@
 typedef struct _app_t _app_t;
 
 typedef enum : int {
-    _SPIN_APP_EVENT = 0,
-    _EXIT_APP_EVENT = 1
+    _EXIT_APP_EVENT = 0
 } _APP_EVENT;
 
-static char const* _APP_EVENT_NAME[2] = {
-    "SPIN", "EXIT"
+static char const* _APP_EVENT_NAME[1] = {
+    "EXIT"
 };
 
 typedef struct _app_event_t {

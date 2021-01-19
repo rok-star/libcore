@@ -53,9 +53,7 @@ void window_event(_window_event_t const* event, void* param) {
 
 void app_event(_app_event_t const* event, void* param) {
 	_ASSERT(event != NULL);
-	if (event->type == _SPIN_APP_EVENT) {
-		;
-	} else if (event->type == _EXIT_APP_EVENT) {
+	if (event->type == _EXIT_APP_EVENT) {
 		exit_ = true;
 	}
 }
@@ -73,7 +71,7 @@ int main(int argc, char const *argv[]) {
 	_window_on_event(window, window_event, NULL);
 	_window_set_text(window, "Lorem ipsum привет рулет");
 	_window_set_size(window, &(_size_t){ 640, 480 });
-	_window_set_closable(window, false);
+	_window_set_closable(window, true);
 	_window_set_sizable(window, true);
 	_window_set_minimizable(window, true);
 	_window_set_maximizable(window, true);

@@ -94,15 +94,6 @@ void _app_process(_app_t* app) {
         [NSApp sendEvent: event];
         [NSApp updateWindows];
     }
-
-    if (app->proc != NULL) {
-        app->proc(
-            &(_app_event_t){
-                .type = _SPIN_APP_EVENT
-            },
-            app->param
-        );
-    }
 }
 
 void _app_on_event(_app_t* app, void(*proc)(_app_event_t const*,void*), void* param) {
