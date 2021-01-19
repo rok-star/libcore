@@ -60,12 +60,13 @@ void app_event(_app_event_t const* event, void* param) {
 
 int main(int argc, char const *argv[]) {
 
-	app = _app_create();
-	window = _window_create();
 	red_brush = _brush_create_color(&_RED_COLOR);
 	green_brush = _brush_create_color(&_GREEN_COLOR);
 	blue_brush = _brush_create_color(&_BLUE_COLOR);
 	white_brush = _brush_create_color(&_WHITE_COLOR);
+
+	app = _app_create();
+	window = _window_create();
 	context = _context_create_window(window);
 	_context_set_origin(context, _LEFTTOP_CONTEXT_ORIGIN);
 	_window_on_event(window, window_event, NULL);
@@ -87,13 +88,15 @@ int main(int argc, char const *argv[]) {
 		}
 	}
 
+
+	_context_destroy(context);
+	_window_destroy(window);
+	_app_destroy(app);
+
 	_brush_destroy(red_brush);
 	_brush_destroy(green_brush);
 	_brush_destroy(blue_brush);
 	_brush_destroy(white_brush);
-	_context_destroy(context);
-	_window_destroy(window);
-	_app_destroy(app);
 
 	return 0;
 }

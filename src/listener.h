@@ -10,7 +10,7 @@ typedef struct _listener_info_t {
 } _listener_info_t;
 
 typedef enum : int {
-    _CONNECTION_LISTENER_EVENT  = 0
+    _CONNECTION_LISTENER_EVENT = 0
 } _LISTENER_EVENT;
 
 static char const* _LISTENER_EVENT_NAME[1] = {

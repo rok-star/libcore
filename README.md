@@ -8,16 +8,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <libcore/path.h>
 #include <libcore/app.h>
 #include <libcore/window.h>
 #include <libcore/context.h>
 #include <libcore/MACRO.h>
 
-_color_t RED_COLOR = { 255, 0, 0, 255 };
-_color_t GREEN_COLOR = { 0, 255, 0, 255 };
-_color_t BLUE_COLOR = { 0, 0, 255, 255 };
-_color_t WHITE_COLOR = { 255, 255, 255, 255 };
+bool exit_ = false;
 
+_app_t* app = NULL;
 _window_t* window = NULL;
 _context_t* context = NULL;
 _brush_t* red_brush = NULL;
@@ -41,58 +40,71 @@ void window_render(_size_t const* size, float ratio) {
         .size = { 10, 10 }
     };
 
-    _transform_t transform = {
-        .scale = ratio
-    };
-
     _context_begin_paint(context);
-    _context_fill_rect(context, &rect2, white_brush, &transform);
-    _context_stroke_rect(context, &rect2, 1, red_brush, &transform);
+    _context_fill_rect(context, &rect2, white_brush);
+    _context_stroke_rect(context, &rect2, 1, red_brush);
     _context_end_paint(context);
 }
 
 void window_event(_window_event_t const* event, void* param) {
     _ASSERT(event != NULL);
     if (event->type == _SIZE_WINDOW_EVENT) {
-        _size_t size = _window_size(window);
-        float ratio = _window_pixelratio(window);
-        window_render(&size, ratio);
+        window_render(
+            _window_size(window),
+            _window_pixelratio(window)
+        );
     } else if (event->type == _CLOSE_WINDOW_EVENT) {
-        _app_exit();
+        exit_ = true;
     }
 }
 
 void app_event(_app_event_t const* event, void* param) {
     _ASSERT(event != NULL);
-    if (event->type == _RUN_APP_EVENT) {
-        red_brush = _brush_create_color(&RED_COLOR);
-        green_brush = _brush_create_color(&GREEN_COLOR);
-        blue_brush = _brush_create_color(&BLUE_COLOR);
-        white_brush = _brush_create_color(&WHITE_COLOR);
-        window = _window_create();
-        context = _context_create_window(window);
-        _context_set_origin(context, _LEFTTOP_CONTEXT_ORIGIN);
-        _window_on_event(window, window_event, NULL);
-        _window_set_text(window, "Lorem ipsum привет рулет");
-        _window_set_size(window, &(_size_t){ 640, 480 });
-        _window_set_closable(window, false);
-        _window_set_sizable(window, true);
-        _window_set_minimizable(window, true);
-        _window_set_maximizable(window, true);
-        _window_set_visible(window, true);
-    } else if (event->type == _EXIT_APP_EVENT) {
-        _brush_destroy(red_brush);
-        _brush_destroy(green_brush);
-        _brush_destroy(blue_brush);
-        _brush_destroy(white_brush);
-        _context_destroy(context);
-        _window_destroy(window);
+    if (event->type == _EXIT_APP_EVENT) {
+        exit_ = true;
     }
 }
 
 int main(int argc, char const *argv[]) {
-    _app_on_event(app_event, NULL);
-    _app_run();
+
+    red_brush = _brush_create_color(&_RED_COLOR);
+    green_brush = _brush_create_color(&_GREEN_COLOR);
+    blue_brush = _brush_create_color(&_BLUE_COLOR);
+    white_brush = _brush_create_color(&_WHITE_COLOR);
+
+    app = _app_create();
+    window = _window_create();
+    context = _context_create_window(window);
+    _context_set_origin(context, _LEFTTOP_CONTEXT_ORIGIN);
+    _window_on_event(window, window_event, NULL);
+    _window_set_text(window, "Lorem ipsum привет рулет");
+    _window_set_size(window, &(_size_t){ 640, 480 });
+    _window_set_closable(window, true);
+    _window_set_sizable(window, true);
+    _window_set_minimizable(window, true);
+    _window_set_maximizable(window, true);
+    _window_set_visible(window, true);
+
+    _app_on_event(app, app_event, NULL);
+    _window_on_event(window, window_event, NULL);
+
+    for (;;) {
+        _app_process(app);
+        if (exit_) {
+            break;
+        }
+    }
+
+
+    _context_destroy(context);
+    _window_destroy(window);
+    _app_destroy(app);
+
+    _brush_destroy(red_brush);
+    _brush_destroy(green_brush);
+    _brush_destroy(blue_brush);
+    _brush_destroy(white_brush);
+
     return 0;
 }
 ```
