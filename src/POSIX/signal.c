@@ -1,4 +1,8 @@
-#include <signal.h>
+#ifdef __linux__
+    #define _POSIX_C_SOURCE 200809L
+#endif
+
+#include <stdint.h>
 #include <libcore/signal.h>
 #include <libcore/MACRO.h>
 

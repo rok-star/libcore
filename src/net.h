@@ -1,6 +1,7 @@
 #ifndef _LIBCORE_NET_H
 #define _LIBCORE_NET_H
 
+#include <stdint.h>
 #include <libcore/status.h>
 
 typedef struct _connection_t _connection_t;

@@ -44,6 +44,7 @@ await Promise.all([ Deno.copyFile(`${project}/src/WINDOWS.h`, `${out_inc}/WINDOW
                     Deno.copyFile(`${project}/src/context.h`, `${out_inc}/context.h`),
                     Deno.copyFile(`${project}/src/layer.h`, `${out_inc}/layer.h`),
                     Deno.copyFile(`${project}/src/signal.h`, `${out_inc}/signal.h`),
+                    Deno.copyFile(`${project}/src/net.h`, `${out_inc}/net.h`),
                     Deno.copyFile(`${project}/src/thread.h`, `${out_inc}/thread.h`),
                     Deno.copyFile(`${project}/src/timer.h`, `${out_inc}/timer.h`),
                     Deno.copyFile(`${project}/src/time.h`, `${out_inc}/time.h`),

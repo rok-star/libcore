@@ -1,6 +1,8 @@
 #ifndef _LIBCORE_SIGNAL_H
 #define _LIBCORE_SIGNAL_H
 
+#include <signal.h>
+
 typedef struct _signal_t _signal_t;
 
 typedef enum : int {
