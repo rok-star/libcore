@@ -3,6 +3,8 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h>
+#include <stdbool.h>
 #include <string.h>
 #include <execinfo.h>
 
@@ -151,7 +153,7 @@
     __ret; \
 })
 
-#define _REMOVE_V(data, size, capacity, index) { \
+#define _REMOVE_V(data, size, capacity, item) { \
     _ASSERT(data != NULL); \
     _ASSERT(size >= 0); \
     _ASSERT(capacity >= 0); \

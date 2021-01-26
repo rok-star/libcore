@@ -12,8 +12,6 @@
         _ABORT("sigaction() failed: %s\n", strerror(__err)); \
 }
 
-typedef struct sigaction sigaction_t;
-
 typedef struct _signal_t {
 	void (*proc)(_signal_event_t const*, void*);
     void* param;
@@ -31,9 +29,10 @@ static void __handler(int signum) {
 	_ASSERT(signum < 256);
 
 	_signal_t* signal = __map[signum];
-	_ASSERT(signal != NULL);
 
-	_PUSH(signal->signums, signum);
+	if (signal != NULL) {
+		_PUSH(signal->signums, signum);
+	}
 }
 
 _signal_t* _signal_create(int* signums, int num) {
@@ -49,7 +48,7 @@ _signal_t* _signal_create(int* signums, int num) {
 		__map[signum] = signal;
 		sigaction_E(
 			signum,
-			&(sigaction_t){
+			&(struct sigaction){
 				.sa_handler = __handler
 			},
 			NULL
