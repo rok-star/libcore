@@ -1,5 +1,5 @@
-#ifndef _LIBCORE_PATH_H
-#define _LIBCORE_PATH_H
+#ifndef _LIBEXT_PATH_H
+#define _LIBEXT_PATH_H
 
 #include <stdint.h>
 #include <stdbool.h>
@@ -35,4 +35,4 @@ bool _path_is_diretory(char const*);
 }
 #endif
 
-#endif /* _LIBCORE_PATH_H */
+#endif /* _LIBEXT_PATH_H */

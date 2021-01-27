@@ -8,11 +8,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <libcore/path.h>
-#include <libcore/app.h>
-#include <libcore/window.h>
-#include <libcore/context.h>
-#include <libcore/MACRO.h>
+#include <libext/path.h>
+#include <libext/app.h>
+#include <libext/window.h>
+#include <libext/context.h>
+#include <libext/MACRO.h>
 
 bool exit_ = false;
 

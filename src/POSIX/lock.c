@@ -3,8 +3,8 @@
 #endif
 
 #include <pthread.h>
-#include <libcore/lock.h>
-#include <libcore/MACRO.h>
+#include <libext/lock.h>
+#include <libext/MACRO.h>
 
 #define pthread_mutex_init_E(a, b) { \
     int __err = pthread_mutex_init(a, b); \

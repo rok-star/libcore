@@ -1,8 +1,8 @@
 #include <Cocoa/Cocoa.h>
-#include <libcore/MACRO.h>
-#include <libcore/sleep.h>
-#include <libcore/time.h>
-#include <libcore/app.h>
+#include <libext/MACRO.h>
+#include <libext/sleep.h>
+#include <libext/time.h>
+#include <libext/app.h>
 
 @interface __Delegate : NSObject<NSApplicationDelegate>
 

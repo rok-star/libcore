@@ -1,5 +1,5 @@
-#ifndef _LIBCORE_TIME_H
-#define _LIBCORE_TIME_H
+#ifndef _LIBEXT_TIME_H
+#define _LIBEXT_TIME_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -12,4 +12,4 @@ double _time_local(void);
 }
 #endif
 
-#endif /* _LIBCORE_TIME_H */
+#endif /* _LIBEXT_TIME_H */

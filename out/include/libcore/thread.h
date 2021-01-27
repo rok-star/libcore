@@ -1,5 +1,5 @@
-#ifndef _LIBCORE_THREAD_H
-#define _LIBCORE_THREAD_H
+#ifndef _LIBEXT_THREAD_H
+#define _LIBEXT_THREAD_H
 
 #include <stdint.h>
 
@@ -17,4 +17,4 @@ void _thread_join(_thread_t*);
 }
 #endif
 
-#endif /* _LIBCORE_THREAD_H */
+#endif /* _LIBEXT_THREAD_H */

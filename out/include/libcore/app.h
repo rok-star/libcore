@@ -1,5 +1,5 @@
-#ifndef _LIBCORE_APP_H
-#define _LIBCORE_APP_H
+#ifndef _LIBEXT_APP_H
+#define _LIBEXT_APP_H
 
 #include <stdbool.h>
 
@@ -9,9 +9,7 @@ typedef enum : int {
     _EXIT_APP_EVENT = 0
 } _APP_EVENT;
 
-static char const* _APP_EVENT_NAME[1] = {
-    "EXIT"
-};
+static char const* _APP_EVENT_NAME[1] = { "EXIT" };
 
 typedef struct _app_event_t {
     _APP_EVENT type;
@@ -30,4 +28,4 @@ void _app_on_event(_app_t*, void(*)(_app_event_t const*,void*),void*);
 }
 #endif
 
-#endif /* _LIBCORE_APP_H */
+#endif /* _LIBEXT_APP_H */

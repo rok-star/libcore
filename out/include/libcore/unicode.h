@@ -1,5 +1,5 @@
-#ifndef _LIBCORE_UNICODE_H
-#define _LIBCORE_UNICODE_H
+#ifndef _LIBEXT_UNICODE_H
+#define _LIBEXT_UNICODE_H
 
 #include <stdbool.h>
 #include <stdint.h>
@@ -31,4 +31,4 @@ int _ucs2_to_utf8(wchar_t const*,int,char*,int);
 }
 #endif
 
-#endif /* _LIBCORE_UNICODE_H */
+#endif /* _LIBEXT_UNICODE_H */

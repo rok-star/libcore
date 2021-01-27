@@ -8,8 +8,8 @@
 #include <errno.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <libcore/MACRO.h>
-#include <libcore/path.h>
+#include <libext/MACRO.h>
+#include <libext/path.h>
 
 #define getcwd_E(a, b) { \
     if (getcwd(a, b) == NULL) \

@@ -1,4 +1,4 @@
-#include <libcore/MACRO.h>
+#include <libext/MACRO.h>
 #include "metal.h"
 
 char const* __metal_source = "#include <metal_stdlib> \n\

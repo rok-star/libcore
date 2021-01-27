@@ -1,6 +1,6 @@
-#ifndef _LIBCORE_JSON_H
-#define _LIBCORE_JSON_H
+#ifndef _LIBEXT_JSON_H
+#define _LIBEXT_JSON_H
 
 
 
-#endif /* _LIBCORE_JSON_H */
+#endif /* _LIBEXT_JSON_H */

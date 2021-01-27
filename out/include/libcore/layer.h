@@ -1,9 +1,9 @@
-#ifndef _LIBCORE_LAYER_H
-#define _LIBCORE_LAYER_H
+#ifndef _LIBEXT_LAYER_H
+#define _LIBEXT_LAYER_H
 
-#include <libcore/math.h>
-#include <libcore/context.h>
-#include <libcore/texture.h>
+#include <libext/math.h>
+#include <libext/context.h>
+#include <libext/texture.h>
 
 typedef enum {
 	_DEFAULT_TEXTURE_LAYOUT,
@@ -82,4 +82,4 @@ _layer_t* _layer_hittest(_layer_t const*,_point_t const*);
 }
 #endif
 
-#endif /* _LIBCORE_LAYER_H */
+#endif /* _LIBEXT_LAYER_H */

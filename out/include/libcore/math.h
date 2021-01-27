@@ -1,5 +1,5 @@
-#ifndef _LIBCORE_MATH_H
-#define _LIBCORE_MATH_H
+#ifndef _LIBEXT_MATH_H
+#define _LIBEXT_MATH_H
 
 #define _LERP(a, b, t) (a + (b - a) * t)
 
@@ -47,4 +47,4 @@ void _conic_points(_point_t const*,_point_t const*,_point_t const*,double,double
 }
 #endif
 
-#endif /* _LIBCORE_MATH_H */
+#endif /* _LIBEXT_MATH_H */

@@ -5,8 +5,8 @@
 #include <math.h>
 #include <time.h>
 #include <sys/time.h>
-#include <libcore/MACRO.h>
-#include <libcore/time.h>
+#include <libext/MACRO.h>
+#include <libext/time.h>
 
 #define gettimeofday_E(a, b) { \
     int __err = gettimeofday(a, b); \

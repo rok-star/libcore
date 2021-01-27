@@ -1,7 +1,7 @@
 #include <stdio.h>
-#include <libcore/WINDOWS.h>
-#include <libcore/MACRO.h>
-#include <libcore/app.h>
+#include <libext/WINDOWS.h>
+#include <libext/MACRO.h>
+#include <libext/app.h>
 
 unsigned long long __thread_id = 0;
 void (*__on_event)(_app_event_t const*,void*) = NULL;

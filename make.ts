@@ -1,22 +1,22 @@
-console.log(
-`  _ _ _
- | (_) |
- | |_| |__   ___ ___  _ __ ___
- | | | '_ \\ / __/ _ \\| '__/ _ \\
- | | | |_) | (_| (_) | | |  __/
- |_|_|_.__/ \\___\\___/|_|  \\___|
+console.log(`
+  _ _ _               _
+ | (_) |             | |
+ | |_| |__   _____  _| |_
+ | | | '_ \\ / _ \\ \\/ / __|
+ | | | |_) |  __/>  <| |_
+ |_|_|_.__/ \\___/_/\\_\\\\__|
 `);
 
 import * as Path from 'https://deno.land/std/path/mod.ts';
 import { Target, TargetType, Standard, red, green, yellow, remove, tempPath } from 'https://deno.land/x/buildsystem/mod.ts';
 
 const mode: string = Deno.args.includes('--release') ? 'release' : 'debug';
-const temp: string = Path.join(tempPath(), 'libcore', mode);
+const temp: string = Path.join(tempPath(), 'libext', mode);
 const dirname: string = Path.dirname(Path.fromFileUrl(import.meta.url));
 const project: string = Path.resolve(dirname);
 const library: string = Path.resolve(Path.join(dirname, '..'));
-const out_lib: string = Path.resolve(Path.join(`${project}`, 'out', 'lib', Deno.build.os, mode, (Deno.build.os == 'windows' ? 'core.lib' : 'libcore.a')));
-const out_inc: string = Path.resolve(Path.join(`${project}`, 'out', 'include', 'libcore'));
+const out_lib: string = Path.resolve(Path.join(`${project}`, 'out', 'lib', Deno.build.os, mode, (Deno.build.os == 'windows' ? 'ext.lib' : 'libext.a')));
+const out_inc: string = Path.resolve(Path.join(`${project}`, 'out', 'include', 'libext'));
 const clean: boolean = (Deno.args.includes('--clean') || Deno.args.includes('--release'));
 
 if (clean) {
@@ -96,6 +96,7 @@ if (Deno.build.os == 'windows') {
     target.sources.push(`${project}/src/POSIX/time.c`);
     target.sources.push(`${project}/src/POSIX/path.c`);
     target.sources.push(`${project}/src/POSIX/file.c`);
+    target.sources.push(`${project}/src/POSIX/net.c`);
 } else if (Deno.build.os == 'linux') {
     target.sources.push(`${project}/src/POSIX/cond.c`);
     target.sources.push(`${project}/src/POSIX/lock.c`);
@@ -105,6 +106,7 @@ if (Deno.build.os == 'windows') {
     target.sources.push(`${project}/src/POSIX/time.c`);
     target.sources.push(`${project}/src/POSIX/path.c`);
     target.sources.push(`${project}/src/POSIX/file.c`);
+    target.sources.push(`${project}/src/POSIX/net.c`);
 } else {
     throw new Error(`${Deno.build.os} not supported for build target`);
 }
@@ -120,7 +122,7 @@ if (Deno.args.includes('--release')) {
 
 const res = await target.make({ output: true, threads: 8, log: false });
 if (res.type == 'error') {
-    console.log(red('Unable to build libcore'));
+    console.log(red('Unable to build libext'));
     Deno.exit(1);
 }
 
@@ -132,7 +134,7 @@ if (Deno.args.includes('--example')) {
     target.cStandard = Standard.c17;
     target.includePath = [Path.dirname(out_inc)];
     target.libraryPath = [Path.dirname(out_lib)];
-    target.libraries = ['core'];
+    target.libraries = ['ext'];
     target.sources.push(`${project}/example/main.c`);
     if (Deno.build.os == 'windows') {
 

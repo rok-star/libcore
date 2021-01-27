@@ -1,12 +1,12 @@
-#ifndef _LIBCORE_CONTEXT_H
-#define _LIBCORE_CONTEXT_H
+#ifndef _LIBEXT_CONTEXT_H
+#define _LIBEXT_CONTEXT_H
 
-#include <libcore/math.h>
-#include <libcore/brush.h>
-#include <libcore/line.h>
-#include <libcore/bezierpath.h>
-#include <libcore/texture.h>
-#include <libcore/window.h>
+#include <libext/math.h>
+#include <libext/brush.h>
+#include <libext/line.h>
+#include <libext/bezierpath.h>
+#include <libext/texture.h>
+#include <libext/window.h>
 
 typedef enum {
     _LEFTTOP_CONTEXT_ORIGIN,
@@ -45,4 +45,4 @@ void _context_fill_ellipse(_context_t const*,_rect_t const*,_brush_t const*);
 }
 #endif
 
-#endif /* _LIBCORE_CONTEXT_H */
+#endif /* _LIBEXT_CONTEXT_H */

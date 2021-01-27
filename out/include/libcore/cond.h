@@ -1,7 +1,7 @@
-#ifndef _LIBCORE_COND_H
-#define _LIBCORE_COND_H
+#ifndef _LIBEXT_COND_H
+#define _LIBEXT_COND_H
 
-#include <libcore/lock.h>
+#include <libext/lock.h>
 
 typedef struct _cond_t _cond_t;
 
@@ -20,4 +20,4 @@ void _cond_wait_timeout(_cond_t*, _lock_t*, double);
 }
 #endif
 
-#endif /* _LIBCORE_COND_H */
+#endif /* _LIBEXT_COND_H */

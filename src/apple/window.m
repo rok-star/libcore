@@ -1,6 +1,6 @@
 #include <Cocoa/Cocoa.h>
-#include <libcore/MACRO.h>
-#include <libcore/window.h>
+#include <libext/MACRO.h>
+#include <libext/window.h>
 
 @interface __Window : NSWindow<NSWindowDelegate>
 

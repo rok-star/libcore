@@ -1,5 +1,5 @@
-#ifndef _LIBCORE_TIMER_H
-#define _LIBCORE_TIMER_H
+#ifndef _LIBEXT_TIMER_H
+#define _LIBEXT_TIMER_H
 
 typedef struct _timer_t _timer_t;
 
@@ -14,4 +14,4 @@ void _timer_destroy(_timer_t*);
 }
 #endif
 
-#endif /* _LIBCORE_TIMER_H */
+#endif /* _LIBEXT_TIMER_H */

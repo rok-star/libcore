@@ -1,5 +1,5 @@
-#ifndef _LIBCORE_STRING_H
-#define _LIBCORE_STRING_H
+#ifndef _LIBEXT_STRING_H
+#define _LIBEXT_STRING_H
 
 #include <stdbool.h>
 
@@ -20,4 +20,4 @@ bool _string_digital(char const*,int);
 }
 #endif
 
-#endif /* _LIBCORE_STRING_H */
+#endif /* _LIBEXT_STRING_H */

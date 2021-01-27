@@ -1,5 +1,5 @@
-#ifndef _LIBCORE_COLOR_H
-#define _LIBCORE_COLOR_H
+#ifndef _LIBEXT_COLOR_H
+#define _LIBEXT_COLOR_H
 
 typedef struct _color_t {
     unsigned char red;
@@ -149,4 +149,4 @@ extern _color_t const _YELLOW_COLOR;
 extern _color_t const _LIGHTPINK_COLOR;
 extern _color_t const _YELLOWGREEN_COLOR;
 
-#endif /* _LIBCORE_COLOR_H */
+#endif /* _LIBEXT_COLOR_H */

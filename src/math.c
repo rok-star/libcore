@@ -1,5 +1,5 @@
-#include <libcore/MACRO.h>
-#include <libcore/math.h>
+#include <libext/MACRO.h>
+#include <libext/math.h>
 
 // https://webglfundamentals.org/webgl/lessons/webgl-3d-geometry-lathe.html
 

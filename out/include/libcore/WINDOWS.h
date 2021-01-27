@@ -1,5 +1,5 @@
-#ifndef _LIBCORE_WINDOWS_H
-#define _LIBCORE_WINDOWS_H
+#ifndef _LIBEXT_WINDOWS_H
+#define _LIBEXT_WINDOWS_H
 
 #define WIN32_LEAN_AND_MEAN
 #define _CRT_SECURE_NO_WARNINGS
@@ -29,4 +29,4 @@ static char* GetLastErrorMessage() {
     }
 }
 
-#endif /* _LIBCORE_WINDOWS_H */
+#endif /* _LIBEXT_WINDOWS_H */

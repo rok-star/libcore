@@ -1,5 +1,5 @@
-#ifndef _LIBCORE_MACRO_H
-#define _LIBCORE_MACRO_H
+#ifndef _LIBEXT_MACRO_H
+#define _LIBEXT_MACRO_H
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -43,6 +43,12 @@
     #define _ASSERT(a) if (!(a)) _ABORT("Assertion failed: (%s) in function \"%s\" in file \"%s\" at line %d\n", #a, __FUNCTION__, __FILE__, __LINE__)
     #define _ASSERT_M(a, b) if (!(a)) _ABORT("Assertion failed: %s, (%s) in function \"%s\" in file \"%s\" at line %d\n", #b, #a, __FUNCTION__, __FILE__, __LINE__)
 #endif
+
+#define _CALL(a, ...) { \
+    int __err = a(__VA_ARGS__); \
+    if (__err != 0) \
+        _ABORT("%s() failed: %s\n", #a, strerror(__err)); \
+}
 
 #define _FREE(a) { \
     if (a != NULL) { \
@@ -128,13 +134,13 @@
         __typeof__(data) __data = _ALLOC(__typeof__(*data), __reserve); \
         __data[0] = (__VA_ARGS__); \
         if (data != NULL) { \
-            for (int64_t __i = 0; __i < size; __i++) \
+            for (__typeof__(size) __i = 0; __i < size; __i++) \
                 __data[__i + 1] = data[__i]; \
             _FREE(data); \
         } \
         data = __data; \
     } else { \
-        for (int64_t __i = (size - 1); __i >= 0; __i--) \
+        for (__typeof__(size) __i = (size - 1); __i >= 0; __i--) \
             data[__i + 1] = data[__i]; \
         data[0] = (__VA_ARGS__); \
     } \
@@ -147,51 +153,54 @@
     _ASSERT(capacity > 0); \
     _ASSERT(size <= capacity); \
     __typeof__(*data) __ret = data[0]; \
-    for (int64_t __i = 1; __i < size; __i++) \
+    for (__typeof__(size) __i = 1; __i < size; __i++) \
         data[__i - 1] = data[__i]; \
     size -= 1; \
     __ret; \
 })
 
 #define _REMOVE_V(data, size, capacity, item) { \
-    _ASSERT(data != NULL); \
     _ASSERT(size >= 0); \
     _ASSERT(capacity >= 0); \
     _ASSERT(size <= capacity); \
-    int64_t __index = -1; \
-    for (int64_t __i = 0; __i < size; __i++) { \
-        if (data[__i] == item) { \
-            __index = __i; \
-            break; \
+    if (data != NULL) { \
+        __typeof__(size) __index = -1; \
+        for (__typeof__(size) __i = 0; __i < size; __i++) { \
+            if (data[__i] == item) { \
+                __index = __i; \
+                break; \
+            } \
         } \
-    } \
-    if ((__index >= 0) && (__index < size)) { \
-        for (int64_t __i = (__index + 1); __i < size; __i++) \
-            data[__i - 1] = data[__i]; \
-        size -= 1; \
+        if ((__index >= 0) && (__index < size)) { \
+            for (__typeof__(size) __i = (__index + 1); __i < size; __i++) \
+                data[__i - 1] = data[__i]; \
+            size -= 1; \
+        } \
     } \
 }
 
 #define _REMOVE_INDEX_V(data, size, capacity, index) { \
-    _ASSERT(data != NULL); \
     _ASSERT(size >= 0); \
     _ASSERT(capacity >= 0); \
     _ASSERT(size <= capacity); \
-    if ((index >= 0) && (index < size)) { \
-        for (int64_t __i = (index + 1); __i < size; __i++) \
-            data[__i - 1] = data[__i]; \
-        size -= 1; \
+    if (data != NULL) { \
+        if ((index >= 0) && (index < size)) { \
+            for (__typeof__(size) __i = (index + 1); __i < size; __i++) \
+                data[__i - 1] = data[__i]; \
+            size -= 1; \
+        } \
     } \
 }
 
 #define _INDEX_OF_V(data, size, item) ({ \
-    _ASSERT(data != NULL); \
     _ASSERT(size >= 0); \
-    int64_t __ret = -1; \
-    for (int64_t __i = 0; __i < size; __i++) { \
-        if (data[__i] == item) { \
-            __ret = __i; \
-            break; \
+    __typeof__(size) __ret = -1; \
+    if (data != NULL) { \
+        for (__typeof__(size) __i = 0; __i < size; __i++) { \
+            if (data[__i] == item) { \
+                __ret = __i; \
+                break; \
+            } \
         } \
     } \
     __ret; \
@@ -222,4 +231,4 @@
 #define _FIRST(array) _FIRST_V((array).data, (array).size);
 #define _LAST(array) _LAST_V((array).data, (array).size);
 
-#endif /* _LIBCORE_MACRO_H */
+#endif /* _LIBEXT_MACRO_H */

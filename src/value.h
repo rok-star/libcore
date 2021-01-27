@@ -1,5 +1,5 @@
-#ifndef _LIBCORE_VALUE_H
-#define _LIBCORE_VALUE_H
+#ifndef _LIBEXT_VALUE_H
+#define _LIBEXT_VALUE_H
 
 typedef enum {
 	_NULL_VALUE,
@@ -51,4 +51,4 @@ void _value_map_clear(_value_t*);
 }
 #endif
 
-#endif /* _LIBCORE_VALUE_H */
+#endif /* _LIBEXT_VALUE_H */

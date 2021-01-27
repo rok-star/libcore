@@ -1,7 +1,7 @@
-#ifndef _LIBCORE_DIRECTORY_H
-#define _LIBCORE_DIRECTORY_H
+#ifndef _LIBEXT_DIRECTORY_H
+#define _LIBEXT_DIRECTORY_H
 
-#include <libcore/status.h>
+#include <libext/status.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -14,4 +14,4 @@ void _dir_remove(char const*,bool,_status_t*);
 }
 #endif
 
-#endif /* _LIBCORE_DIRECTORY_H */
+#endif /* _LIBEXT_DIRECTORY_H */

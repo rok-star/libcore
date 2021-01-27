@@ -1,5 +1,5 @@
-#include <libcore/MACRO.h>
-#include <libcore/brush.h>
+#include <libext/MACRO.h>
+#include <libext/brush.h>
 
 typedef struct _brush_t {
     _BRUSH_TYPE type;

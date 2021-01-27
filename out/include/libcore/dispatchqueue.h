@@ -1,5 +1,5 @@
-#ifndef _LIBCORE_DISPATCH_QUEUE_H
-#define _LIBCORE_DISPATCH_QUEUE_H
+#ifndef _LIBEXT_DISPATCH_QUEUE_H
+#define _LIBEXT_DISPATCH_QUEUE_H
 
 typedef struct _dispatch_queue_t _dispatch_queue_t;
 
@@ -20,4 +20,4 @@ void _dispatch_queue_runloop(_dispatch_queue_t*,bool*);
 }
 #endif
 
-#endif /* _LIBCORE_DISPATCH_QUEUE_H */
+#endif /* _LIBEXT_DISPATCH_QUEUE_H */

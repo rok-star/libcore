@@ -1,5 +1,5 @@
-#ifndef _LIBCORE_KEYBOARD_H
-#define _LIBCORE_KEYBOARD_H
+#ifndef _LIBEXT_KEYBOARD_H
+#define _LIBEXT_KEYBOARD_H
 
 typedef enum : unsigned char {
     _NONE_KEY             = 0,
@@ -91,4 +91,4 @@ static unsigned char const _KEY_TO_NATIVE[256] = {
 
 #endif
 
-#endif /* _LIBCORE_KEYBOARD_H */
+#endif /* _LIBEXT_KEYBOARD_H */

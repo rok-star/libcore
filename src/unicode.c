@@ -1,5 +1,5 @@
-#include <libcore/MACRO.h>
-#include <libcore/unicode.h>
+#include <libext/MACRO.h>
+#include <libext/unicode.h>
 
 #define __convert(FROMTYPE, TOTYPE, FROMNAME, TONAME, string, length, out, capacity) ({ \
     _ASSERT(string != NULL); \

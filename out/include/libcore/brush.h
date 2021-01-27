@@ -1,8 +1,8 @@
-#ifndef _LIBCORE_BRUSH_H
-#define _LIBCORE_BRUSH_H
+#ifndef _LIBEXT_BRUSH_H
+#define _LIBEXT_BRUSH_H
 
-#include <libcore/color.h>
-#include <libcore/texture.h>
+#include <libext/color.h>
+#include <libext/texture.h>
 
 typedef enum {
     _COLOR_BRUSH_TYPE,
@@ -26,4 +26,4 @@ void _brush_destroy(_brush_t*);
 }
 #endif
 
-#endif /* _LIBCORE_BRUSH_H */
+#endif /* _LIBEXT_BRUSH_H */

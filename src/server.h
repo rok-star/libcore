@@ -1,7 +1,7 @@
-#ifndef _LIBCORE_SERVER_H
-#define _LIBCORE_SERVER_H
+#ifndef _LIBEXT_SERVER_H
+#define _LIBEXT_SERVER_H
 
-#include <libcore/status.h>
+#include <libext/status.h>
 
 typedef struct _server_t _server_t;
 
@@ -42,4 +42,4 @@ void _server_on_event(_server_t*,void(*)(_server_event_t const*,void*),void*);
 }
 #endif
 
-#endif /* _LIBCORE_SERVER_H */
+#endif /* _LIBEXT_SERVER_H */

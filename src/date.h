@@ -1,5 +1,5 @@
-#ifndef _LIBCORE_DATE_H
-#define _LIBCORE_DATE_H
+#ifndef _LIBEXT_DATE_H
+#define _LIBEXT_DATE_H
 
 typedef struct _date_t _date_t;
 
@@ -22,4 +22,4 @@ int _date_millisecond(_date_t const*);
 }
 #endif
 
-#endif /* _LIBCORE_DATE_H */
+#endif /* _LIBEXT_DATE_H */

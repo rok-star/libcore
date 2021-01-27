@@ -1,5 +1,5 @@
-#ifndef _LIBCORE_SLEEP_H
-#define _LIBCORE_SLEEP_H
+#ifndef _LIBEXT_SLEEP_H
+#define _LIBEXT_SLEEP_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -11,4 +11,4 @@ void _sleep(double);
 }
 #endif
 
-#endif /* _LIBCORE_SLEEP_H */
+#endif /* _LIBEXT_SLEEP_H */

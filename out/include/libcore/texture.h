@@ -1,7 +1,7 @@
-#ifndef _LIBCORE_TEXTURE_H
-#define _LIBCORE_TEXTURE_H
+#ifndef _LIBEXT_TEXTURE_H
+#define _LIBEXT_TEXTURE_H
 
-#include <libcore/math.h>
+#include <libext/math.h>
 
 typedef struct _texture_t _texture_t;
 
@@ -23,4 +23,4 @@ _size_t const* _texture_size(_texture_t const*);
 }
 #endif
 
-#endif /* _LIBCORE_TEXTURE_H */
+#endif /* _LIBEXT_TEXTURE_H */

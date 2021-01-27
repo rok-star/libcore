@@ -1,5 +1,5 @@
-#ifndef _LIBCORE_LINE_H
-#define _LIBCORE_LINE_H
+#ifndef _LIBEXT_LINE_H
+#define _LIBEXT_LINE_H
 
 typedef enum {
     _BUTT_LINE_CAP,
@@ -12,4 +12,4 @@ typedef enum {
     _FLAT_LINE_JOIN
 } _LINE_JOIN;
 
-#endif /* _LIBCORE_LINE_H */
+#endif /* _LIBEXT_LINE_H */

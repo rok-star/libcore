@@ -1,9 +1,9 @@
-#ifndef _LIBCORE_WINDOW_H
-#define _LIBCORE_WINDOW_H
+#ifndef _LIBEXT_WINDOW_H
+#define _LIBEXT_WINDOW_H
 
 #include <stdbool.h>
-#include <libcore/math.h>
-#include <libcore/keyboard.h>
+#include <libext/math.h>
+#include <libext/keyboard.h>
 
 typedef struct _window_t _window_t;
 
@@ -89,4 +89,4 @@ void _window_on_event(_window_t*, void (*)(_window_event_t const*,void*), void*)
 }
 #endif
 
-#endif /* _LIBCORE_WINDOW_H */
+#endif /* _LIBEXT_WINDOW_H */

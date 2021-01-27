@@ -1,5 +1,5 @@
-#ifndef _LIBCORE_LOCK_H
-#define _LIBCORE_LOCK_H
+#ifndef _LIBEXT_LOCK_H
+#define _LIBEXT_LOCK_H
 
 typedef struct _lock_t _lock_t;
 
@@ -16,4 +16,4 @@ void _lock_release(_lock_t*);
 }
 #endif
 
-#endif /* _LIBCORE_LOCK_H */
+#endif /* _LIBEXT_LOCK_H */

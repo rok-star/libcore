@@ -1,5 +1,5 @@
-#ifndef _LIBCORE_STATUS_H
-#define _LIBCORE_STATUS_H
+#ifndef _LIBEXT_STATUS_H
+#define _LIBEXT_STATUS_H
 
 #define _STATUS_MAX_MESSAGE 255
 
@@ -24,4 +24,4 @@ void _status_set(_status_t*,_STATUS_TYPE,char const*);
 }
 #endif
 
-#endif /* _LIBCORE_STATUS_H */
+#endif /* _LIBEXT_STATUS_H */

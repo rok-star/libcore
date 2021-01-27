@@ -1,5 +1,5 @@
-#ifndef _LIBCORE_SIGNAL_H
-#define _LIBCORE_SIGNAL_H
+#ifndef _LIBEXT_SIGNAL_H
+#define _LIBEXT_SIGNAL_H
 
 #include <signal.h>
 
@@ -31,4 +31,4 @@ void _signal_on_event(_signal_t*,void(*)(_signal_event_t const*,void*),void*);
 }
 #endif
 
-#endif /* _LIBCORE_SIGNAL_H */
+#endif /* _LIBEXT_SIGNAL_H */

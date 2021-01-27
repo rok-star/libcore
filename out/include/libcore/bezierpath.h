@@ -1,9 +1,9 @@
-#ifndef _LIBCORE_BEZIERPATH_H
-#define _LIBCORE_BEZIERPATH_H
+#ifndef _LIBEXT_BEZIERPATH_H
+#define _LIBEXT_BEZIERPATH_H
 
 #include <stdbool.h>
-#include <libcore/math.h>
-#include <libcore/line.h>
+#include <libext/math.h>
+#include <libext/line.h>
 
 typedef struct _bezier_path_t _bezier_path_t;
 
@@ -26,4 +26,4 @@ void _bezier_path_conic_to(_bezier_path_t*,_point_t const*,_point_t const*,doubl
 }
 #endif
 
-#endif /* _LIBCORE_BEZIERPATH_H */
+#endif /* _LIBEXT_BEZIERPATH_H */

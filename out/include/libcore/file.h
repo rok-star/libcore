@@ -1,8 +1,8 @@
-#ifndef _LIBCORE_FILE_H
-#define _LIBCORE_FILE_H
+#ifndef _LIBEXT_FILE_H
+#define _LIBEXT_FILE_H
 
 #include <stdint.h>
-#include <libcore/status.h>
+#include <libext/status.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -17,4 +17,4 @@ void _file_remove(char const*,_status_t*);
 }
 #endif
 
-#endif /* _LIBCORE_FILE_H */
+#endif /* _LIBEXT_FILE_H */

@@ -1,7 +1,7 @@
 #include <ctype.h>
-#include <libcore/MACRO.h>
-#include <libcore/unicode.h>
-#include <libcore/string.h>
+#include <libext/MACRO.h>
+#include <libext/unicode.h>
+#include <libext/string.h>
 
 typedef struct __string_array_t {
 	char** data;
