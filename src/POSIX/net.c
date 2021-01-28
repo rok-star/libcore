@@ -5,6 +5,7 @@
 
 #include <errno.h>
 #include <unistd.h>
+#include <fcntl.h>
 #include <sys/select.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -123,6 +124,9 @@ _connection_t* _connection_accept(_listener_t* listener, _status_t* status) {
 
 	int sock = accept(listener->socket, (sockaddr_t*)&listener->addr, &(socklen_t){ sizeof(sockaddr_in_t) });
 	if (sock >= 0) {
+		int flags = fcntl(sock, F_GETFL, 0);
+		_ASSERT(flags >= 0);
+		_CALL(fcntl, sock, F_SETFL, (flags | O_NONBLOCK));
 		_status_set(status, _SUCCESS_STATUS_TYPE, NULL);
 		return _NEW(_connection_t, { .socket = sock });
 	} else {
@@ -165,17 +169,72 @@ int _connection_read(_connection_t* connection, uint8_t* data, int64_t size) {
 	int ret = 0;
 	for (;;) {
 		int read = recv(connection->socket, data, size, 0);
-		if (read == 0) {
-			break;
-		}
-		data += read;
-		size -= read;
-		ret += read;
-		if (size == 0) {
+		if (read > 0) {
+			data += read;
+			size -= read;
+			ret += read;
+			if (size == 0) {
+				break;
+			}
+		} else {
 			break;
 		}
 	}
 	return ret;
+}
+
+void _connection_read_all(_connection_t* connection, uint8_t** data, int64_t* size) {
+	_ASSERT(connection != NULL);
+	_ASSERT(data != NULL);
+	_ASSERT(size != NULL);
+
+	(*data) = NULL;
+	(*size) = 0;
+
+	#define __CHUNK_SIZE 1024
+
+	typedef struct __chunk_t {
+		uint8_t* data;
+		int64_t size;
+	} __chunk_t;
+
+	typedef struct __chunk_array_t {
+		__chunk_t* data;
+		int64_t size;
+		int64_t capacity;
+	} __chunk_array_t;
+
+	__chunk_array_t chunks = {};
+
+	for (;;) {
+		__chunk_t chunk = {
+			.data = _NEW(uint8_t, __CHUNK_SIZE),
+			.size = 0
+		};
+
+		chunk.size = recv(connection->socket, chunk.data, __CHUNK_SIZE, 0);
+
+		if (chunk.size > 0) {
+			_PUSH(chunks, chunk);
+			(*size) += chunk.size;
+		} else {
+			_FREE(chunk.data);
+			break;
+		}
+	}
+
+	(*data) = _NEW(uint8_t, (*size));
+
+	uint8_t* dst = (*data);
+	for (int64_t i = 0; i < chunks.size; i++) {
+		memcpy(dst, chunks.data[i].data, chunks.data[i].size);
+		_FREE(chunks.data[i].data);
+		dst += chunks.data[i].size;
+	}
+
+	_FREE(chunks.data);
+
+	#undef __CHUNK_SIZE
 }
 
 void _connection_write(_connection_t* connection, uint8_t* data, int64_t size) {

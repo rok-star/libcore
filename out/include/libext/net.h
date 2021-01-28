@@ -47,6 +47,7 @@ _connection_t* _connection_accept(_listener_t*,_status_t*);
 void _connection_destroy(_connection_t*);
 void _connection_process(_connection_t*);
 int _connection_read(_connection_t*,uint8_t*,int64_t);
+void _connection_read_all(_connection_t*,uint8_t**,int64_t*);
 void _connection_write(_connection_t*,uint8_t*,int64_t);
 void _connection_on_event(_connection_t*,void(*)(_connection_event_t const*,void*),void*);
 void _connection_set_userdata(_connection_t*,void*);
