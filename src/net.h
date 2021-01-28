@@ -12,11 +12,11 @@ typedef struct _listener_t _listener_t;
 typedef struct _connection_t _connection_t;
 typedef struct _connection_poll_t _connection_poll_t;
 
-typedef enum : int {
+typedef enum {
     _ACCEPT_LISTENER_EVENT = 0
 } _LISTENER_EVENT;
 
-typedef enum : int {
+typedef enum {
     _READ_CONNECTION_EVENT = 0,
     _WRITE_CONNECTION_EVENT = 1,
     _CLOSE_CONNECTION_EVENT = 2
