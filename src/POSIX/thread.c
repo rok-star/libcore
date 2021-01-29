@@ -31,7 +31,6 @@ _thread_t* _thread_create(void(*proc)(void*), void* param) {
 
 void _thread_destroy(_thread_t* thread) {
     _ASSERT(thread != NULL);
-    _CALL(pthread_cancel, thread->thread);
     _FREE(thread);
 }
 

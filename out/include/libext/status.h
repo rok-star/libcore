@@ -3,6 +3,12 @@
 
 #define _STATUS_MAX_MESSAGE 255
 
+#define _STATUS_SET_FORMAT(status, type, ...) { \
+    char __message[_STATUS_MAX_MESSAGE] = {}; \
+    snprintf(__message, _STATUS_MAX_MESSAGE, __VA_ARGS__); \
+    _status_set(status, type, __message); \
+}
+
 typedef enum {
 	_SUCCESS_STATUS_TYPE,
 	_FAILURE_STATUS_TYPE

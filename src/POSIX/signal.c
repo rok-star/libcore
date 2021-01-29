@@ -12,14 +12,24 @@
         _ABORT("sigaction() failed: %s\n", strerror(__err)); \
 }
 
+#define __CLEAR_EVENTS(array) { \
+	for (int64_t i = 0; i < array.size; i++) { \
+		_FREE(array.data[i].message); \
+	} \
+	array.size = 0; \
+}
+
 typedef struct _signal_t {
-	void (*proc)(_signal_event_t const*, void*);
-    void* param;
     struct {
     	int* data;
     	int size;
     	int capacity;
     } signums;
+	struct {
+		_signal_event_t* data;
+		int64_t size;
+		int64_t capacity;
+	} events;
 } _signal_t;
 
 static void* __map[256] = {};
@@ -60,28 +70,27 @@ _signal_t* _signal_create(int* signums, int num) {
 
 void _signal_destroy(_signal_t* signal) {
 	_ASSERT(signal != NULL);
+	__CLEAR_EVENTS(signal->events);
+	_FREE(signal->events.data);
+	_FREE(signal);
 }
 
-void _signal_process(_signal_t* signal) {
+void _signal_process(_signal_t* signal, _signal_event_t const** events, int64_t* num) {
 	_ASSERT(signal != NULL);
+
+	(*events) = NULL;
+	(*num) = 0;
+
+	__CLEAR_EVENTS(signal->events);
 
 	while (signal->signums.size > 0) {
 		int signum = _SHIFT(signal->signums);
-		if (signal->proc != NULL) {
-			signal->proc(
-				&(_signal_event_t){
-					.type = _SIGNAL_SIGNAL_EVENT,
-					.signum = signum
-				},
-				signal->param
-			);
-		}
+		_PUSH(signal->events, (_signal_event_t){
+			.type = _SIGNAL_SIGNAL_EVENT,
+			.signum = signum
+		});
 	}
-}
 
-void _signal_on_event(_signal_t* signal, void(*proc)(_signal_event_t const*,void*), void* param) {
-	_ASSERT(signal != NULL);
-
-	signal->proc = proc;
-	signal->param = param;
+	(*events) = signal->events.data;
+	(*num) = signal->events.size;
 }

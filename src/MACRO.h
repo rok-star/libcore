@@ -7,6 +7,7 @@
 #include <stdbool.h>
 #include <string.h>
 #include <execinfo.h>
+#include <errno.h>
 
 #define _OUTPUT(...) { \
     fprintf(stdout, __VA_ARGS__); \
@@ -45,9 +46,12 @@
 #endif
 
 #define _CALL(a, ...) { \
-    int __err = a(__VA_ARGS__); \
-    if (__err != 0) \
-        _ABORT("%s() failed: %s\n", #a, strerror(__err)); \
+    int __ret = a(__VA_ARGS__); \
+    if (__ret > 0) { \
+        _ABORT("%s() failed: %s\n", #a, strerror(__ret)); \
+    } else if (__ret < 0) { \
+        _ABORT("%s() failed: %s\n", #a, strerror(errno)); \
+    } \
 }
 
 #define _FREE(a) { \
@@ -102,6 +106,11 @@
         data = __data; \
         capacity = reserve; \
     } \
+}
+
+#define _CLEAR_V(data, size) { \
+    _ASSERT(size >= 0); \
+    size = 0; \
 }
 
 #define _PUSH_V(data, size, capacity, ...) { \
@@ -221,6 +230,7 @@
 })
 
 #define _RESERVE(array, reserve) _RESERVE_V((array).data, (array).size, (array).capacity, reserve)
+#define _CLEAR(array) _CLEAR_V((array).data, (array).size)
 #define _PUSH(array, ...) _PUSH_V((array).data, (array).size, (array).capacity, __VA_ARGS__)
 #define _POP(array) _POP_V((array).data, (array).size, (array).capacity)
 #define _UNSHIFT(array, ...) _UNSHIFT_V((array).data, (array).size, (array).capacity, __VA_ARGS__)

@@ -12,6 +12,15 @@
 #include <libext/net.h>
 #include <libext/MACRO.h>
 
+#define __POLL_COUNT 255
+#define __CHUNK_SIZE 1024
+#define __CLEAR_EVENTS(array) { \
+	for (int64_t i = 0; i < array.size; i++) { \
+		_FREE(array.data[i].message); \
+	} \
+	array.size = 0; \
+}
+
 typedef struct sockaddr_in sockaddr_in_t;
 typedef struct sockaddr sockaddr_t;
 typedef struct timeval timeval_t;
@@ -20,30 +29,35 @@ typedef struct epoll_event epoll_event_t;
 typedef struct _listener_t {
 	sockaddr_in_t addr;
 	int socket;
-	void (*proc)(_listener_event_t const*,void*);
-	void* param;
+	struct {
+		_listener_event_t* data;
+		int64_t size;
+		int64_t capacity;
+	} events;
 } _listener_t;
 
 typedef struct _connection_t {
 	int socket;
-	void* userdata;
-	void (*proc)(_connection_event_t const*,void*);
-	void* param;
+	struct {
+		_connection_event_t* data;
+		int64_t size;
+		int64_t capacity;
+	} events;
 } _connection_t;
 
 typedef struct _connection_poll_t {
 	struct {
-		_connection_t** data;
+		_connection_event_t* data;
 		int64_t size;
 		int64_t capacity;
-	} connections;
+	} events;
 #ifdef __linux__
 	int pollfd;
 #else
 #endif
 } _connection_poll_t;
 
-_listener_t* _listener_create(_listener_info_t const* info, _status_t* status) {
+_listener_t* _listener_create(_listener_info_t* info, _status_t* status) {
 	_ASSERT(info != NULL);
 	_ASSERT(status != NULL);
 	_ASSERT(info->port > 0);
@@ -65,21 +79,21 @@ _listener_t* _listener_create(_listener_info_t const* info, _status_t* status) {
 					});
 				} else {
 					close(sock);
-					_status_set(status, _FAILURE_STATUS_TYPE, strerror(errno));
+					_STATUS_SET_FORMAT(status, _FAILURE_STATUS_TYPE, "listen() failed: %s", strerror(errno));
 					return NULL;
 				}
 			} else {
 				close(sock);
-				_status_set(status, _FAILURE_STATUS_TYPE, strerror(errno));
+				_STATUS_SET_FORMAT(status, _FAILURE_STATUS_TYPE, "bind() failed: %s", strerror(errno));
 				return NULL;
 			}
 		} else {
 			close(sock);
-			_status_set(status, _FAILURE_STATUS_TYPE, strerror(errno));
+			_STATUS_SET_FORMAT(status, _FAILURE_STATUS_TYPE, "setsockopt() failed: %s", strerror(errno));
 			return NULL;
 		}
 	} else {
-		_status_set(status, _FAILURE_STATUS_TYPE, strerror(errno));
+		_STATUS_SET_FORMAT(status, _FAILURE_STATUS_TYPE, "socket() failed: %s", strerror(errno));
 		return NULL;
 	}
 }
@@ -88,34 +102,47 @@ void _listener_destroy(_listener_t* listener) {
 	_ASSERT(listener != NULL);
 
 	close(listener->socket);
+	__CLEAR_EVENTS(listener->events);
+
+	_FREE(listener->events.data);
 	_FREE(listener);
 }
 
-void _listener_process(_listener_t* listener) {
+void _listener_process(_listener_t* listener, _listener_event_t const** events, int64_t* num) {
 	_ASSERT(listener != NULL);
+	_ASSERT(events != NULL);
+	_ASSERT(num != NULL);
+
+	(*events) = NULL;
+	(*num) = 0;
+
+	__CLEAR_EVENTS(listener->events);
 
 	fd_set fd_in = {};
 	FD_SET(listener->socket, &fd_in);
 
-	if (select((listener->socket + 1), &fd_in, NULL, NULL, &(timeval_t){ .tv_usec = 1 }) > 0) {
+	int ret = select((listener->socket + 1), &fd_in, NULL, NULL, &(timeval_t){ .tv_usec = 1 });
+	if (ret > 0) {
 		if (FD_ISSET(listener->socket, &fd_in)) {
-			if (listener->proc != NULL) {
-				listener->proc(
-					&(_listener_event_t){
-						.type = _ACCEPT_LISTENER_EVENT
-					},
-					listener->param
-				);
-			}
+			_PUSH(listener->events, (_listener_event_t){
+				.type = _ACCEPT_LISTENER_EVENT
+			});
+		}
+	} else if (ret < 0) {
+		if (errno == EINTR) {
+			_PUSH(listener->events, (_listener_event_t){
+				.type = _INTERUPT_LISTENER_EVENT
+			});
+		} else {
+			_PUSH(listener->events, (_listener_event_t){
+				.type = _ERROR_LISTENER_EVENT,
+				.message = _FORMAT("select() failed: %s", strerror(errno))
+			});
 		}
 	}
-}
 
-void _listener_on_event(_listener_t* listener, void(*proc)(_listener_event_t const*,void*), void* param) {
-	_ASSERT(listener != NULL);
-
-	listener->proc = proc;
-	listener->param = param;
+	(*events) = listener->events.data;
+	(*num) = listener->events.size;
 }
 
 _connection_t* _connection_accept(_listener_t* listener, _status_t* status) {
@@ -123,50 +150,86 @@ _connection_t* _connection_accept(_listener_t* listener, _status_t* status) {
 	_ASSERT(status != NULL);
 
 	int sock = accept(listener->socket, (sockaddr_t*)&listener->addr, &(socklen_t){ sizeof(sockaddr_in_t) });
-	if (sock >= 0) {
+	if (sock > 0) {
 		int flags = fcntl(sock, F_GETFL, 0);
-		_ASSERT(flags >= 0);
-		_CALL(fcntl, sock, F_SETFL, (flags | O_NONBLOCK));
-		_status_set(status, _SUCCESS_STATUS_TYPE, NULL);
-		return _NEW(_connection_t, { .socket = sock });
-	} else {
-		_status_set(status, _FAILURE_STATUS_TYPE, strerror(errno));
-		return NULL;
-	}
-}
-
-void _connection_process(_connection_t* connection) {
-	_ASSERT(connection != NULL);
-
-	fd_set fd_in = {};
-	FD_SET(connection->socket, &fd_in);
-
-	if (select((connection->socket + 1), &fd_in, NULL, NULL, &(timeval_t){ .tv_usec = 1 }) > 0) {
-		if (FD_ISSET(connection->socket, &fd_in)) {
-			if (connection->proc != NULL) {
-				connection->proc(
-					&(_connection_event_t){
-						.type = _READ_CONNECTION_EVENT
-					},
-					connection->param
-				);
+		if (flags >= 0) {
+			if (fcntl(sock, F_SETFL, (flags | O_NONBLOCK)) == 0) {
+				_status_set(status, _SUCCESS_STATUS_TYPE, NULL);
+				return _NEW(_connection_t, { .socket = sock });
+			} else {
+				close(sock);
+				_STATUS_SET_FORMAT(status, _FAILURE_STATUS_TYPE, "fcntl() failed: %s", strerror(errno));
 			}
+		} else {
+			close(sock);
+			_STATUS_SET_FORMAT(status, _FAILURE_STATUS_TYPE, "fcntl() failed: %s", strerror(errno));
 		}
+	} else if (sock < 0) {
+		_STATUS_SET_FORMAT(status, _FAILURE_STATUS_TYPE, "accept() failed: %s", strerror(errno));
 	}
+
+	return NULL;
 }
 
 void _connection_destroy(_connection_t* connection) {
 	_ASSERT(connection != NULL);
 
 	close(connection->socket);
+	__CLEAR_EVENTS(connection->events);
+
+	_FREE(connection->events.data);
 	_FREE(connection);
 }
 
-int _connection_read(_connection_t* connection, uint8_t* data, int64_t size) {
+void _connection_process(_connection_t* connection, _connection_event_t const** events, int64_t* num) {
+	_ASSERT(connection != NULL);
+	_ASSERT(events != NULL);
+	_ASSERT(num != NULL);
+
+	(*events) = NULL;
+	(*num) = 0;
+
+	__CLEAR_EVENTS(connection->events);
+
+	fd_set fd_in = {};
+	FD_SET(connection->socket, &fd_in);
+
+	int ret = select((connection->socket + 1), &fd_in, NULL, NULL, &(timeval_t){ .tv_usec = 1 });
+	if (ret > 0) {
+		if (FD_ISSET(connection->socket, &fd_in)) {
+			_PUSH(connection->events, (_connection_event_t){
+				.type = _READ_CONNECTION_EVENT
+			});
+		}
+	} else if (ret < 0) {
+		if (errno == EINTR) {
+			_PUSH(connection->events, (_connection_event_t){
+				.type = _INTERUPT_CONNECTION_EVENT
+			});
+		} else {
+			_PUSH(connection->events, (_connection_event_t){
+				.type = _ERROR_CONNECTION_EVENT,
+				.message = _FORMAT("select() failed: %s", strerror(errno))
+			});
+		}
+	}
+
+	(*events) = connection->events.data;
+	(*num) = connection->events.size;
+}
+
+void _connection_write(_connection_t* connection, uint8_t* data, int64_t size) {
 	_ASSERT(connection != NULL);
 	_ASSERT(data != NULL);
 
-	int ret = 0;
+	write(connection->socket, data, size);
+}
+
+int64_t _connection_read(_connection_t* connection, uint8_t* data, int64_t size) {
+	_ASSERT(connection != NULL);
+	_ASSERT(data != NULL);
+
+	int64_t ret = 0;
 	for (;;) {
 		int read = recv(connection->socket, data, size, 0);
 		if (read > 0) {
@@ -191,8 +254,6 @@ void _connection_read_all(_connection_t* connection, uint8_t** data, int64_t* si
 	(*data) = NULL;
 	(*size) = 0;
 
-	#define __CHUNK_SIZE 1024
-
 	typedef struct __chunk_t {
 		uint8_t* data;
 		int64_t size;
@@ -207,57 +268,35 @@ void _connection_read_all(_connection_t* connection, uint8_t** data, int64_t* si
 	__chunk_array_t chunks = {};
 
 	for (;;) {
-		__chunk_t chunk = {
-			.data = _NEW(uint8_t, __CHUNK_SIZE),
-			.size = 0
-		};
+		uint8_t tmp[__CHUNK_SIZE];
+		int64_t len = recv(connection->socket, tmp, __CHUNK_SIZE, 0);
 
-		chunk.size = recv(connection->socket, chunk.data, __CHUNK_SIZE, 0);
-
-		if (chunk.size > 0) {
+		if (len > 0) {
+			__chunk_t chunk = {
+				.data = _ALLOC(uint8_t, len),
+				.size = len
+			};
+			memcpy(chunk.data, tmp, len);
 			_PUSH(chunks, chunk);
-			(*size) += chunk.size;
+			(*size) += len;
 		} else {
-			_FREE(chunk.data);
 			break;
 		}
 	}
 
-	(*data) = _NEW(uint8_t, (*size));
-
-	uint8_t* dst = (*data);
-	for (int64_t i = 0; i < chunks.size; i++) {
-		memcpy(dst, chunks.data[i].data, chunks.data[i].size);
-		_FREE(chunks.data[i].data);
-		dst += chunks.data[i].size;
+	if (chunks.size == 1) {
+		(*data) = chunks.data[0].data;
+	} else if (chunks.size > 1) { 
+		(*data) = _ALLOC(uint8_t, (*size));
+		uint8_t* dst = (*data);
+		for (int64_t i = 0; i < chunks.size; i++) {
+			memcpy(dst, chunks.data[i].data, chunks.data[i].size);
+			_FREE(chunks.data[i].data);
+			dst += chunks.data[i].size;
+		}
 	}
 
 	_FREE(chunks.data);
-
-	#undef __CHUNK_SIZE
-}
-
-void _connection_write(_connection_t* connection, uint8_t* data, int64_t size) {
-	_ASSERT(connection != NULL);
-	_ASSERT(data != NULL);
-
-	write(connection->socket, data, size);
-}
-
-void _connection_on_event(_connection_t* connection, void(*proc)(_connection_event_t const*,void*), void* param) {
-	_ASSERT(connection != NULL);
-	connection->proc = proc;
-	connection->param = param;
-}
-
-void _connection_set_userdata(_connection_t* connection, void* userdata) {
-	_ASSERT(connection != NULL);
-	connection->userdata = userdata;
-}
-
-void* _connection_userdata(_connection_t const* connection) {
-	_ASSERT(connection != NULL);
-	return connection->userdata;
 }
 
 _connection_poll_t* _connection_poll_create(_status_t* status) {
@@ -269,62 +308,73 @@ _connection_poll_t* _connection_poll_create(_status_t* status) {
 		_status_set(status, _SUCCESS_STATUS_TYPE, NULL);
 		return _NEW(_connection_poll_t, { .pollfd = pollfd });
 	} else {
-		_status_set(status, _FAILURE_STATUS_TYPE, strerror(errno));
+		_STATUS_SET_FORMAT(status, _FAILURE_STATUS_TYPE, "epoll_create() failed: %s", strerror(errno));
 		return NULL;
 	}
 #else
+	_status_set(status, _SUCCESS_STATUS_TYPE, NULL);
 	return _NEW(_connection_poll_t, {});
 #endif
 }
 
 void _connection_poll_destroy(_connection_poll_t* poll) {
 	_ASSERT(poll != NULL);
+
 #ifdef __linux__
 	close(poll->pollfd);
 #else
 #endif
-	_FREE(poll->connections.data);
+
+	__CLEAR_EVENTS(poll->events);
+
+	_FREE(poll->events.data);
 	_FREE(poll);
 }
 
-void _connection_poll_process(_connection_poll_t* poll) {
+void _connection_poll_process(_connection_poll_t* poll, _connection_event_t const** events, int64_t* num) {
 	_ASSERT(poll != NULL);
+	_ASSERT(events != NULL);
+	_ASSERT(num != NULL);
+
+	(*events) = NULL;
+	(*num) = 0;
+
+	__CLEAR_EVENTS(poll->events);
 
 #ifdef __linux__
-	epoll_event_t ev[255];
-	int ret = epoll_wait(poll->pollfd, ev, 255, 1);
+	epoll_event_t ev[__POLL_COUNT];
+	int ret = epoll_wait(poll->pollfd, ev, __POLL_COUNT, 1);
 	if (ret >= 0) {
 		for (int i = 0; i < ret; i++) {
 			if (ev[i].events & EPOLLIN) {
-	            _connection_t* conn = (_connection_t*)ev[i].data.ptr;
-	            _ASSERT(conn != NULL);
-	            if (conn->proc != NULL) {
-	            	conn->proc(
-	            		&(_connection_event_t){
-	            			.type = _READ_CONNECTION_EVENT,
-	            			.connection = conn
-	            		},
-	            		conn->param
-	            	);
-	            }
+				_PUSH(poll->events, (_connection_event_t){
+					.type = _READ_CONNECTION_EVENT,
+	            	.connection = (_connection_t*)ev[i].data.ptr
+				});
 			}
 		}
 	} else {
-		_ABORT("epoll_wait() failed: %s\n", strerror(ret));
+		if (errno == EINTR) {
+			_PUSH(poll->events, (_connection_event_t){
+				.type = _INTERUPT_CONNECTION_EVENT
+			});
+		} else {
+			_PUSH(poll->events, (_connection_event_t){
+				.type = _ERROR_CONNECTION_EVENT,
+				.message = _FORMAT("epoll_wait() failed: %s\n", strerror(errno))
+			});
+		}
 	}
 #else
 #endif
+
+	(*events) = poll->events.data;
+	(*num) = poll->events.size;
 }
 
 void _connection_poll_append(_connection_poll_t* poll, _connection_t* connection) {
 	_ASSERT(poll != NULL);
 	_ASSERT(connection != NULL);
-
-	if (_INDEX_OF(poll->connections, connection) > -1) {
-		return;
-	}
-
-	_PUSH(poll->connections, connection);
 
 #ifdef __linux__
 	_CALL(
@@ -344,12 +394,6 @@ void _connection_poll_append(_connection_poll_t* poll, _connection_t* connection
 void _connection_poll_remove(_connection_poll_t* poll, _connection_t* connection) {
 	_ASSERT(poll != NULL);
 	_ASSERT(connection != NULL);
-
-	if (_INDEX_OF(poll->connections, connection) == -1) {
-		return;
-	}
-
-	_REMOVE(poll->connections, connection);
 
 #ifdef __linux__
 	_CALL(

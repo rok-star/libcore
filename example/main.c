@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <libext/string.h>
 #include <libext/path.h>
 #include <libext/app.h>
 #include <libext/window.h>

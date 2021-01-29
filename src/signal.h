@@ -5,16 +5,16 @@
 
 typedef struct _signal_t _signal_t;
 
-typedef enum : int {
-    _SIGNAL_SIGNAL_EVENT = 0
+typedef enum {
+    _SIGNAL_SIGNAL_EVENT = 0,
+    _ERROR_SIGNAL_EVENT  = 1
 } _SIGNAL_EVENT;
 
-static char const* _SIGNAL_EVENT_NAME[1] = {
-    "SIGNAL"
-};
+static char const* _SIGNAL_EVENT_NAME[2] = { "SIGNAL", "ERROR" };
 
 typedef struct _signal_event_t {
 	_SIGNAL_EVENT type;
+    char* message;
 	int signum;
 } _signal_event_t;
 
@@ -24,8 +24,7 @@ extern "C" {
 
 _signal_t* _signal_create(int*,int);
 void _signal_destroy(_signal_t*);
-void _signal_process(_signal_t*);
-void _signal_on_event(_signal_t*,void(*)(_signal_event_t const*,void*),void*);
+void _signal_process(_signal_t*,_signal_event_t const**,int64_t*);
 
 #ifdef __cplusplus
 }

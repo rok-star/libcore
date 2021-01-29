@@ -232,4 +232,13 @@ bool _string_digital(char const* pchar, int64_t len) {
 
 int64_t _string_readline(char const* pchar, int64_t len) {
 	_ASSERT(pchar != NULL);
+	int64_t pos = 0;
+	while (pos < len) {
+		if (pchar[pos] == '\n') {
+			pos += 1;
+			break;
+		}
+		pos += 1;
+	}
+	return pos;
 }
