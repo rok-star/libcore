@@ -121,7 +121,7 @@
         __typeof__(capacity) __reserve = ((size * 2) + 1); \
         _RESERVE_V(data, size, capacity, __reserve); \
     } \
-    data[size++] = (__VA_ARGS__); \
+    data[size++] = (__typeof__(*data))__VA_ARGS__; \
 }
 
 #define _POP_V(data, size, capacity) ({ \
@@ -141,7 +141,7 @@
     if (size == capacity) { \
         __typeof__(capacity) __reserve = ((size * 2) + 1); \
         __typeof__(data) __data = _ALLOC(__typeof__(*data), __reserve); \
-        __data[0] = (__VA_ARGS__); \
+        __data[0] = (__typeof__(*data))__VA_ARGS__; \
         if (data != NULL) { \
             for (__typeof__(size) __i = 0; __i < size; __i++) \
                 __data[__i + 1] = data[__i]; \
@@ -151,7 +151,7 @@
     } else { \
         for (__typeof__(size) __i = (size - 1); __i >= 0; __i--) \
             data[__i + 1] = data[__i]; \
-        data[0] = (__VA_ARGS__); \
+        data[0] = (__typeof__(*data))__VA_ARGS__; \
     } \
     size += 1; \
 }

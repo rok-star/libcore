@@ -14,7 +14,6 @@ bool exit_ = false;
 _app_t* app = NULL;
 _window_t* window = NULL;
 _context_t* context = NULL;
-_signal_t* signal_ = NULL;
 _brush_t* red_brush = NULL;
 _brush_t* green_brush = NULL;
 _brush_t* blue_brush = NULL;
@@ -54,11 +53,6 @@ void window_event(_window_event_t const* event, void* param) {
 	}
 }
 
-void signal_event(_signal_event_t const* event, void* param) {
-	_ASSERT(event != NULL);
-	_OUTPUT("signal: %d\n", event->signum);
-}
-
 void app_event(_app_event_t const* event, void* param) {
 	_ASSERT(event != NULL);
 	if (event->type == _EXIT_APP_EVENT) {
@@ -76,11 +70,9 @@ int main(int argc, char const *argv[]) {
 	app = _app_create();
 	window = _window_create();
 	context = _context_create_window(window);
-	signal_ = _signal_create((int[]){ SIGINT, SIGTERM }, 2);
 
 	_app_on_event(app, app_event, NULL);
 	_window_on_event(window, window_event, NULL);
-	_signal_on_event(signal_, signal_event, NULL);
 
 	_context_set_origin(context, _LEFTTOP_CONTEXT_ORIGIN);
 	_window_set_text(window, "Lorem ipsum привет рулет");
@@ -93,13 +85,11 @@ int main(int argc, char const *argv[]) {
 
 	for (;;) {
 		_app_process(app);
-		_signal_process(signal_);
 		if (exit_) {
 			break;
 		}
 	}
 
-	_signal_destroy(signal_);
 	_context_destroy(context);
 	_window_destroy(window);
 	_app_destroy(app);
