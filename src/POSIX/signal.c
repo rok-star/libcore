@@ -72,6 +72,7 @@ void _signal_destroy(_signal_t* signal) {
 	_ASSERT(signal != NULL);
 	__CLEAR_EVENTS(signal->events);
 	_FREE(signal->events.data);
+	_FREE(signal->signums.data);
 	_FREE(signal);
 }
 

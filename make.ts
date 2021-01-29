@@ -18,11 +18,24 @@ const library: string = Path.resolve(Path.join(dirname, '..'));
 const out_lib: string = Path.resolve(Path.join(`${project}`, 'out', 'lib', Deno.build.os, mode, (Deno.build.os == 'windows' ? 'ext.lib' : 'libext.a')));
 const out_inc: string = Path.resolve(Path.join(`${project}`, 'out', 'include', 'libext'));
 const clean: boolean = (Deno.args.includes('--clean') || Deno.args.includes('--release'));
+const cpus: number = await (async (): Promise<number> => {
+    if (Deno.build.os == 'linux') {
+        const proc = Deno.run({ cmd: ["nproc"], stdout: "piped", stderr: "piped" });
+        const out = await proc.output();
+        const str = new TextDecoder().decode(out);
+        const ret: number = +(str);
+        proc.close();
+        return ret;
+    } else {
+        return 8;
+    }
+})();
 
 if (clean) {
     remove(temp);
     remove(out_lib);
     remove(out_inc);
+    remove(`${out_inc}/cxx`);
 }
 
 await Promise.all([ Deno.mkdir(Path.dirname(out_lib), { recursive: true }),
@@ -137,7 +150,7 @@ if (Deno.args.includes('--release')) {
     target.arguments.push('-fsanitize=address');
 }
 
-const res = await target.make({ output: true, threads: 8, log: false });
+const res = await target.make({ output: true, threads: cpus, log: false });
 if (res.type == 'error') {
     console.log(red('Unable to build libext'));
     Deno.exit(1);
