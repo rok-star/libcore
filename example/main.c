@@ -61,7 +61,6 @@ void app_event(_app_event_t const* event, void* param) {
 }
 
 int main(int argc, char const *argv[]) {
-
 	red_brush = _brush_create_color(&_RED_COLOR);
 	green_brush = _brush_create_color(&_GREEN_COLOR);
 	blue_brush = _brush_create_color(&_BLUE_COLOR);

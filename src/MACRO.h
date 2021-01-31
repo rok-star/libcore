@@ -118,7 +118,7 @@
     _ASSERT(capacity >= 0); \
     _ASSERT(size <= capacity); \
     if (size == capacity) { \
-        __typeof__(capacity) __reserve = ((size * 2) + 1); \
+        __typeof__(capacity) __reserve = ((size == 0) ? 10 : (size * 2)); \
         _RESERVE_V(data, size, capacity, __reserve); \
     } \
     data[size++] = (__typeof__(*data))__VA_ARGS__; \

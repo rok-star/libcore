@@ -50,6 +50,7 @@ await Promise.all([ Deno.copyFile(`${project}/src/WINDOWS.h`, `${out_inc}/WINDOW
                     Deno.copyFile(`${project}/src/line.h`, `${out_inc}/line.h`),
                     Deno.copyFile(`${project}/src/unicode.h`, `${out_inc}/unicode.h`),
                     Deno.copyFile(`${project}/src/string.h`, `${out_inc}/string.h`),
+                    Deno.copyFile(`${project}/src/parser.h`, `${out_inc}/parser.h`),
                     Deno.copyFile(`${project}/src/keyboard.h`, `${out_inc}/keyboard.h`),
                     Deno.copyFile(`${project}/src/color.h`, `${out_inc}/color.h`),
                     Deno.copyFile(`${project}/src/brush.h`, `${out_inc}/brush.h`),
@@ -102,6 +103,7 @@ target.sources.push(`${project}/src/dispatchqueue.c`);
 target.sources.push(`${project}/src/bezierpath.c`);
 target.sources.push(`${project}/src/unicode.c`);
 target.sources.push(`${project}/src/string.c`);
+target.sources.push(`${project}/src/parser.c`);
 target.sources.push(`${project}/src/status.c`);
 target.sources.push(`${project}/src/brush.c`);
 target.sources.push(`${project}/src/layer.c`);
@@ -156,6 +158,35 @@ const res = await target.make({ output: true, threads: cpus, log: false });
 if (res.type == 'error') {
     console.log(red('Unable to build libext'));
     Deno.exit(1);
+}
+
+if (Deno.args.includes('--test')) {
+    const target = new Target();
+    target.type = TargetType.executable;
+    target.temp = Path.join(temp, 'test');
+    target.output = Path.join(target.temp, `test${(Deno.build.os == 'windows') ? '.exe' : '.a'}`);
+    target.cStandard = Standard.c17;
+    target.includePath = [Path.dirname(out_inc)];
+    target.libraryPath = [Path.dirname(out_lib)];
+    target.libraries = ['ext'];
+    target.arguments.push('-fsanitize=address');
+    target.debug = true;
+    target.sources.push(`${project}/test/main.c`);
+    if (Deno.build.os == 'windows') {
+
+    } else if (Deno.build.os == 'darwin') {
+        target.frameworks = ['Cocoa', 'Metal', 'MetalKit', 'QuartzCore'];
+    }
+
+    remove(target.temp);
+    remove(target.output);
+
+    const res = await target.make({ output: true });
+    if (res.type == 'error') {
+        console.log(red('Unable to build test'));
+        Deno.exit();
+    }
+    await Deno.run({ cmd: [ target.output ] }).status();
 }
 
 if (Deno.args.includes('--example')) {
