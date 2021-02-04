@@ -52,8 +52,7 @@ _connection_t* _connection_accept(_listener_t*,_status_t*);
 void _connection_destroy(_connection_t*);
 void _connection_process(_connection_t*,_connection_event_t const**,int64_t*);
 void _connection_write(_connection_t*,uint8_t*,int64_t);
-int64_t _connection_read(_connection_t*,uint8_t*,int64_t);
-void _connection_read_all(_connection_t*,uint8_t**,int64_t*);
+void _connection_read(_connection_t*,uint8_t**,int64_t*);
 
 _connection_poll_t* _connection_poll_create(_status_t*);
 void _connection_poll_destroy(_connection_poll_t*);

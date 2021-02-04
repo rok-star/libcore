@@ -100,7 +100,6 @@ static bool __read_message(_parser_t* parser, _http_value_t* value, _status_t* s
     }
 }
 
-
 static bool __read_url(_parser_t* parser, _http_value_t* value, _status_t* status) {
     _ASSERT(parser != NULL);
     _ASSERT(value != NULL);
@@ -158,6 +157,54 @@ static bool __read_first_line(_parser_t* parser, _http_message_t* http_message, 
     }
 }
 
+static bool __read_header(_parser_t* parser, _http_header_t* header, _status_t* status) {
+    _ASSERT(parser != NULL);
+    _ASSERT(header != NULL);
+    _ASSERT(status != NULL);
+
+    if (_parser_read_until(parser, ": ", 2, &header->name.data, &header->name.size)) {
+        if (_parser_seek(parser, 2)) {
+            if (_parser_read_string(parser, &header->value.data, &header->value.size)) {
+                return true;
+            } else {
+                _status_set(status, _FAILURE_STATUS_TYPE, "Unable to parse header value");
+                return false;
+            }
+        } else {
+            _status_set(status, _FAILURE_STATUS_TYPE, "Unexpected end of header data");
+            return false;
+        }
+    } else {
+        _status_set(status, _FAILURE_STATUS_TYPE, "Unable to parse header name");
+        return false;
+    }
+}
+
+static bool __read_headers(_parser_t* parser, _http_message_t* http_message, _status_t* status) {
+    _ASSERT(parser != NULL);
+    _ASSERT(http_message != NULL);
+    _ASSERT(status != NULL);
+
+    _http_header_t header = {};
+    for (;;) {
+        if (__read_header(parser, &header, status)) {
+            _PUSH(http_message->headers, header);
+        } else {
+            break;
+        }
+        if (!_parser_read_exact(parser, "\r\n", 2)) {
+            break;
+        }
+    }
+
+    if (http_message->headers.size > 0) {
+        return true;
+    } else {
+        _status_set(status, _FAILURE_STATUS_TYPE, "Unable to parse headers");
+        return false;
+    }
+}
+
 _http_message_t* _http_message_create(char const* data, int64_t size, _HTTP_MESSAGE_TYPE type, _status_t* status) {
     _ASSERT(data != NULL);
     _ASSERT(status != NULL);
@@ -165,11 +212,40 @@ _http_message_t* _http_message_create(char const* data, int64_t size, _HTTP_MESS
     _http_message_t* http_message = _NEW(_http_message_t, { .type = type });
 
     _parser_t* parser = _parser_create(data, size);
-    if (!_parser_end(parser)) {
-        if (__read_first_line(parser, http_message, status)) {
-
+    if (__read_first_line(parser, http_message, status)) {
+        if (_parser_read_exact(parser, "\r\n", 2)) {
+            if (__read_headers(parser, http_message, status)) {
+                if (_parser_read_exact(parser, "\r\n\r\n", 4)) {
+                    ;
+                } else {
+                    return http_message;
+                }
+            } else {
+                _FREE(http_message);
+                return NULL;
+            }
         } else {
-            _OUTPUT("parser->position: %llu\n", _parser_position(parser));
+            _status_set(status, _FAILURE_STATUS_TYPE, "Unexpected end of message");
+            _FREE(http_message);
+            return NULL;
+        }
+    } else {
+        _FREE(http_message);
+        return NULL;
+    }
+
+
+
+
+    if (!_parser_end(parser)) {
+        if (__read_first_line(parser, http_message, status)
+        && __read_return(parser, status)
+        && __read_headers(parser, http_message, status)
+        && __read_return(parser, status)
+        && __read_body(parser, http_message, status)) {
+            _status_set(status, _SUCCESS_STATUS_TYPE, NULL);
+        } else {
+
         }
     } else {
         _status_set(status, _FAILURE_STATUS_TYPE, "Empty http message");

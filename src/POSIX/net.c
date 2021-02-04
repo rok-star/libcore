@@ -225,28 +225,7 @@ void _connection_write(_connection_t* connection, uint8_t* data, int64_t size) {
 	write(connection->socket, data, size);
 }
 
-int64_t _connection_read(_connection_t* connection, uint8_t* data, int64_t size) {
-	_ASSERT(connection != NULL);
-	_ASSERT(data != NULL);
-
-	int64_t ret = 0;
-	for (;;) {
-		int read = recv(connection->socket, data, size, 0);
-		if (read > 0) {
-			data += read;
-			size -= read;
-			ret += read;
-			if (size == 0) {
-				break;
-			}
-		} else {
-			break;
-		}
-	}
-	return ret;
-}
-
-void _connection_read_all(_connection_t* connection, uint8_t** data, int64_t* size) {
+void _connection_read(_connection_t* connection, uint8_t** data, int64_t* size) {
 	_ASSERT(connection != NULL);
 	_ASSERT(data != NULL);
 	_ASSERT(size != NULL);
@@ -286,7 +265,7 @@ void _connection_read_all(_connection_t* connection, uint8_t** data, int64_t* si
 
 	if (chunks.size == 1) {
 		(*data) = chunks.data[0].data;
-	} else if (chunks.size > 1) { 
+	} else if (chunks.size > 1) {
 		(*data) = _ALLOC(uint8_t, (*size));
 		uint8_t* dst = (*data);
 		for (int64_t i = 0; i < chunks.size; i++) {
