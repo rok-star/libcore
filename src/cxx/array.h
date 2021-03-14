@@ -297,6 +297,25 @@ public:
             new (_data + i) T(std::move(_data[i + 1]));
         return ret;
     }
+    template<typename... A>
+    ext::array<T>& push_new(A &&... a) {
+        if (_capacity == _size) {
+            reserve(_size * 2);
+        }
+        new (_data + _size) T(std::forward<A>(a)...);
+        _size += 1;
+        return *this;
+    }
+    template<typename... A>
+    ext::array<T>& unshift_new(A &&... a) {
+        if (_capacity == _size)
+            reserve(_size * 2);
+        for (int64_t i = (_size - 1); i >= 0; i--)
+            new (_data + i + 1) T(std::move(_data[i]));
+        new (_data) T(std::forward<A>(a)...);
+        _size += 1;
+        return *this;
+    }
     ext::array<T>& reserve(int64_t capacity) {
         if (capacity > _capacity) {
             T* data = ext::alloc<T>(capacity);
