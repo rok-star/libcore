@@ -5,6 +5,17 @@
 #include <libext/math.h>
 #include <libext/line.h>
 
+typedef enum {
+    _BUTT_LINE_CAP,
+    _SQUARE_LINE_CAP,
+    _ROUND_LINE_CAP
+} _LINE_CAP;
+
+typedef enum {
+    _ROUND_LINE_JOIN,
+    _FLAT_LINE_JOIN
+} _LINE_JOIN;
+
 typedef struct _bezier_path_t _bezier_path_t;
 
 #ifdef __cplusplus
