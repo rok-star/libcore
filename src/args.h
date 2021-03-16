@@ -11,8 +11,8 @@ typedef enum {
 extern "C" {
 #endif
 
-int _args_has(char const *[],int,char const*,int64_t);
-int _args_value(char const *[],int,char const*,int64_t,_PARAM_VALUE_SEPARATOR,char const**,int64_t*);
+int _args_has(char const*[],int,char const*,int64_t);
+int _args_value(char const*[],int,char const*,int64_t,_PARAM_VALUE_SEPARATOR,char const**,int64_t*);
 
 #ifdef __cplusplus
 }

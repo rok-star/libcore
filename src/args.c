@@ -14,8 +14,8 @@ int _args_has(char const *[] argv, int argc, char const* name, int64_t len, _PAR
 	if (len > 0) {
 		for (int i = 0; i < argc; i++) {
 			char const* arg_str = argv[i];
-			int64_t const arg_len = strlen(argv[i]);
-			int64_t const index = _string_index_of(arg_str, arg_len, "=", 1, 0);
+			int64_t arg_len = strlen(argv[i]);
+			int64_t index = _string_index_of(arg_str, arg_len, "=", 1, 0);
 			if (sep == _SPACE_PARAM_VALUE_SEPARATOR) {
 				if (_string_compare(arg_str, arg_len, name, len)) {
 					return i;
@@ -40,10 +40,10 @@ int _args_value(char const *[] argv, int argc, char const* name, int64_t len, _P
 	_ASSERT(name != NULL);
 	_ASSERT(value != NULL);
 	_ASSERT(value_len != NULL);
-	int const i = _args_has(argv, argc, name, len, sep);
+	int i = _args_has(argv, argc, name, len, sep);
 	if (i > -1) {
 		if (sep == _SPACE_PARAM_VALUE_SEPARATOR) {
-			int const ii = (i + 1);
+			int ii = (i + 1);
 			if (ii < argc) {
 				(*value) = argv[ii];
 				(*value_len) = strlen(argv[ii]);
@@ -52,7 +52,7 @@ int _args_value(char const *[] argv, int argc, char const* name, int64_t len, _P
 				return -1;
 			}
 		} else if (sep == _EQUALS_PARAM_VALUE_SEPARATOR) {
-			int64_t const index = _string_index_of(arg_str, strlen(argv[i]), "=", 1, 0);
+			int64_t index = _string_index_of(arg_str, strlen(argv[i]), "=", 1, 0);
 			if (index > -1) {
 				(*value) = argv[ii];
 				(*value_len) = index;
@@ -61,8 +61,8 @@ int _args_value(char const *[] argv, int argc, char const* name, int64_t len, _P
 				return -1;
 			}
 		} else if (sep == _BOTH_PARAM_VALUE_SEPARATOR) {
-			int64_t const arg_len = strlen(argv[i]);
-			int64_t const index = _string_index_of(arg_str, arg_len, "=", 1, 0);
+			int64_t arg_len = strlen(argv[i]);
+			int64_t index = _string_index_of(arg_str, arg_len, "=", 1, 0);
 			(*value) = argv[ii];
 			(*value_len) = (index > -1 ? index : arg_len);
 			return i;
