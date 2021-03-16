@@ -11,11 +11,12 @@ extern "C" {
 char* _string_clone(char const*,int64_t);
 char* _string_uppercase(char const*,int64_t);
 char* _string_lowercase(char const*,int64_t);
-bool _string_compare(char const*,char const*,int64_t);
+bool _string_compare(char const*,int64_t,char const*,int64_t);
 void _string_tokenize(char const*,int64_t,char***,int64_t*);
 void _string_split(char const*,int64_t,char const*,char const***,int64_t*);
 bool _string_whitespace(char const*,int64_t);
 bool _string_digital(char const*,int64_t);
+int64_t _string_index_of(char const*,int64_t,char const*,int64_t,int64_t);
 int64_t _string_read_int8(char const*,int64_t,bool,int8_t*);
 int64_t _string_read_int16(char const*,int64_t,bool,int16_t*);
 int64_t _string_read_int32(char const*,int64_t,bool,int32_t*);

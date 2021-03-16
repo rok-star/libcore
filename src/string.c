@@ -48,7 +48,6 @@ static char* __convert_case(char const* pchar, int64_t len, int64_t a, int64_t b
 
 static bool __contains_only(char const* pchar, int64_t len, uint32_t const* array, int64_t size) {
 	_ASSERT(pchar != NULL);
-	_ASSERT(len >= 0);
 	if (len > 0) {
 		uint32_t codepoint = 0;
 		int64_t read = 0;
@@ -289,14 +288,17 @@ char* _string_lowercase(char const* pchar, int64_t len) {
 	return __convert_case(pchar, len, 1, 0);
 }
 
-bool _string_compare(char const* pchar1, char const* pchar2, int64_t len) {
+bool _string_compare(char const* pchar1, int64_t len1, char const* pchar2, int64_t len2) {
 	_ASSERT(pchar1 != NULL);
 	_ASSERT(pchar2 != NULL);
-	_ASSERT(len >= 0);
-	if (len > 0) {
-		for (int64_t i = 0; i < len; i++)
-			if (pchar1[i] != pchar2[i])
+	if ((len1 > 0)
+	&& (len2 > 0)
+	&& (len1 == len2)) {
+		for (int64_t i = 0; i < len1; i++) {
+			if (pchar1[i] != pchar2[i]) {
 				return false;
+			}
+		}
 		return true;
 	} else {
 		return false;
@@ -432,6 +434,22 @@ bool _string_digital(char const* pchar, int64_t len) {
 	_ASSERT(pchar != NULL);
 	_ASSERT(len >= 0);
 	return __contains_only(pchar, len, __digital, 10);
+}
+
+int64_t _string_index_of(char const* pchar, int64_t len, char const* pchar2, int64_t len2, int64_t start) {
+	_ASSERT(pchar != NULL);
+	_ASSERT(pchar2 != NULL);
+	if ((len > 0)
+	&& (len2 > 0)
+	&& (len2 <= len)) {
+		int64_t last = (len - len2);
+		for (int64_t i = start; i <= last; i++) {
+			if (strncmp((pchar + i), pchar2, len2) == 0) {
+				return i;
+			}
+		}
+	}
+	return -1;
 }
 
 #define __READ_INT(pchar, len, out, spaces, sign, T, MAX) ({ \
