@@ -35,12 +35,10 @@ if (clean) {
     remove(temp);
     remove(out_lib);
     remove(out_inc);
-    remove(`${out_inc}/cxx`);
 }
 
 await Promise.all([ Deno.mkdir(Path.dirname(out_lib), { recursive: true }),
                     Deno.mkdir(out_inc, { recursive: true }),
-                    Deno.mkdir(`${out_inc}/cxx`, { recursive: true }),
                     Deno.mkdir(temp, { recursive: true }) ]);
 
 await Promise.all([ Deno.copyFile(`${project}/src/WINDOWS.h`, `${out_inc}/WINDOWS.h`),
@@ -71,23 +69,7 @@ await Promise.all([ Deno.copyFile(`${project}/src/WINDOWS.h`, `${out_inc}/WINDOW
                     Deno.copyFile(`${project}/src/path.h`, `${out_inc}/path.h`),
                     Deno.copyFile(`${project}/src/file.h`, `${out_inc}/file.h`),
                     Deno.copyFile(`${project}/src/directory.h`, `${out_inc}/directory.h`),
-                    Deno.copyFile(`${project}/src/dispatchqueue.h`, `${out_inc}/dispatchqueue.h`),
-                    Deno.copyFile(`${project}/src/cxx/app.h`, `${out_inc}/cxx/app.h`),
-                    Deno.copyFile(`${project}/src/cxx/array.h`, `${out_inc}/cxx/array.h`),
-                    Deno.copyFile(`${project}/src/cxx/base.h`, `${out_inc}/cxx/base.h`),
-                    Deno.copyFile(`${project}/src/cxx/date.h`, `${out_inc}/cxx/date.h`),
-                    Deno.copyFile(`${project}/src/cxx/directory.h`, `${out_inc}/cxx/directory.h`),
-                    Deno.copyFile(`${project}/src/cxx/event.h`, `${out_inc}/cxx/event.h`),
-                    Deno.copyFile(`${project}/src/cxx/file.h`, `${out_inc}/cxx/file.h`),
-                    Deno.copyFile(`${project}/src/cxx/map.h`, `${out_inc}/cxx/map.h`),
-                    Deno.copyFile(`${project}/src/cxx/math.h`, `${out_inc}/cxx/math.h`),
-                    Deno.copyFile(`${project}/src/cxx/number.h`, `${out_inc}/cxx/number.h`),
-                    Deno.copyFile(`${project}/src/cxx/optional.h`, `${out_inc}/cxx/optional.h`),
-                    Deno.copyFile(`${project}/src/cxx/path.h`, `${out_inc}/cxx/path.h`),
-                    Deno.copyFile(`${project}/src/cxx/ref.h`, `${out_inc}/cxx/ref.h`),
-                    Deno.copyFile(`${project}/src/cxx/status.h`, `${out_inc}/cxx/status.h`),
-                    Deno.copyFile(`${project}/src/cxx/string.h`, `${out_inc}/cxx/string.h`),
-                    Deno.copyFile(`${project}/src/cxx/window.h`, `${out_inc}/cxx/window.h`) ]);
+                    Deno.copyFile(`${project}/src/dispatchqueue.h`, `${out_inc}/dispatchqueue.h`) ]);
 
 const target = new Target();
 target.type = TargetType.library;
