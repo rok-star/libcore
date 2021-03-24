@@ -1,6 +1,6 @@
 #include <Cocoa/Cocoa.h>
-#include <libext/MACRO.h>
-#include <libext/timer.h>
+#include <libcore/MACRO.h>
+#include <libcore/timer.h>
 
 typedef struct _timer_t {
     void(*proc)(void*);

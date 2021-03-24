@@ -1,7 +1,7 @@
 #include <ctype.h>
-#include <libext/string.h>
-#include <libext/parser.h>
-#include <libext/MACRO.h>
+#include <libcore/string.h>
+#include <libcore/parser.h>
+#include <libcore/MACRO.h>
 
 typedef struct _parser_t {
 	char const* data;

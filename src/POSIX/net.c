@@ -9,8 +9,8 @@
 #include <sys/select.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
-#include <libext/net.h>
-#include <libext/MACRO.h>
+#include <libcore/net.h>
+#include <libcore/MACRO.h>
 
 #define __POLL_COUNT 255
 #define __CHUNK_SIZE 1024

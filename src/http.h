@@ -1,8 +1,8 @@
-#ifndef _LIBEXT_HTTP_H
-#define _LIBEXT_HTTP_H
+#ifndef _LIBCORE_HTTP_H
+#define _LIBCORE_HTTP_H
 
 #include <stdint.h>
-#include <libext/status.h>
+#include <libcore/status.h>
 
 typedef enum {
     _REQUEST_HTTP_MESSAGE_TYPE  = 0,
@@ -45,4 +45,4 @@ void _http_message_destroy(_http_message_t*);
 }
 #endif
 
-#endif /* _LIBEXT_HTTP_H */
+#endif /* _LIBCORE_HTTP_H */

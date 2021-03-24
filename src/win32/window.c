@@ -1,9 +1,9 @@
 #include <stdio.h>
 #include <stdbool.h>
-#include <libext/WINDOWS.h>
-#include <libext/window.h>
-#include <libext/unicode.h>
-#include <libext/MACRO.h>
+#include <libcore/WINDOWS.h>
+#include <libcore/window.h>
+#include <libcore/unicode.h>
+#include <libcore/MACRO.h>
 
 #define WINAPI_CALL(a) { \
     if (a == 0) \

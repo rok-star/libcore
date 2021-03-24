@@ -1,7 +1,7 @@
 #include <math.h>
 #include <stdint.h>
-#include <libext/MACRO.h>
-#include <libext/layer.h>
+#include <libcore/MACRO.h>
+#include <libcore/layer.h>
 
 typedef struct _layer_t {
 	_rect_t rect;

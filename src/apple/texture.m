@@ -1,5 +1,5 @@
-#include <libext/texture.h>
-#include <libext/MACRO.h>
+#include <libcore/texture.h>
+#include <libcore/MACRO.h>
 
 #include "metal.h"
 

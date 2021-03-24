@@ -3,8 +3,8 @@
 #endif
 
 #include <stdint.h>
-#include <libext/signal.h>
-#include <libext/MACRO.h>
+#include <libcore/signal.h>
+#include <libcore/MACRO.h>
 
 #define sigaction_E(a, b, c) { \
 	int __err = sigaction(a, b, c); \

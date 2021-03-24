@@ -1,8 +1,8 @@
 #include <stdlib.h>
-#include <libext/http.h>
-#include <libext/string.h>
-#include <libext/parser.h>
-#include <libext/MACRO.h>
+#include <libcore/http.h>
+#include <libcore/string.h>
+#include <libcore/parser.h>
+#include <libcore/MACRO.h>
 
 static char const* __METHODS[] = { "GET", "HEAD", "POST", "PUT", "DELETE", "CONNECT", "OPTIONS", "TRACE", "PATCH", NULL };
 

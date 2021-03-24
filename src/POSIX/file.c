@@ -5,8 +5,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
-#include <libext/MACRO.h>
-#include <libext/file.h>
+#include <libcore/MACRO.h>
+#include <libcore/file.h>
 
 static void __file_write(char const* path, uint8_t const* data, int64_t size, bool append, _status_t* status) {
 	_ASSERT(path != NULL);

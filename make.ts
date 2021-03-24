@@ -1,22 +1,22 @@
 console.log(`
-  _ _ _               _
- | (_) |             | |
- | |_| |__   _____  _| |_
- | | | '_ \\ / _ \\ \\/ / __|
- | | | |_) |  __/>  <| |_
- |_|_|_.__/ \\___/_/\\_\\\\__|
+  _ _ _                        
+ | (_) |                       
+ | |_| |__   ___ ___  _ __ ___ 
+ | | | '_ \\ / __/ _ \\| '__/ _ \\
+ | | | |_) | (_| (_) | | |  __/
+ |_|_|_.__/ \\___\\___/|_|  \\___|
 `);
 
 import * as Path from 'https://deno.land/std/path/mod.ts';
 import { Target, TargetType, Standard, red, green, yellow, remove, tempPath } from 'https://deno.land/x/buildsystem/mod.ts';
 
 const mode: string = Deno.args.includes('--release') ? 'release' : 'debug';
-const temp: string = Path.join(tempPath(), 'libext', mode);
+const temp: string = Path.join(tempPath(), 'libcore', mode);
 const dirname: string = Path.dirname(Path.fromFileUrl(import.meta.url));
 const project: string = Path.resolve(dirname);
 const library: string = Path.resolve(Path.join(dirname, '..'));
-const out_lib: string = Path.resolve(Path.join(`${project}`, 'out', 'lib', Deno.build.os, mode, (Deno.build.os == 'windows' ? 'ext.lib' : 'libext.a')));
-const out_inc: string = Path.resolve(Path.join(`${project}`, 'out', 'include', 'libext'));
+const out_lib: string = Path.resolve(Path.join(`${project}`, 'out', 'lib', Deno.build.os, mode, (Deno.build.os == 'windows' ? 'ext.lib' : 'libcore.a')));
+const out_inc: string = Path.resolve(Path.join(`${project}`, 'out', 'include', 'libcore'));
 const clean: boolean = (Deno.args.includes('--clean') || Deno.args.includes('--release'));
 const cpus: number = await (async (): Promise<number> => {
     if (Deno.build.os == 'linux') {
@@ -47,7 +47,6 @@ await Promise.all([ Deno.copyFile(`${project}/src/WINDOWS.h`, `${out_inc}/WINDOW
                     Deno.copyFile(`${project}/src/MACRO.h`, `${out_inc}/MACRO.h`),
                     Deno.copyFile(`${project}/src/status.h`, `${out_inc}/status.h`),
                     Deno.copyFile(`${project}/src/math.h`, `${out_inc}/math.h`),
-                    Deno.copyFile(`${project}/src/line.h`, `${out_inc}/line.h`),
                     Deno.copyFile(`${project}/src/unicode.h`, `${out_inc}/unicode.h`),
                     Deno.copyFile(`${project}/src/string.h`, `${out_inc}/string.h`),
                     Deno.copyFile(`${project}/src/parser.h`, `${out_inc}/parser.h`),
@@ -60,7 +59,7 @@ await Promise.all([ Deno.copyFile(`${project}/src/WINDOWS.h`, `${out_inc}/WINDOW
                     Deno.copyFile(`${project}/src/layer.h`, `${out_inc}/layer.h`),
                     Deno.copyFile(`${project}/src/signal.h`, `${out_inc}/signal.h`),
                     Deno.copyFile(`${project}/src/net.h`, `${out_inc}/net.h`),
-                    Deno.copyFile(`${project}/src/http.h`, `${out_inc}/http.h`),
+                    //Deno.copyFile(`${project}/src/http.h`, `${out_inc}/http.h`),
                     Deno.copyFile(`${project}/src/thread.h`, `${out_inc}/thread.h`),
                     Deno.copyFile(`${project}/src/timer.h`, `${out_inc}/timer.h`),
                     Deno.copyFile(`${project}/src/time.h`, `${out_inc}/time.h`),
@@ -110,7 +109,7 @@ target.sources.push(`${project}/src/layer.c`);
 target.sources.push(`${project}/src/color.c`);
 target.sources.push(`${project}/src/math.c`);
 target.sources.push(`${project}/src/path.c`);
-target.sources.push(`${project}/src/http.c`);
+//target.sources.push(`${project}/src/http.c`);
 
 if (Deno.build.os == 'windows') {
     target.sources.push(`${project}/src/win32/app.c`);
@@ -156,7 +155,7 @@ if (Deno.args.includes('--release')) {
 
 const res = await target.make({ output: true, threads: cpus, log: false });
 if (res.type == 'error') {
-    console.log(red('Unable to build libext'));
+    console.log(red('Unable to build libcore'));
     Deno.exit(1);
 }
 
@@ -168,7 +167,7 @@ if (Deno.args.includes('--test')) {
     target.cStandard = Standard.c17;
     target.includePath = [Path.dirname(out_inc)];
     target.libraryPath = [Path.dirname(out_lib)];
-    target.libraries = ['ext'];
+    target.libraries = ['core'];
     target.arguments.push('-fsanitize=address');
     target.debug = true;
     target.sources.push(`${project}/test/main.c`);
@@ -197,7 +196,7 @@ if (Deno.args.includes('--example')) {
     target.cStandard = Standard.c17;
     target.includePath = [Path.dirname(out_inc)];
     target.libraryPath = [Path.dirname(out_lib)];
-    target.libraries = ['ext'];
+    target.libraries = ['core'];
     target.sources.push(`${project}/example/main.c`);
     if (Deno.build.os == 'windows') {
 

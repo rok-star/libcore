@@ -3,8 +3,8 @@
 #endif
 
 #include <pthread.h>
-#include <libext/thread.h>
-#include <libext/MACRO.h>
+#include <libcore/thread.h>
+#include <libcore/MACRO.h>
 
 typedef struct _thread_t {
     void(*proc)(void*);

@@ -1,9 +1,9 @@
 #include <stdbool.h>
 #include <stdint.h>
-#include <libext/MACRO.h>
-#include <libext/cond.h>
-#include <libext/lock.h>
-#include <libext/dispatchqueue.h>
+#include <libcore/MACRO.h>
+#include <libcore/cond.h>
+#include <libcore/lock.h>
+#include <libcore/dispatchqueue.h>
 
 typedef struct _dispatch_queue_item_t {
     void (*proc)(void*);

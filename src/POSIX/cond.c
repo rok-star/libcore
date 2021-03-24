@@ -5,9 +5,9 @@
 #include <time.h>
 #include <stdint.h>
 #include <pthread.h>
-#include <libext/lock.h>
-#include <libext/cond.h>
-#include <libext/MACRO.h>
+#include <libcore/lock.h>
+#include <libcore/cond.h>
+#include <libcore/MACRO.h>
 
 #define pthread_cond_init_E(a, b) { \
     int __err = pthread_cond_init(a, b); \

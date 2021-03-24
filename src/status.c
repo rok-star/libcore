@@ -1,5 +1,5 @@
-#include <libext/MACRO.h>
-#include <libext/status.h>
+#include <libcore/MACRO.h>
+#include <libcore/status.h>
 
 void _status_set(_status_t* status, _STATUS_TYPE type, char const* message) {
 	_ASSERT(status != NULL);

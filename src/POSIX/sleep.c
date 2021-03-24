@@ -4,8 +4,8 @@
 
 #include <math.h>
 #include <pthread.h>
-#include <libext/sleep.h>
-#include <libext/MACRO.h>
+#include <libcore/sleep.h>
+#include <libcore/MACRO.h>
 
 #define nanospeep_E(a, b) { \
     int __err = nanosleep(a, b); \

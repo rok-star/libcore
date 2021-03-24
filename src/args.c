@@ -1,6 +1,6 @@
-#include <libext/MACRO.h>
-#include <libext/args.h>
-#include <libext/string.h>
+#include <libcore/MACRO.h>
+#include <libcore/args.h>
+#include <libcore/string.h>
 
 typedef enum {
 	_SPACE_PARAM_VALUE_SEPARATOR  = 0,

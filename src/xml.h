@@ -1,6 +1,6 @@
-#ifndef _LIBEXT_XML_H
-#define _LIBEXT_XML_H
+#ifndef _LIBCORE_XML_H
+#define _LIBCORE_XML_H
 
 
 
-#endif /* _LIBEXT_XML_H */
+#endif /* _LIBCORE_XML_H */

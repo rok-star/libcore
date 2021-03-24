@@ -1,6 +1,6 @@
 #include <stdbool.h>
-#include <libext/MACRO.h>
-#include <libext/path.h>
+#include <libcore/MACRO.h>
+#include <libcore/path.h>
 
 char* _path_resolve(char const* path) {
     _ASSERT(path != NULL);

@@ -1,6 +1,6 @@
-#include <libext/MACRO.h>
-#include <libext/window.h>
-#include <libext/context.h>
+#include <libcore/MACRO.h>
+#include <libcore/window.h>
+#include <libcore/context.h>
 
 #include "metal.h"
 

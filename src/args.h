@@ -1,5 +1,5 @@
-#ifndef _LIBEXT_ARGS_H
-#define _LIBEXT_ARGS_H
+#ifndef _LIBCORE_ARGS_H
+#define _LIBCORE_ARGS_H
 
 typedef enum {
 	_SPACE_PARAM_VALUE_SEPARATOR  = 0,
@@ -18,4 +18,4 @@ int _args_value(char const*[],int,char const*,int64_t,_PARAM_VALUE_SEPARATOR,cha
 }
 #endif
 
-#endif /* _LIBEXT_ARGS_H */
+#endif /* _LIBCORE_ARGS_H */

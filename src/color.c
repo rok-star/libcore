@@ -1,4 +1,4 @@
-#include <libext/color.h>
+#include <libcore/color.h>
 
 _color_t const _ALICEBLUE_COLOR = { 240, 248, 255, 255 };
 _color_t const _LIGHTSALMON_COLOR = { 255, 160, 122, 255 };

@@ -3,10 +3,10 @@
 #include <stdbool.h>
 #include <string.h>
 #include <execinfo.h>
-#include <libext/MACRO.h>
-#include <libext/thread.h>
-#include <libext/sleep.h>
-#include <libext/timer.h>
+#include <libcore/MACRO.h>
+#include <libcore/thread.h>
+#include <libcore/sleep.h>
+#include <libcore/timer.h>
 
 typedef struct _timer_t {
     _thread_t* thread;

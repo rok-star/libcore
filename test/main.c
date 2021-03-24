@@ -1,9 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <libext/string.h>
-#include <libext/http.h>
-#include <libext/MACRO.h>
+#include <libcore/status.h>
+#include <libcore/string.h>
+#include <libcore/MACRO.h>
 
 void test_string_read_number(void) {
 
@@ -62,11 +62,11 @@ void test_string_read_number(void) {
         int64_t read = _string_read_uint64(item.string, strlen(item.string), true, &value);
         if (read > 0) {
             if (item.error) {
-                printf("%s - FAIL, should be an error, but got %llu\n", item.string, value);
+                printf("%s - FAIL, should be an error, but got %lu\n", item.string, value);
             } else if (value == item.should) {
-                printf("%s - OK, equals, %llu\n", item.string, value);
+                printf("%s - OK, equals, %lu\n", item.string, value);
             } else {
-                printf("%s - FAIL, value isn't equal to correct (%llu)\n", item.string, value);
+                printf("%s - FAIL, value isn't equal to correct (%lu)\n", item.string, value);
             }
         } else {
             if (!item.error) {
@@ -358,11 +358,11 @@ void test_string_read_number(void) {
         int64_t read = _string_read_int64(item.string, strlen(item.string), true, &value);
         if (read > 0) {
             if (item.error) {
-                printf("%s - FAIL, should be an error, but got %lld\n", item.string, value);
+                printf("%s - FAIL, should be an error, but got %ld\n", item.string, value);
             } else if (value == item.should) {
-                printf("%s - OK, equals, %lld\n", item.string, value);
+                printf("%s - OK, equals, %ld\n", item.string, value);
             } else {
-                printf("%s - FAIL, value isn't equal to correct (%lld)\n", item.string, value);
+                printf("%s - FAIL, value isn't equal to correct (%ld)\n", item.string, value);
             }
         } else {
             if (!item.error) {
@@ -452,25 +452,9 @@ void test_string_read_number(void) {
     }
 }
 
-void test_http(void) {
-	char const* request = "GET /video.ogv HTTP/1.1\r\nFragment: track=audio\r\nRange: npt=00:10-00:20\r\nAccept-Range-Refer: bytes\r\n\r\n";
-	char const* response = "HTTP 200 OK\r\nContent-Length: 600\r\nContent-Range: npt 00:10-00:20/01:20\r\nContent-Fragment: track=audio\r\nVary: Fragment, Accept-Range-Refer\r\nRange-Refer: this bytes 0-600, http://www.example.com/video.ogv#track=audio bytes 20000-30000\r\n\r\n";
-
-	_status_t status = {};
-	_http_message_t* req = _http_message_create(request, strlen(request), _REQUEST_HTTP_MESSAGE_TYPE, &status);
-
-	if (status.type == _FAILURE_STATUS_TYPE) {
-		_OUTPUT("%s\n", status.message);
-	} else {
-		_OUTPUT("method: \"%.*s\"\n", (int)req->method.size, req->method.data);
-		_OUTPUT("url: \"%.*s\"\n", (int)req->url.size, req->url.data);
-		_OUTPUT("version: \"%.*s\"\n", (int)req->version.size, req->version.data);
-	}
-}
-
 int main(int argc, char const *argv[]) {
 
-    test_http();
+    test_string_read_number();
 
     return 0;
 }
