@@ -7,7 +7,7 @@ typedef struct _any_entry_t {
 } _any_entry_t;
 
 typedef struct _any_t {
-	
+	_ANY_TYPE type;
 } _any_t;
 
 _any_entry_t* _any_entry_create_null(void) {
