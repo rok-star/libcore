@@ -26,7 +26,7 @@ extern "C" {
 #endif
 
 _any_entry_t* _any_entry_create_null(void);
-_any_entry_t* _any_entry_create_string(char const*);
+_any_entry_t* _any_entry_create_string(char const*,int64_t);
 _any_entry_t* _any_entry_create_number(double);
 _any_entry_t* _any_entry_create_date(double);
 _ANY_ENTRY_TYPE _any_entry_type(_any_entry_t*);

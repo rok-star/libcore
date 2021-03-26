@@ -22,12 +22,12 @@ static const uint32_t __digital[10] = { 48, 49, 50, 51, 52, 53, 54, 55, 56, 57 }
 
 static char* __convert_case(char const* pchar, int64_t len, int64_t a, int64_t b) {
 	_ASSERT(pchar != NULL);
-	_ASSERT(len >= 0);
 	uint32_t codepoint = 0;
 	int64_t read = 0;
 	int64_t lindex = 0;
-	while ((read = _utf8_read_codepoint((pchar + lindex), (len - lindex), &codepoint)) > 0)
+	while ((read = _utf8_read_codepoint((pchar + lindex), (len - lindex), &codepoint)) > 0) {
 		lindex += read;
+	}
 	int64_t rindex = 0;
 	int64_t rlen = lindex;
 	char* ret = _ALLOC(char, (rlen + 1));
@@ -270,21 +270,22 @@ static int64_t __read_number(char const* pchar, int64_t len, bool read_space, bo
 
 char* _string_clone(char const* pchar, int64_t len) {
 	_ASSERT(pchar != NULL);
-	_ASSERT(len >= 0);
-	char* ret = _ALLOC(char, (len + 1));
-	memcpy(ret, pchar, len);
-	return ret;
+	if (len > 0) {
+		char* ret = _ALLOC(char, (len + 1));
+		memcpy(ret, pchar, len);
+		return ret;
+	} else {
+		return _ALLOC(char, 1);
+	}
 }
 
 char* _string_uppercase(char const* pchar, int64_t len) {
 	_ASSERT(pchar != NULL);
-	_ASSERT(len >= 0);
 	return __convert_case(pchar, len, 0, 1);
 }
 
 char* _string_lowercase(char const* pchar, int64_t len) {
 	_ASSERT(pchar != NULL);
-	_ASSERT(len >= 0);
 	return __convert_case(pchar, len, 1, 0);
 }
 
@@ -307,9 +308,8 @@ bool _string_compare(char const* pchar1, int64_t len1, char const* pchar2, int64
 
 void _string_tokenize(char const* pchar, int64_t len, char*** tokens, int64_t* size) {
 	_ASSERT(pchar != NULL);
-	_ASSERT(len >= 0);
 	_ASSERT(tokens != NULL);
-	_ASSERT(size >= 0);
+	_ASSERT(size != NULL);
 	int64_t count = 0;
     int64_t index = 0;
     int64_t position = 0;

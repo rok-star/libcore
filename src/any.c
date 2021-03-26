@@ -8,14 +8,19 @@ typedef struct _any_entry_t {
 
 typedef struct _any_t {
 	_ANY_TYPE type;
+	void* data;
 } _any_t;
 
 _any_entry_t* _any_entry_create_null(void) {
-
+	return _NEW(_any_t, { .type = _NULL_ANY_TYPE });
 }
 
-_any_entry_t* _any_entry_create_string(char const*) {
-
+_any_entry_t* _any_entry_create_string(char const* string, int64_t len) {
+	_ASSERT(string != NULL);
+	return _NEW(_any_t, {
+		.type = _STRING_ANY_TYPE,
+		.data = (char*)((len > 0) ? _string_clone(string, len) : _ALLOC(char, 1))
+	});
 }
 
 _any_entry_t* _any_entry_create_number(double) {
