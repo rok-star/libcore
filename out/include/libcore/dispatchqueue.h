@@ -13,7 +13,6 @@ void _dispatch_queue_post(_dispatch_queue_t*,void(*)(void*),void*);
 bool _dispatch_queue_remove(_dispatch_queue_t*,void(*)(void*),void*);
 bool _dispatch_queue_remove_proc(_dispatch_queue_t*,void(*)(void*));
 bool _dispatch_queue_remove_param(_dispatch_queue_t*,void*);
-void _dispatch_queue_runloop(_dispatch_queue_t*,bool*);
 void _dispatch_queue_process(_dispatch_queue_t*);
 void _dispatch_queue_process_timeout(_dispatch_queue_t*,double);
 

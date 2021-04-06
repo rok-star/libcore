@@ -23,7 +23,7 @@ _app_t* _app_create(void);
 void _app_destroy(_app_t*);
 void _app_process(_app_t*);
 void _app_process_timeout(_app_t*,double);
-void _app_on_event(_app_t*, void(*)(_app_event_t const*,void*),void*);
+void _app_on_event(_app_t*,void(*)(_app_event_t const*,void*),void*);
 
 #ifdef __cplusplus
 }

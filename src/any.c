@@ -1,3 +1,7 @@
+#include <libcore/any.h>
+#include <libcore/string.h>
+#include <libcore/MACRO.h>
+
 typedef struct _any_entry_t {
 	_ANY_ENTRY_TYPE type;
 	char* path;
@@ -11,23 +15,27 @@ typedef struct _any_t {
 	void* data;
 } _any_t;
 
-_any_entry_t* _any_entry_create_null(void) {
-	return _NEW(_any_t, { .type = _NULL_ANY_TYPE });
-}
-
-_any_entry_t* _any_entry_create_string(char const* string, int64_t len) {
-	_ASSERT(string != NULL);
-	return _NEW(_any_t, {
-		.type = _STRING_ANY_TYPE,
-		.data = (char*)((len > 0) ? _string_clone(string, len) : _ALLOC(char, 1))
+_any_entry_t* _any_entry_create_null(char const* path, int64_t len) {
+	return _NEW(_any_entry_t, {
+		.type = _NULL_ANY_ENTRY_TYPE,
+		.path = _string_clone(path, len)
 	});
 }
 
-_any_entry_t* _any_entry_create_number(double) {
+_any_entry_t* _any_entry_create_string(char const* path, int64_t len, char const* string, int64_t len2) {
+	_ASSERT(string != NULL);
+	return _NEW(_any_entry_t, {
+		.type = _STRING_ANY_ENTRY_TYPE,
+		.path = _string_clone(path, len),
+		.string = ((len > 0) ? _string_clone(string, len) : (char*)_ALLOC(char, 1))
+	});
+}
+
+_any_entry_t* _any_entry_create_number(char const* path, int64_t len, double number) {
 
 }
 
-_any_entry_t* _any_entry_create_date(double) {
+_any_entry_t* _any_entry_create_date(char const* path, int64_t len, double date) {
 
 }
 

@@ -114,11 +114,11 @@ bool _dispatch_queue_remove_param(_dispatch_queue_t* queue, void* param) {
 
 void _dispatch_queue_process(_dispatch_queue_t* queue) {
     _ASSERT(queue != NULL);
-    _dispatch_queue_process(queue, -1);
+    __dispatch_queue_process(queue, -1);
 }
 
 void _dispatch_queue_process_timeout(_dispatch_queue_t* queue, double timeout) {
     _ASSERT(queue != NULL);
     _ASSERT(timeout >= 0);
-    _dispatch_queue_process(queue, timeout);
+    __dispatch_queue_process(queue, timeout);
 }
