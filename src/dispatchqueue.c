@@ -21,6 +21,28 @@ typedef struct _dispatch_queue_t {
     void(*wakeup)();
 } _dispatch_queue_t;
 
+static void __dispatch_queue_process(_dispatch_queue_t* queue, double timeout) {
+    _ASSERT(queue != NULL);
+    _lock_acquire(queue->lock);
+    if (queue->items.size == 0) {
+        if (timeout < 0) {
+            _cond_wait(queue->cond, queue->lock);
+        } else if (timeout > 0) {
+            _cond_wait_timeout(queue->cond, queue->lock, timeout);
+        }
+    }
+    for (;;) {
+        if (queue->items.size == 0) break;
+        else {
+            _dispatch_queue_item_t item = _SHIFT(queue->items);
+            _lock_release(queue->lock);
+            item.proc(item.param);
+            _lock_acquire(queue->lock);
+        }
+    }
+    _lock_release(queue->lock);
+}
+
 _dispatch_queue_t* _dispatch_queue_create(void) {
     return _NEW(_dispatch_queue_t, {
         .lock = _lock_create(),
@@ -64,62 +86,39 @@ bool _dispatch_queue_remove(_dispatch_queue_t* queue, void(*proc)(void*), void* 
 
 bool _dispatch_queue_remove_proc(_dispatch_queue_t* queue, void(*proc)(void*)) {
     _ASSERT(queue != NULL);
-    bool ret = false;
     _lock_acquire(queue->lock);
     for (int i = (queue->items.size - 1); i >= 0; i--) {
         if (queue->items.data[i].proc == proc) {
             _REMOVE_INDEX(queue->items, i);
-            ret = true;
+            _lock_release(queue->lock);
+            return true;
         }
     }
     _lock_release(queue->lock);
-    return ret;
+    return false;
 }
 
 bool _dispatch_queue_remove_param(_dispatch_queue_t* queue, void* param) {
     _ASSERT(queue != NULL);
-    bool ret = false;
     _lock_acquire(queue->lock);
     for (int i = (queue->items.size - 1); i >= 0; i--) {
         if (queue->items.data[i].param == param) {
             _REMOVE_INDEX(queue->items, i);
-            ret = true;
+            _lock_release(queue->lock);
+            return true;
         }
     }
     _lock_release(queue->lock);
-    return ret;
+    return false;
 }
 
 void _dispatch_queue_process(_dispatch_queue_t* queue) {
     _ASSERT(queue != NULL);
-    _lock_acquire(queue->lock);
-    for (;;) {
-        if (queue->items.size == 0) break;
-        else {
-            _dispatch_queue_item_t item = _SHIFT(queue->items);
-            _lock_release(queue->lock);
-            item.proc(item.param);
-            _lock_acquire(queue->lock);
-        }
-    }
-    _lock_release(queue->lock);
+    _dispatch_queue_process(queue, -1);
 }
 
-void _dispatch_queue_runloop(_dispatch_queue_t* queue, bool* exit_) {
+void _dispatch_queue_process_timeout(_dispatch_queue_t* queue, double timeout) {
     _ASSERT(queue != NULL);
-    _ASSERT(exit_ != NULL);
-    _lock_acquire(queue->lock);
-    for (;;) {
-        if (exit_)
-            break;
-        if (queue->items.size > 0) {
-            _dispatch_queue_item_t item = _SHIFT(queue->items);
-            _lock_release(queue->lock);
-            item.proc(item.param);
-            _lock_acquire(queue->lock);
-        } else {
-            _cond_wait_timeout(queue->cond, queue->lock, 1);
-        }
-    }
-    _lock_release(queue->lock);
+    _ASSERT(timeout >= 0);
+    _dispatch_queue_process(queue, timeout);
 }

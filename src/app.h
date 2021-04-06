@@ -5,7 +5,7 @@
 
 typedef struct _app_t _app_t;
 
-typedef enum : int {
+typedef enum {
     _EXIT_APP_EVENT = 0
 } _APP_EVENT;
 
@@ -22,6 +22,7 @@ extern "C" {
 _app_t* _app_create(void);
 void _app_destroy(_app_t*);
 void _app_process(_app_t*);
+void _app_process_timeout(_app_t*,double);
 void _app_on_event(_app_t*, void(*)(_app_event_t const*,void*),void*);
 
 #ifdef __cplusplus

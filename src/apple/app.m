@@ -39,9 +39,12 @@ typedef struct _app_t {
     void* param;
 } _app_t;
 
-_app_t* _app_create(void) {
-    _app_t* app = _NEW(_app_t, {});
+_app_t* __current = NULL;
 
+_app_t* _app_create(void) {
+    _ASSERT_M(__current == NULL, "only one instance of \"_app_t\" can be created");
+    _app_t* app = _NEW(_app_t, {});
+    __current = app;
     [[NSApplication sharedApplication]
         setDelegate: [[__Delegate alloc]
             initWithOnRun: ^{
@@ -68,21 +71,19 @@ _app_t* _app_create(void) {
         ]
     ];
     [NSApp finishLaunching];
-
     return app;
 }
 
 void _app_destroy(_app_t* app) {
     _ASSERT(app != NULL);
-
+    _ASSERT(app == __current);
     [[NSApplication sharedApplication] setDelegate: nil];
-
     _FREE(app);
+    __current = NULL;
 }
 
 void _app_process(_app_t* app) {
     _ASSERT(app != NULL);
-
     for (;;) {
         NSEvent* event = [NSApp nextEventMatchingMask: NSEventMaskAny
                                             untilDate: nil
@@ -90,9 +91,21 @@ void _app_process(_app_t* app) {
                                               dequeue: YES];
         if (event == nil)
             break;
-
         [NSApp sendEvent: event];
         [NSApp updateWindows];
+    }
+}
+
+void _app_process_timeout(_app_t* app, double timeout) {
+    _ASSERT(app != NULL);
+    NSEvent* event = [NSApp nextEventMatchingMask: NSEventMaskAny
+                                        untilDate: [NSDate dateWithTimeIntervalSinceNow: (timeout / 1000.0)]
+                                           inMode: NSDefaultRunLoopMode
+                                          dequeue: YES];
+    if (event != nil) {
+        [NSApp sendEvent: event];
+        [NSApp updateWindows];
+        _app_process(app);
     }
 }
 

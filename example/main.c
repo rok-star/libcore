@@ -7,6 +7,7 @@
 #include <libcore/window.h>
 #include <libcore/context.h>
 #include <libcore/signal.h>
+#include <libcore/time.h>
 #include <libcore/MACRO.h>
 
 bool exit_ = false;
