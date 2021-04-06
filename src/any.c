@@ -27,7 +27,7 @@ _any_entry_t* _any_entry_create_string(char const* path, int64_t len, char const
 	return _NEW(_any_entry_t, {
 		.type = _STRING_ANY_ENTRY_TYPE,
 		.path = _string_clone(path, len),
-		.string = ((len > 0) ? _string_clone(string, len) : (char*)_ALLOC(char, 1))
+		.string = ((len > 0) ? _string_clone(string, len2) : (char*)_ALLOC(char, 1))
 	});
 }
 
