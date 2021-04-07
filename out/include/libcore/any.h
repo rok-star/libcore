@@ -66,7 +66,7 @@ _any_t* _any_array_shift(_any_t*);
 void _any_array_clear(_any_t*);
 int64_t _any_map_key_count(_any_t const*);
 char const* _any_map_key_item(_any_t const*,int64_t);
-void _any_map_set(_any_t*,char const*,_any_t*);
+void _any_map_set(_any_t*,char const*,_any_t const*);
 bool _any_map_has(_any_t*,char const*);
 _any_t* _any_map_get(_any_t*,char const*);
 void _any_map_clear(_any_t*);
