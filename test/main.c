@@ -1,8 +1,8 @@
-#include "any.test.c"
+#include "value.test.c"
 
 int main(int argc, char const *argv[]) {
 
-	_any_test();
+	_value_test();
 
 	puts("Nothing failed.");
 

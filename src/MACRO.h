@@ -40,9 +40,15 @@
 #ifdef NDEBUG
     #define _ASSERT(a)
     #define _ASSERT_M(a, b)
+    #define _NOTNULL(a) a
 #else
     #define _ASSERT(a) if (!(a)) _ABORT("Assertion failed: (%s) in function \"%s\" in file \"%s\" at line %d\n", #a, __FUNCTION__, __FILE__, __LINE__)
     #define _ASSERT_M(a, b) if (!(a)) _ABORT("Assertion failed: %s, (%s) in function \"%s\" in file \"%s\" at line %d\n", #b, #a, __FUNCTION__, __FILE__, __LINE__)
+    #define _NOTNULL(a) ({ \
+        __typeof__(a) __val = a; \
+        _ASSERT(__val != NULL); \
+        __val; \
+    })
 #endif
 
 #define _CALL(a, ...) { \
