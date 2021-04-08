@@ -103,31 +103,100 @@ void _any_entry_destroy(_any_entry_t* entry) {
 }
 
 _any_t* _any_clone(_any_t const* any) {
-	return NULL;
+	_ASSERT(any != NULL);
+	if (any->type == _NULL_ANY_TYPE) {
+		return _NEW(_any_t, {
+			.type = _NULL_ANY_TYPE
+		});
+	} else if (any->type == _STRING_ANY_TYPE) {
+		return _NEW(_any_t, {
+			.type = _STRING_ANY_TYPE,
+			.data = (void*)_string_clone(
+				(char const*)any->data,
+				strlen((char const*)any->data)
+			)
+		});
+	} else if (any->type == _NUMBER_ANY_TYPE) {
+		return _NEW(_any_t, {
+			.type = _NUMBER_ANY_TYPE,
+			.data = (void*)_NEW(double, *(double*)any->data)
+		});
+	} else if (any->type == _DATE_ANY_TYPE) {
+		return _NEW(_any_t, {
+			.type = _DATE_ANY_TYPE,
+			.data = (void*)_NEW(double, *(double*)any->data)
+		});
+	} else if (any->type == _ARRAY_ANY_TYPE) {
+		_any_array_t* src = (_any_array_t*)any->data;
+		_any_array_t* dst = _NEW(_any_array_t, {});
+		_RESERVE(*dst, src->size);
+		for (int64_t i = 0; src->size; i++) {
+			_any_t* copy = _any_clone(src->data[i]);
+			_PUSH(*dst, copy);
+		}
+		return _NEW(_any_t, {
+			.type = _ARRAY_ANY_TYPE,
+			.data = (void*)dst
+		});
+	} else if (any->type == _MAP_ANY_TYPE) {
+		_any_keyvalue_array_t* src = (_any_keyvalue_array_t*)any->data;
+		_any_keyvalue_array_t* dst = _NEW(_any_keyvalue_array_t, {});
+		_RESERVE(*dst, src->size);
+		for (int64_t i = 0; i < src->size; i++) {
+			_any_keyvalue_t pair = {
+				.key = _string_clone(src->data[i].key, strlen(src->data[i].key)),
+				.value = _any_clone(src->data[i].value)
+			};
+			_PUSH(*dst, pair);
+		}
+		return _NEW(_any_t, {
+			.type = _MAP_ANY_TYPE,
+			.data = (void*)dst
+		});
+	} else {
+		_ABORT("%s\n", "unexpected any type");
+	}
 }
 
 _any_t* _any_create_null(void) {
-	return NULL;
+	return _NEW(_any_t, {
+		.type = _NULL_ANY_TYPE
+	});
 }
 
-_any_t* _any_create_string(char const* string) {
-	return NULL;
+_any_t* _any_create_string(char const* string, int64_t len) {
+	return _NEW(_any_t, {
+		.type = _STRING_ANY_TYPE,
+		.data = (void*)_string_clone(string, len)
+	});
 }
 
 _any_t* _any_create_number(double number) {
-	return NULL;
+	return _NEW(_any_t, {
+		.type = _NUMBER_ANY_TYPE,
+		.data = (void*)_NEW(double, number)
+	});
 }
 
 _any_t* _any_create_date(double date) {
-	return NULL;
+	return _NEW(_any_t, {
+		.type = _DATE_ANY_TYPE,
+		.data = (void*)_NEW(double, date)
+	});
 }
 
 _any_t* _any_create_array(void) {
-	return NULL;
+	return _NEW(_any_t, {
+		.type = _ARRAY_ANY_TYPE,
+		.data = (void*)_NEW(_any_array_t, {})
+	});
 }
 
 _any_t* _any_create_map(void) {
-	return NULL;
+	return _NEW(_any_t, {
+		.type = _MAP_ANY_TYPE,
+		.data = (void*)_NEW(_any_keyvalue_array_t, {})
+	});
 }
 
 _any_t* _any_create_entries(_any_entry_t const** entries, int64_t size) {
@@ -135,31 +204,64 @@ _any_t* _any_create_entries(_any_entry_t const** entries, int64_t size) {
 }
 
 void _any_destroy(_any_t* any) {
-
+	_ASSERT(any != NULL);
+	_any_set_null(any);
+	_FREE(any);
 }
 
 void _any_set_null(_any_t* any) {
-
+	_ASSERT(any != NULL);
+	if (any->type == _ARRAY_ANY_TYPE) {
+		_any_array_t* array = (_any_array_t*)any->data;
+		for (int64_t i = 0; i < array->size; i++) {
+			_any_destroy(array->data[i]);
+		}
+		_FREE(array->data);
+	} else if (any->type == _MAP_ANY_TYPE) {
+		_any_keyvalue_array_t* array = (_any_keyvalue_array_t*)any->data;
+		for (int64_t i = 0; i < array->size; i++) {
+			_FREE(array->data[i].key);
+			_any_destroy(array->data[i].value);
+		}
+		_FREE(array->data);
+	}
+	_FREE(any->data);
+	any->type = _NULL_ANY_TYPE;
 }
 
-void _any_set_string(_any_t* any, char const* string) {
-
+void _any_set_string(_any_t* any, char const* string, int64_t len) {
+	_ASSERT(any != NULL);
+	_any_set_null(any);
+	any->type = _STRING_ANY_TYPE;
+	any->data = (void*)_string_clone(string, len);
 }
 
 void _any_set_number(_any_t* any, double number) {
-
+	_ASSERT(any != NULL);
+	_any_set_null(any);
+	any->type = _NUMBER_ANY_TYPE;
+	any->data = (void*)_NEW(double, number);
 }
 
 void _any_set_date(_any_t* any, double date) {
-
+	_ASSERT(any != NULL);
+	_any_set_null(any);
+	any->type = _DATE_ANY_TYPE;
+	any->data = (void*)_NEW(double, date);
 }
 
 void _any_set_array(_any_t* any) {
-
+	_ASSERT(any != NULL);
+	_any_set_null(any);
+	any->type = _ARRAY_ANY_TYPE;
+	any->data = (void*)_NEW(_any_array_t, {});
 }
 
 void _any_set_map(_any_t* any) {
-
+	_ASSERT(any != NULL);
+	_any_set_null(any);
+	any->type = _MAP_ANY_TYPE;
+	any->data = (void*)_NEW(_any_keyvalue_array_t, {});
 }
 
 _ANY_TYPE _any_type(_any_t const* any) {
@@ -311,7 +413,7 @@ _any_t* _any_map_get(_any_t* any, char const* key) {
 			return map->data[i].value;
 		}
 	}
-	_ABORT("key \"%s\" not found", key);
+	_ABORT("key \"%s\" not found\n", key);
 }
 
 void _any_map_clear(_any_t* any) {
