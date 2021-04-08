@@ -303,7 +303,7 @@ int64_t _value_array_count(_value_t const* value) {
 	return ((_value_array_t*)value->data)->size;
 }
 
-_value_t* _value_array_item(_value_t const* value, int64_t index) {
+_value_t* _value_array_get(_value_t const* value, int64_t index) {
 	_ASSERT(value != NULL);
 	_ASSERT(value->data != NULL);
 	_ASSERT(value->type == _ARRAY_VALUE_TYPE);
@@ -313,7 +313,53 @@ _value_t* _value_array_item(_value_t const* value, int64_t index) {
 	return _NOTNULL(array->data[index]);
 }
 
-void _value_array_push(_value_t* value, _value_t const* item) {
+_value_t* _value_array_take(_value_t const* value, int64_t index) {
+	_ASSERT(value != NULL);
+	_ASSERT(value->data != NULL);
+	_ASSERT(value->type == _ARRAY_VALUE_TYPE);
+	_ASSERT(index >= 0);
+	_value_array_t* array = _NOTNULL((_value_array_t*)value->data);
+	_ASSERT(index < array->size);
+	_value_t* ret = array->data[index];
+	_REMOVE_INDEX(*array, index);
+	return _NOTNULL(ret);
+}
+
+void _value_array_remove(_value_t* value, int64_t index) {
+	_ASSERT(value != NULL);
+	_ASSERT(value->data != NULL);
+	_ASSERT(value->type == _ARRAY_VALUE_TYPE);
+	_ASSERT(index >= 0);
+	_value_array_t* array = _NOTNULL((_value_array_t*)value->data);
+	_ASSERT(index < array->size);
+	_REMOVE_INDEX(*array, index);
+}
+
+void _value_array_set_copy(_value_t* value, int64_t index, _value_t const* item) {
+	_ASSERT(value != NULL);
+	_ASSERT(value->data != NULL);
+	_ASSERT(value->type == _ARRAY_VALUE_TYPE);
+	_ASSERT(index >= 0);
+	_ASSERT(item != NULL);
+	_value_array_t* array = _NOTNULL((_value_array_t*)value->data);
+	_ASSERT(index < array->size);
+	_value_destroy(_NOTNULL(array->data[index]));
+	array->data[index] = _value_clone(item);
+}
+
+void _value_array_set_move(_value_t* value, int64_t index, _value_t* item) {
+	_ASSERT(value != NULL);
+	_ASSERT(value->data != NULL);
+	_ASSERT(value->type == _ARRAY_VALUE_TYPE);
+	_ASSERT(index >= 0);
+	_ASSERT(item != NULL);
+	_value_array_t* array = _NOTNULL((_value_array_t*)value->data);
+	_ASSERT(index < array->size);
+	_value_destroy(_NOTNULL(array->data[index]));
+	array->data[index] = item;
+}
+
+void _value_array_push_copy(_value_t* value, _value_t const* item) {
 	_ASSERT(value != NULL);
 	_ASSERT(value->data != NULL);
 	_ASSERT(value->type == _ARRAY_VALUE_TYPE);
@@ -332,7 +378,7 @@ void _value_array_push_move(_value_t* value, _value_t* item) {
 	_PUSH(*array, item);
 }
 
-void _value_array_unshift(_value_t* value, _value_t const* item) {
+void _value_array_unshift_copy(_value_t* value, _value_t const* item) {
 	_ASSERT(value != NULL);
 	_ASSERT(value->data != NULL);
 	_ASSERT(value->type == _ARRAY_VALUE_TYPE);
@@ -396,7 +442,7 @@ char const* _value_map_key_item(_value_t const* value, int64_t index) {
 	return _NOTNULL(map->data[index].key);
 }
 
-void _value_map_set(_value_t* value, char const* key, _value_t const* val) {
+void _value_map_set_copy(_value_t* value, char const* key, _value_t const* val) {
 	_ASSERT(value != NULL);
 	_ASSERT(value->data != NULL);
 	_ASSERT(value->type == _MAP_VALUE_TYPE);
@@ -411,6 +457,25 @@ void _value_map_set(_value_t* value, char const* key, _value_t const* val) {
 	_value_keyvalue_t pair = {
 		.key = _string_clone(key, strlen(key)),
 		.value = _value_clone(val)
+	};
+	_PUSH(*map, pair);
+}
+
+void _value_map_set_move(_value_t* value, char const* key, _value_t* val) {
+	_ASSERT(value != NULL);
+	_ASSERT(value->data != NULL);
+	_ASSERT(value->type == _MAP_VALUE_TYPE);
+	_value_keyvalue_array_t* map = _NOTNULL((_value_keyvalue_array_t*)value->data);
+	for (int64_t i = 0; i < map->size; i++) {
+		if (strcmp(map->data[i].key, key) == 0) {
+			_value_destroy(map->data[i].value);
+			map->data[i].value = val;
+			return;
+		}
+	}
+	_value_keyvalue_t pair = {
+		.key = _string_clone(key, strlen(key)),
+		.value = val
 	};
 	_PUSH(*map, pair);
 }
@@ -436,6 +501,22 @@ _value_t* _value_map_get(_value_t* value, char const* key) {
 	for (int64_t i = 0; i < map->size; i++) {
 		if (strcmp(map->data[i].key, key) == 0) {
 			return map->data[i].value;
+		}
+	}
+	_ABORT("key \"%s\" not found\n", key);
+}
+
+_value_t* _value_map_take(_value_t* value, char const* key) {
+	_ASSERT(value != NULL);
+	_ASSERT(value->data != NULL);
+	_ASSERT(value->type == _MAP_VALUE_TYPE);
+	_value_keyvalue_array_t* map = _NOTNULL((_value_keyvalue_array_t*)value->data);
+	for (int64_t i = 0; i < map->size; i++) {
+		if (strcmp(map->data[i].key, key) == 0) {
+			_value_t* ret = map->data[i].value;
+			_FREE(map->data[i].key);
+			_REMOVE_INDEX(*map, i);
+			return ret;
 		}
 	}
 	_ABORT("key \"%s\" not found\n", key);
