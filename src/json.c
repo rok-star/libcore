@@ -2,13 +2,18 @@
 #include <libcore/parser.h>
 #include <libcore/MACRO.h>
 
-typedef struct __string_t {
+typedef struct __string_const_t {
 	char const* data;
+	int64_t size;
+} __string_const_t;
+
+typedef struct __string_t {
+	char* data;
 	int64_t size;
 } __string_t;
 
 typedef struct __keyvalue_t {
-	__string_t key;
+	__string_const_t key;
 	_value_t* value;
 } __keyvalue_t;
 
@@ -94,6 +99,58 @@ static bool __parse_array(_parser_t* parser, _value_t** value, _status_t* status
 	return true;
 }
 
+static bool __parse_string(_parser_t* parser, _value_t** value, _status_t* status) {
+	_ASSERT(parser != NULL);
+	_ASSERT(value != NULL);
+	_ASSERT(status != NULL);
+	if (_parser_peek_exact(parser, "\"", 1)) {
+		__string_const_t src = {};
+		if (_parser_read_quoted(parser, '"', &src.data, &src.size)) {
+			_ASSERT(src.size >= 2);
+			_ASSERT(src.data[0] == '"');
+			_ASSERT(src.data[src.size - 1] == '"');
+			__string_t dst = {
+				.data = _ALLOC(char, (src.size - 1)),
+				.size = (src.size - 1)
+			};
+			int64_t pos = 0;
+			bool esc = false;
+			for (int64_t i = 1; i < (src.size - 1); i++) {
+				char char_ = src.data[i];
+				if (esc) {
+					if (char_ == 'b') {
+						dst.data[pos++] = '\b';
+					} else if (char_ == 'f') {
+						dst.data[pos++] = '\f';
+					} else if (char_ == 'n') {
+						dst.data[pos++] = '\n';
+					} else if (char_ == 'r') {
+						dst.data[pos++] = '\r';
+					} else if (char_ == 't') {
+						dst.data[pos++] = '\t';
+					} else if (char_ == '\\') {
+						dst.data[pos++] = '\\';
+					}
+				} else {
+					if (char_ == '\\') {
+						esc = true;
+					} else {
+						dst.data[pos++] = char_;
+						esc = false;
+					}
+				}
+			}
+			(*value) = _value_create_string(dst.data, dst.size);
+			_FREE(dst.data);
+			return true;
+		} else {
+			_status_set(status, _FAILURE_STATUS_TYPE, "unexpected end of data");
+			return false;
+		}
+	}
+	return true;
+}
+
 static bool __parse_value(_parser_t* parser, _value_t** value, _status_t* status) {
 	_ASSERT(parser != NULL);
 	_ASSERT(value != NULL);
@@ -109,12 +166,7 @@ static bool __parse_value(_parser_t* parser, _value_t** value, _status_t* status
 				return false;
 			}
 		} else if (_parser_peek_exact(parser, "\"", 1)) {
-			__string_t string = {};
-			if (_parser_read_quoted(parser, '"', &string.data, &string.size)) {
-				(*value) = _value_create_string(string.data, string.size);
-				return true;
-			} else {
-				_status_set(status, _FAILURE_STATUS_TYPE, "unexpected end of data");
+			if (!__parse_string(parser, value, status)) {
 				return false;
 			}
 		} else {

@@ -85,13 +85,12 @@ const make = (path: string): void => {
 
 	makeValue(value, 'root');
 
+	output.push(``);
+	output.push(`	_value_destroy(root);`);
 	output.push(`}`);
 
 	writeTextFileSync(resolve(__dirname, 'output', `${name}.c`), output.join('\n'));
 }
-
-make(resolve(__dirname, 'input/sample1.json'));
-
 
 const files: string[] = [];
 const names: string[] = [];
@@ -110,8 +109,8 @@ writeTextFileSync(resolve(__dirname, 'index.c'),
 #include <libcore/json.h>
 #include <libcore/MACRO.h>
 
-${files.map(f => `#include "${f}"`)}
+${files.map(f => `#include "${f}"`).join('\n')}
 
 void _json_test(void) {
-${names.map(n => `	_json_test_${n}();`)}
+${names.map(n => `	_json_test_${n}();`).join('\n')}
 }`);
