@@ -5,3 +5,7 @@
 #include <libcore/MACRO.h>
 
 #include "output/sample1.c"
+
+void _json_test(void) {
+	_json_test_sample1();
+}

@@ -74,11 +74,14 @@ const make = (path: string): void => {
 		}
 	}
 
-	output.push(`void test_${name}(void) {`);
+	output.push(`void _json_test_${name}(void) {`);
 	output.push(`	char const json[] = { ${(new TextEncoder()).encode(json).join(', ')}, 0 };`);
 	output.push(`	_status_t status = {};`);
 	output.push(``);
 	output.push(`	_value_t* root = _json_parse(json, sizeof json, &status);`);
+	output.push(`	if (status.type == _FAILURE_STATUS_TYPE) {`);
+	output.push(`		_ABORT("%s\\n", status.message);`);
+	output.push(`	}`);
 
 	makeValue(value, 'root');
 
@@ -91,10 +94,13 @@ make(resolve(__dirname, 'input/sample1.json'));
 
 
 const files: string[] = [];
+const names: string[] = [];
 
 for (const entry of walkSync(resolve(__dirname, 'input'), { exts: ['.json'], maxDepth: 1 })) {
 	make(entry.path);
-	files.push(`output/${entry.name.replace(extname(entry.name), '')}.c`);
+	const name = entry.name.replace(extname(entry.name), '');
+	names.push(name);
+	files.push(`output/${name}.c`);
 }
 
 writeTextFileSync(resolve(__dirname, 'index.c'),
@@ -104,4 +110,8 @@ writeTextFileSync(resolve(__dirname, 'index.c'),
 #include <libcore/json.h>
 #include <libcore/MACRO.h>
 
-${files.map(f => `#include "${f}"`)}`);
+${files.map(f => `#include "${f}"`)}
+
+void _json_test(void) {
+${names.map(n => `	_json_test_${n}();`)}
+}`);

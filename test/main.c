@@ -4,6 +4,7 @@
 int main(int argc, char const *argv[]) {
 
 	_value_test();
+	_json_test();
 
 	puts("Nothing failed.");
 
