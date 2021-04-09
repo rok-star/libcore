@@ -101,6 +101,50 @@ static bool __string(_parser_t* parser, bool peek, char const** out_pchar, int64
 	}
 }
 
+static bool __quoted(_parser_t* parser, bool peek, char mark, char const** out_pchar, int64_t* out_len) {
+	_ASSERT(parser != NULL);
+
+	int64_t read = 0;
+	if (parser->position < parser->size) {
+		if (parser->data[parser->position] == mark) {
+			read += 1;
+			bool esc = false;
+			for (;;) {
+				if ((parser->position + read) < parser->size) {
+					char char_ = parser->data[parser->position + read];
+					if ((char_ == '\\') && !esc) {
+						esc = true;
+						read += 1;
+					} else if ((char_ == mark) && !esc) {
+						read += 1;
+						break;
+					} else {
+						esc = false;
+						read += 1;
+					}
+				} else {
+					read = 0;
+					break;
+				}
+			}
+		}
+	}
+
+	if (read > 0) {
+		if (out_pchar != NULL) {
+			_ASSERT(out_len != NULL);
+			(*out_pchar) = (parser->data + parser->position);
+			(*out_len) = read;
+		}
+		if (!peek) {
+			parser->position += read;
+		}
+		return true;
+	} else {
+		return false;
+	}
+}
+
 static bool __whitespace(_parser_t* parser, bool peek, int64_t* out_read)  {
 	_ASSERT(parser != NULL);
 
@@ -290,6 +334,11 @@ bool _parser_read_string(_parser_t* parser, char const** out_pchar, int64_t* out
 	return __string(parser, false, out_pchar, out_len);
 }
 
+bool _parser_read_quoted(_parser_t* parser, char mark, char const** out_pchar, int64_t* out_len) {
+	_ASSERT(parser != NULL);
+	return __quoted(parser, false, mark, out_pchar, out_len);
+}
+
 bool _parser_read_whitespace(_parser_t* parser, int64_t* out_read)  {
 	_ASSERT(parser != NULL);
 	return __whitespace(parser, false, out_read);
@@ -337,6 +386,11 @@ bool _parser_peek_exact(_parser_t* parser, char const* pchar, int64_t len) {
 bool _parser_peek_string(_parser_t* parser, char const** out_pchar, int64_t* out_len) {
 	_ASSERT(parser != NULL);
 	return __string(parser, true, out_pchar, out_len);
+}
+
+bool _parser_peek_quoted(_parser_t* parser, char mark, char const** out_pchar, int64_t* out_len) {
+	_ASSERT(parser != NULL);
+	return __quoted(parser, true, mark, out_pchar, out_len);
 }
 
 bool _parser_peek_whitespace(_parser_t* parser, int64_t* out_read)  {

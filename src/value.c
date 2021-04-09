@@ -442,39 +442,39 @@ char const* _value_map_key_item(_value_t const* value, int64_t index) {
 	return _NOTNULL(map->data[index].key);
 }
 
-void _value_map_set_copy(_value_t* value, char const* key, _value_t const* val) {
+void _value_map_set_copy(_value_t* value, char const* key, int64_t len, _value_t const* val) {
 	_ASSERT(value != NULL);
 	_ASSERT(value->data != NULL);
 	_ASSERT(value->type == _MAP_VALUE_TYPE);
 	_value_keyvalue_array_t* map = _NOTNULL((_value_keyvalue_array_t*)value->data);
 	for (int64_t i = 0; i < map->size; i++) {
-		if (strcmp(map->data[i].key, key) == 0) {
+		if (_string_compare(map->data[i].key, strlen(map->data[i].key), key, len)) {
 			_value_destroy(map->data[i].value);
 			map->data[i].value = _value_clone(val);
 			return;
 		}
 	}
 	_value_keyvalue_t pair = {
-		.key = _string_clone(key, strlen(key)),
+		.key = _string_clone(key, len),
 		.value = _value_clone(val)
 	};
 	_PUSH(*map, pair);
 }
 
-void _value_map_set_move(_value_t* value, char const* key, _value_t* val) {
+void _value_map_set_move(_value_t* value, char const* key, int64_t len, _value_t* val) {
 	_ASSERT(value != NULL);
 	_ASSERT(value->data != NULL);
 	_ASSERT(value->type == _MAP_VALUE_TYPE);
 	_value_keyvalue_array_t* map = _NOTNULL((_value_keyvalue_array_t*)value->data);
 	for (int64_t i = 0; i < map->size; i++) {
-		if (strcmp(map->data[i].key, key) == 0) {
+		if (_string_compare(map->data[i].key, strlen(map->data[i].key), key, len)) {
 			_value_destroy(map->data[i].value);
 			map->data[i].value = val;
 			return;
 		}
 	}
 	_value_keyvalue_t pair = {
-		.key = _string_clone(key, strlen(key)),
+		.key = _string_clone(key, len),
 		.value = val
 	};
 	_PUSH(*map, pair);

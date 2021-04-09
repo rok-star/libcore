@@ -12,12 +12,14 @@ typedef struct __keyvalue_t {
 	_value_t* value;
 } __keyvalue_t;
 
+static bool __parse_value(_parser_t*,_value_t**,_status_t*);
+
 static bool __parse_keyvalue(_parser_t* parser, __keyvalue_t* keyvalue, _status_t* status) {
 	_ASSERT(parser != NULL);
 	_ASSERT(keyvalue != NULL);
 	_ASSERT(status != NULL);
 	if (_parser_read_exact(parser, "\"", 1)) {
-		if (_parser_read_quoted(parser, "\"", 1, &keyvalue->key.data, &keyvalue->key.size)) {
+		if (_parser_read_quoted(parser, '"', &keyvalue->key.data, &keyvalue->key.size)) {
 			_parser_skip_whitespace(parser);
 			if (_parser_read_exact(parser, ":", 1)) {
 				if (!__parse_value(parser, &keyvalue->value, status)) {
@@ -108,7 +110,7 @@ static bool __parse_value(_parser_t* parser, _value_t** value, _status_t* status
 			}
 		} else if (_parser_peek_exact(parser, "\"", 1)) {
 			__string_t string = {};
-			if (_parser_read_quoted(parser, "\"", 1, &string.data, &string.size)) {
+			if (_parser_read_quoted(parser, '"', &string.data, &string.size)) {
 				(*value) = _value_create_string(string.data, string.size);
 				return true;
 			} else {
@@ -142,5 +144,5 @@ _value_t* _json_parse(char const* string, int64_t len, _status_t* status) {
 
 char const* _json_stringify(_value_t const* value) {
 	_ASSERT(value != NULL);
-	_ASSERT(status != NULL);
+	return NULL;
 }
