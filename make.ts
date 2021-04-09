@@ -69,6 +69,7 @@ await Promise.all([ Deno.copyFile(`${project}/src/WINDOWS.h`, `${out_inc}/WINDOW
                     Deno.copyFile(`${project}/src/app.h`, `${out_inc}/app.h`),
                     Deno.copyFile(`${project}/src/path.h`, `${out_inc}/path.h`),
                     Deno.copyFile(`${project}/src/file.h`, `${out_inc}/file.h`),
+                    Deno.copyFile(`${project}/src/json.h`, `${out_inc}/json.h`),
                     Deno.copyFile(`${project}/src/value.h`, `${out_inc}/value.h`),
                     Deno.copyFile(`${project}/src/directory.h`, `${out_inc}/directory.h`),
                     Deno.copyFile(`${project}/src/dispatchqueue.h`, `${out_inc}/dispatchqueue.h`) ]);
@@ -93,6 +94,7 @@ target.sources.push(`${project}/src/layer.c`);
 target.sources.push(`${project}/src/color.c`);
 target.sources.push(`${project}/src/math.c`);
 target.sources.push(`${project}/src/path.c`);
+target.sources.push(`${project}/src/json.c`);
 target.sources.push(`${project}/src/value.c`);
 
 if (Deno.build.os == 'windows') {

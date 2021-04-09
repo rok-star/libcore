@@ -34,6 +34,7 @@ bool _parser_peek_int8(_parser_t*,bool,int8_t*);
 bool _parser_peek_int16(_parser_t*,bool,int16_t*);
 bool _parser_peek_int32(_parser_t*,bool,int32_t*);
 bool _parser_peek_int64(_parser_t*,bool,int64_t*);
+void _parser_skip_whitespace(_parser_t*);
 
 #ifdef __cplusplus
 }

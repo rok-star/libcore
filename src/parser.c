@@ -367,3 +367,8 @@ bool _parser_peek_int64(_parser_t* parser, bool spaces, int64_t* out) {
 	_ASSERT(out != NULL);
 	return __int64(parser, spaces, true, out);
 }
+
+void _parser_skip_whitespace(_parser_t* parser) {
+	_ASSERT(parser != NULL);
+	__whitespace(parser, false, NULL);
+}
