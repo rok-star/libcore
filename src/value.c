@@ -126,6 +126,11 @@ _value_t* _value_clone(_value_t const* value) {
 			.type = _DATE_VALUE_TYPE,
 			.data = (void*)_NEW(double, *(double*)value->data)
 		});
+	} else if (value->type == _BOOL_VALUE_TYPE) {
+		return _NEW(_value_t, {
+			.type = _BOOL_VALUE_TYPE,
+			.data = (void*)_NEW(int, (*(int*)value->data) == 1)
+		});
 	} else if (value->type == _ARRAY_VALUE_TYPE) {
 		_value_array_t* src = _NOTNULL((_value_array_t*)value->data);
 		_value_array_t* dst = _NEW(_value_array_t, {});
@@ -185,6 +190,13 @@ _value_t* _value_create_date(double date) {
 	return _NEW(_value_t, {
 		.type = _DATE_VALUE_TYPE,
 		.data = (void*)_NEW(double, date)
+	});
+}
+
+_value_t* _value_create_bool(bool val) {
+	return _NEW(_value_t, {
+		.type = _BOOL_VALUE_TYPE,
+		.data = (void*)_NEW(int, (val ? 1 : 0))
 	});
 }
 
@@ -256,6 +268,13 @@ void _value_set_date(_value_t* value, double date) {
 	value->data = (void*)_NEW(double, date);
 }
 
+void _value_set_bool(_value_t* value, bool val) {
+	_ASSERT(value != NULL);
+	_value_set_null(value);
+	value->type = _BOOL_VALUE_TYPE;
+	value->data = (void*)_NEW(int, (val ? 1 : 0));
+}
+
 void _value_set_array(_value_t* value) {
 	_ASSERT(value != NULL);
 	_value_set_null(value);
@@ -295,6 +314,14 @@ double _value_date(_value_t const* value) {
 	_ASSERT(value->type == _DATE_VALUE_TYPE);
 	return *(double*)value->data;
 }
+
+bool _value_bool(_value_t const* value) {
+	_ASSERT(value != NULL);
+	_ASSERT(value->data != NULL);
+	_ASSERT(value->type == _BOOL_VALUE_TYPE);
+	return ((*(int*)value->data) == 1);
+}
+
 
 int64_t _value_array_count(_value_t const* value) {
 	_ASSERT(value != NULL);
@@ -480,39 +507,39 @@ void _value_map_set_move(_value_t* value, char const* key, int64_t len, _value_t
 	_PUSH(*map, pair);
 }
 
-bool _value_map_has(_value_t* value, char const* key) {
+bool _value_map_has(_value_t* value, char const* key, int64_t len) {
 	_ASSERT(value != NULL);
 	_ASSERT(value->data != NULL);
 	_ASSERT(value->type == _MAP_VALUE_TYPE);
 	_value_keyvalue_array_t* map = _NOTNULL((_value_keyvalue_array_t*)value->data);
 	for (int64_t i = 0; i < map->size; i++) {
-		if (strcmp(map->data[i].key, key) == 0) {
+		if (_string_compare(map->data[i].key, strlen(map->data[i].key), key, len)) {
 			return true;
 		}
 	}
 	return false;
 }
 
-_value_t* _value_map_get(_value_t* value, char const* key) {
+_value_t* _value_map_get(_value_t* value, char const* key, int64_t len) {
 	_ASSERT(value != NULL);
 	_ASSERT(value->data != NULL);
 	_ASSERT(value->type == _MAP_VALUE_TYPE);
 	_value_keyvalue_array_t* map = _NOTNULL((_value_keyvalue_array_t*)value->data);
 	for (int64_t i = 0; i < map->size; i++) {
-		if (strcmp(map->data[i].key, key) == 0) {
+		if (_string_compare(map->data[i].key, strlen(map->data[i].key), key, len)) {
 			return map->data[i].value;
 		}
 	}
 	_ABORT("key \"%s\" not found\n", key);
 }
 
-_value_t* _value_map_take(_value_t* value, char const* key) {
+_value_t* _value_map_take(_value_t* value, char const* key, int64_t len) {
 	_ASSERT(value != NULL);
 	_ASSERT(value->data != NULL);
 	_ASSERT(value->type == _MAP_VALUE_TYPE);
 	_value_keyvalue_array_t* map = _NOTNULL((_value_keyvalue_array_t*)value->data);
 	for (int64_t i = 0; i < map->size; i++) {
-		if (strcmp(map->data[i].key, key) == 0) {
+		if (_string_compare(map->data[i].key, strlen(map->data[i].key), key, len)) {
 			_value_t* ret = map->data[i].value;
 			_FREE(map->data[i].key);
 			_REMOVE_INDEX(*map, i);

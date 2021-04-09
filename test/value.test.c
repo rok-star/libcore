@@ -39,9 +39,9 @@ void _value_test(void) {
 	} {
 		_value_t* value = _value_create_map();
 		_ASSERT(_value_type(value) == _MAP_VALUE_TYPE);
-		_ASSERT(_value_map_has(value, "one") == false);
-		_ASSERT(_value_map_has(value, "two") == false);
-		_ASSERT(_value_map_has(value, "three") == false);
+		_ASSERT(_value_map_has(value, "one", 3) == false);
+		_ASSERT(_value_map_has(value, "two", 3) == false);
+		_ASSERT(_value_map_has(value, "three", 5) == false);
 		_value_destroy(value);
 	}
 
@@ -68,9 +68,9 @@ void _value_test(void) {
 
 		_value_set_map(value);
 		_ASSERT(_value_type(value) == _MAP_VALUE_TYPE);
-		_ASSERT(_value_map_has(value, "one") == false);
-		_ASSERT(_value_map_has(value, "two") == false);
-		_ASSERT(_value_map_has(value, "three") == false);
+		_ASSERT(_value_map_has(value, "one", 3) == false);
+		_ASSERT(_value_map_has(value, "two", 3) == false);
+		_ASSERT(_value_map_has(value, "three", 5) == false);
 
 		_value_set_string(value, DUMMY_STRING, strlen(DUMMY_STRING));
 		_ASSERT(_value_type(value) == _STRING_VALUE_TYPE);

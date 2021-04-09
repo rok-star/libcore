@@ -1,5 +1,5 @@
 #include "value.test.c"
-#include "json.test.c"
+#include "json/index.c"
 
 int main(int argc, char const *argv[]) {
 
