@@ -8,7 +8,7 @@ typedef enum {
 	_BOTH_PARAM_VALUE_SEPARATOR   = 2
 } _PARAM_VALUE_SEPARATOR;
 
-int _args_has(char const *[] argv, int argc, char const* name, int64_t len, _PARAM_VALUE_SEPARATOR sep) {
+int _arg_has(char const *[] argv, int argc, char const* name, int64_t len, _PARAM_VALUE_SEPARATOR sep) {
 	_ASSERT(argv != NULL);
 	_ASSERT(name != NULL);
 	if (len > 0) {
@@ -35,12 +35,12 @@ int _args_has(char const *[] argv, int argc, char const* name, int64_t len, _PAR
 	return -1;
 }
 
-int _args_value(char const *[] argv, int argc, char const* name, int64_t len, _PARAM_VALUE_SEPARATOR sep, char const** value, int64_t* value_len) {
+int _arg_value(char const *[] argv, int argc, char const* name, int64_t len, _PARAM_VALUE_SEPARATOR sep, char const** value, int64_t* value_len) {
 	_ASSERT(argv != NULL);
 	_ASSERT(name != NULL);
 	_ASSERT(value != NULL);
 	_ASSERT(value_len != NULL);
-	int i = _args_has(argv, argc, name, len, sep);
+	int i = _arg_has(argv, argc, name, len, sep);
 	if (i > -1) {
 		if (sep == _SPACE_PARAM_VALUE_SEPARATOR) {
 			int ii = (i + 1);
