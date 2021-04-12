@@ -58,7 +58,7 @@ await Promise.all([ Deno.copyFile(`${project}/src/WINDOWS.h`, `${out_inc}/WINDOW
                     Deno.copyFile(`${project}/src/layer.h`, `${out_inc}/layer.h`),
                     Deno.copyFile(`${project}/src/signal.h`, `${out_inc}/signal.h`),
                     Deno.copyFile(`${project}/src/net.h`, `${out_inc}/net.h`),
-                    //Deno.copyFile(`${project}/src/http.h`, `${out_inc}/http.h`),
+                    Deno.copyFile(`${project}/src/args.h`, `${out_inc}/args.h`),
                     Deno.copyFile(`${project}/src/thread.h`, `${out_inc}/thread.h`),
                     Deno.copyFile(`${project}/src/timer.h`, `${out_inc}/timer.h`),
                     Deno.copyFile(`${project}/src/time.h`, `${out_inc}/time.h`),
@@ -95,6 +95,7 @@ target.sources.push(`${project}/src/color.c`);
 target.sources.push(`${project}/src/math.c`);
 target.sources.push(`${project}/src/path.c`);
 target.sources.push(`${project}/src/json.c`);
+target.sources.push(`${project}/src/args.c`);
 target.sources.push(`${project}/src/value.c`);
 
 if (Deno.build.os == 'windows') {
