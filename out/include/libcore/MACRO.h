@@ -202,7 +202,7 @@
         if ((index >= 0) && (index < size)) { \
             for (__typeof__(size) __i = (index + 1); __i < size; __i++) { \
                 data[__i - 1] = data[__i]; \
-            }  \
+            } \
             size -= 1; \
         } \
     } \
