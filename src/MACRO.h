@@ -200,12 +200,28 @@
     _ASSERT(size <= capacity); \
     if (data != NULL) { \
         if ((index >= 0) && (index < size)) { \
-            for (__typeof__(size) __i = (index + 1); __i < size; __i++) \
+            for (__typeof__(size) __i = (index + 1); __i < size; __i++) { \
                 data[__i - 1] = data[__i]; \
+            } \
             size -= 1; \
         } \
     } \
 }
+
+#define _FIND_INDEX_V(data, size, ...) ({ \
+    _ASSERT(size >= 0); \
+    __typeof__(size) __ret = -1; \
+    if (data != NULL) { \
+        for (__typeof__(size) __i = 0; __i < size; __i++) { \
+            __typeof__(*data) item = data[__i]; \
+            if (__VA_ARGS__) { \
+                __ret = __i; \
+                break; \
+            } \
+        } \
+    } \
+    __ret; \
+})
 
 #define _INDEX_OF_V(data, size, item) ({ \
     _ASSERT(size >= 0); \
@@ -243,6 +259,7 @@
 #define _SHIFT(array, ...) _SHIFT_V((array).data, (array).size, (array).capacity)
 #define _REMOVE(array, item) _REMOVE_V((array).data, (array).size, (array).capacity, item)
 #define _REMOVE_INDEX(array, index) _REMOVE_INDEX_V((array).data, (array).size, (array).capacity, index)
+#define _FIND_INDEX(array, ...) _FIND_INDEX_V((array).data, (array).size, __VA_ARGS__)
 #define _INDEX_OF(array, item) _INDEX_OF_V((array).data, (array).size, item)
 #define _FIRST(array) _FIRST_V((array).data, (array).size);
 #define _LAST(array) _LAST_V((array).data, (array).size);

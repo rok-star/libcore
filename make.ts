@@ -16,7 +16,7 @@ const temp: string = Path.join(tempPath(), 'libcore', mode);
 const dirname: string = Path.dirname(Path.fromFileUrl(import.meta.url));
 const project: string = Path.resolve(dirname);
 const library: string = Path.resolve(Path.join(dirname, '..'));
-const out_lib: string = Path.resolve(Path.join(`${project}`, 'out', 'lib', Deno.build.os, mode, (Deno.build.os == 'windows' ? 'ext.lib' : 'libcore.a')));
+const out_lib: string = Path.resolve(Path.join(`${project}`, 'out', 'lib', Deno.build.os, mode, (Deno.build.os == 'windows' ? 'core.lib' : 'libcore.a')));
 const out_inc: string = Path.resolve(Path.join(`${project}`, 'out', 'include', 'libcore'));
 const clean: boolean = (Deno.args.includes('--clean') || Deno.args.includes('--release'));
 const cpus: number = await (async (): Promise<number> => {
