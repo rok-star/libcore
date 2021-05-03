@@ -117,8 +117,6 @@ bool _codepoint_is_digital(uint32_t codepoint) {
 int _codepoint_write_utf8(uint32_t codepoint, char* utf8_string, int capacity) {
     if (codepoint >= 0xD800 && codepoint <= 0xDFFF) {
         return 0;
-    } else if (codepoint >= 0xD800 && codepoint <= 0xDFFF) {
-        return 0;
     } else if (codepoint <= 0x7F) {
         if (utf8_string != NULL) {
             if (capacity < 1)
