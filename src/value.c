@@ -340,7 +340,7 @@ _value_t* _value_array_get(_value_t const* value, int64_t index) {
 	return _NOTNULL(array->data[index]);
 }
 
-_value_t* _value_array_take(_value_t const* value, int64_t index) {
+_value_t* _value_array_move(_value_t const* value, int64_t index) {
 	_ASSERT(value != NULL);
 	_ASSERT(value->data != NULL);
 	_ASSERT(value->type == _ARRAY_VALUE_TYPE);
@@ -533,7 +533,7 @@ _value_t* _value_map_get(_value_t* value, char const* key, int64_t len) {
 	_ABORT("key \"%s\" not found\n", key);
 }
 
-_value_t* _value_map_take(_value_t* value, char const* key, int64_t len) {
+_value_t* _value_map_move(_value_t* value, char const* key, int64_t len) {
 	_ASSERT(value != NULL);
 	_ASSERT(value->data != NULL);
 	_ASSERT(value->type == _MAP_VALUE_TYPE);
