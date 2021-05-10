@@ -78,7 +78,7 @@ const target = new Target();
 target.type = TargetType.library;
 target.cStandard = Standard.c17;
 target.includePath = [`${project}/out/include`];
-target.arguments = ['-Wall', '-Wextra', '-Wno-unused-parameter', '-Wno-unused-variable', '-Wno-misleading-indentation'];
+target.arguments = ['-Wall', '-Wextra', '-Wno-unused-parameter', '-Wno-unused-variable', '-Wno-misleading-indentation', '-Wwrite-strings'];
 target.objcARC = true;
 target.output = out_lib;
 target.temp = temp;
@@ -155,9 +155,9 @@ if (Deno.args.includes('--test')) {
     target.includePath = [Path.dirname(out_inc)];
     target.libraryPath = [Path.dirname(out_lib)];
     target.libraries = ['core'];
-    target.arguments.push('-fsanitize=address');
-    target.debug = true;
+    target.arguments = ['-fsanitize=address', '-Wall', '-Wextra', '-Wno-unused-parameter', '-Wno-unused-variable', '-Wno-misleading-indentation', '-Wwrite-strings'];
     target.sources.push(`${project}/test/main.c`);
+    target.debug = true;
     if (Deno.build.os == 'windows') {
 
     } else if (Deno.build.os == 'darwin') {
@@ -184,6 +184,7 @@ if (Deno.args.includes('--example')) {
     target.includePath = [Path.dirname(out_inc)];
     target.libraryPath = [Path.dirname(out_lib)];
     target.libraries = ['core'];
+    target.arguments = ['-Wall', '-Wextra', '-Wno-unused-parameter', '-Wno-unused-variable', '-Wno-misleading-indentation'];
     target.sources.push(`${project}/example/main.c`);
     if (Deno.build.os == 'windows') {
 

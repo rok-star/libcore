@@ -289,6 +289,68 @@ char* _string_lowercase(char const* pchar, int64_t len) {
 	return __convert_case(pchar, len, 1, 0);
 }
 
+char* _string_escape(char const* pchar, int64_t len) {
+	_ASSERT(pchar != NULL);
+	if (len > 0) {
+		int64_t rlen = 0;
+		int64_t rpos = 0;
+		for (int64_t i = 0; i < len; i++) {
+			if (pchar[i] == '\b') {
+				rlen += 2;
+			} else if (pchar[i] == '\f') {
+				rlen += 2;
+			} else if (pchar[i] == '\n') {
+				rlen += 2;
+			} else if (pchar[i] == '\r') {
+				rlen += 2;
+			} else if (pchar[i] == '\t') {
+				rlen += 2;
+			} else if (pchar[i] == '\"') {
+				rlen += 2;
+			} else if (pchar[i] == '\\') {
+				rlen += 2;
+			} else {
+				rlen += 1;
+			}
+		}
+		char* ret = _ALLOC(char, (rlen + 1));
+		for (int64_t i = 0; i < len; i++) {
+			if (pchar[i] == '\b') {
+				ret[rpos++] = '\\';
+				ret[rpos++] = 'b';
+			} else if (pchar[i] == '\f') {
+				ret[rpos++] = '\\';
+				ret[rpos++] = 'f';
+			} else if (pchar[i] == '\n') {
+				ret[rpos++] = '\\';
+				ret[rpos++] = 'n';
+			} else if (pchar[i] == '\r') {
+				ret[rpos++] = '\\';
+				ret[rpos++] = 'r';
+			} else if (pchar[i] == '\t') {
+				ret[rpos++] = '\\';
+				ret[rpos++] = 't';
+			} else if (pchar[i] == '\"') {
+				ret[rpos++] = '\\';
+				ret[rpos++] = '"';
+			} else if (pchar[i] == '\\') {
+				ret[rpos++] = '\\';
+				ret[rpos++] = '\\';
+			} else {
+				ret[rpos++] = pchar[i];
+			}
+		}
+		return ret;
+	} else {
+		return _ALLOC(char, 1);
+	}
+}
+
+char* _string_unescape(char const* pchar, int64_t len) {
+	_ASSERT(pchar != NULL);
+	return NULL;
+}
+
 bool _string_compare(char const* pchar1, int64_t len1, char const* pchar2, int64_t len2) {
 	_ASSERT(pchar1 != NULL);
 	_ASSERT(pchar2 != NULL);

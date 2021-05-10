@@ -11,6 +11,8 @@ extern "C" {
 char* _string_clone(char const*,int64_t);
 char* _string_uppercase(char const*,int64_t);
 char* _string_lowercase(char const*,int64_t);
+char* _string_escape(char const*,int64_t);
+char* _string_unescape(char const*,int64_t);
 bool _string_compare(char const*,int64_t,char const*,int64_t);
 void _string_tokenize(char const*,int64_t,char***,int64_t*);
 void _string_split(char const*,int64_t,char const*,char const***,int64_t*);

@@ -179,7 +179,7 @@ void _value_test(void) {
 		_ASSERT(_value_number(_value_array_get(value, 0)) == 777);
 		_value_destroy(tmp3);
 
-		_value_t* tmp4 = _value_array_take(value, 2);
+		_value_t* tmp4 = _value_array_move(value, 2);
 		_ASSERT(_value_type(tmp4) == _NUMBER_VALUE_TYPE);
 		_ASSERT(_value_number(tmp4) == 777);
 		_value_destroy(tmp4);
