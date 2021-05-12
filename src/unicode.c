@@ -4,17 +4,17 @@
 #define __convert(FROMTYPE, TOTYPE, FROMNAME, TONAME, string, length, out, capacity) ({ \
     _ASSERT(string != NULL); \
     _ASSERT(out != NULL); \
-    int ret = 0; \
+    int64_t ret = 0; \
     if (sizeof(FROMTYPE) == sizeof(TOTYPE)) { \
-        int size_to = (capacity - 1); \
-        int size_copy = (length > size_to) ? size_to : length; \
+        int64_t size_to = (capacity - 1); \
+        int64_t size_copy = (length > size_to) ? size_to : length; \
         memset(out, 0x0, capacity); \
         memcpy(out, string, size_copy); \
         ret = size_copy; \
     } else { \
         FROMTYPE const* src = string; \
         TOTYPE* dst = out; \
-        int rnn = 0, \
+        int64_t rnn = 0, \
             lnn = 0, \
             write = 0, \
             read = 0; \
@@ -32,7 +32,7 @@
     ret; \
 })
 
-static void __utf8_to_utf16(char const* utf8_string, int utf8_length, int* utf8_read, uint16_t* utf16_string, int utf16_capacity, int* utf16_write) {
+static void __utf8_to_utf16(char const* utf8_string, int64_t utf8_length, int64_t* utf8_read, uint16_t* utf16_string, int64_t utf16_capacity, int64_t* utf16_write) {
     _ASSERT(utf8_string != NULL);
     _ASSERT(utf8_read != NULL);
     _ASSERT(utf16_string != NULL);
@@ -42,7 +42,7 @@ static void __utf8_to_utf16(char const* utf8_string, int utf8_length, int* utf8_
     (*utf16_write) = ((*utf8_read) > 0) ? _codepoint_write_utf16(codepoint, utf16_string, utf16_capacity) : 0;
 }
 
-static void __utf8_to_utf32(char const* utf8_string, int utf8_length, int* utf8_read, uint32_t* utf32_string, int utf32_capacity, int* utf32_write) {
+static void __utf8_to_utf32(char const* utf8_string, int64_t utf8_length, int64_t* utf8_read, uint32_t* utf32_string, int64_t utf32_capacity, int64_t* utf32_write) {
     _ASSERT(utf8_string != NULL);
     _ASSERT(utf8_read != NULL);
     _ASSERT(utf32_string != NULL);
@@ -51,7 +51,7 @@ static void __utf8_to_utf32(char const* utf8_string, int utf8_length, int* utf8_
     (*utf32_write) = ((*utf8_read) > 0 ? 1 : 0);
 }
 
-static void __utf16_to_utf8(uint16_t const* utf16_string, int utf16_length, int* utf16_read, char* utf8_string, int utf8_capacity, int* utf8_write) {
+static void __utf16_to_utf8(uint16_t const* utf16_string, int64_t utf16_length, int64_t* utf16_read, char* utf8_string, int64_t utf8_capacity, int64_t* utf8_write) {
     _ASSERT(utf16_string != NULL);
     _ASSERT(utf16_read != NULL);
     _ASSERT(utf8_string != NULL);
@@ -61,7 +61,7 @@ static void __utf16_to_utf8(uint16_t const* utf16_string, int utf16_length, int*
     (*utf8_write) = ((*utf16_read) > 0) ? _codepoint_write_utf8(codepoint, utf8_string, utf8_capacity) : 0;
 }
 
-static void __utf16_to_utf32(uint16_t const* utf16_string, int utf16_length, int* utf16_read, uint32_t* utf32_string, int utf32_capacity, int* utf32_write) {
+static void __utf16_to_utf32(uint16_t const* utf16_string, int64_t utf16_length, int64_t* utf16_read, uint32_t* utf32_string, int64_t utf32_capacity, int64_t* utf32_write) {
     _ASSERT(utf16_string != NULL);
     _ASSERT(utf16_read != NULL);
     _ASSERT(utf32_string != NULL);
@@ -70,7 +70,7 @@ static void __utf16_to_utf32(uint16_t const* utf16_string, int utf16_length, int
     (*utf32_write) = ((*utf16_read) > 0 ? 1 : 0);
 }
 
-static void __utf32_to_utf8(uint32_t const* utf32_string, int utf32_length, int* utf32_read, char* utf8_string, int utf8_capacity, int* utf8_write) {
+static void __utf32_to_utf8(uint32_t const* utf32_string, int64_t utf32_length, int64_t* utf32_read, char* utf8_string, int64_t utf8_capacity, int64_t* utf8_write) {
     _ASSERT(utf32_string != NULL);
     _ASSERT(utf32_read != NULL);
     _ASSERT(utf8_string != NULL);
@@ -79,7 +79,7 @@ static void __utf32_to_utf8(uint32_t const* utf32_string, int utf32_length, int*
     (*utf32_read) = ((*utf8_write) > 0) ? 1 : 0;
 }
 
-static void __utf32_to_utf16(uint32_t const* utf32_string, int utf32_length, int* utf32_read, uint16_t* utf16_string, int utf16_capacity, int* utf16_write) {
+static void __utf32_to_utf16(uint32_t const* utf32_string, int64_t utf32_length, int64_t* utf32_read, uint16_t* utf16_string, int64_t utf16_capacity, int64_t* utf16_write) {
     _ASSERT(utf32_string != NULL);
     _ASSERT(utf32_read != NULL);
     _ASSERT(utf16_string != NULL);
@@ -101,20 +101,20 @@ uint32_t _codepoint_lower(uint32_t codepoint) {
 }
 
 bool _codepoint_is_whitespace(uint32_t codepoint) {
-    for (int i = 0; i < 25; i++)
+    for (int64_t i = 0; i < 25; i++)
         if (__whitespace[i] == codepoint)
             return true;
     return false;
 }
 
 bool _codepoint_is_digital(uint32_t codepoint) {
-    for (int i = 0; i < 10; i++)
+    for (int64_t i = 0; i < 10; i++)
         if (__digital[i] == codepoint)
             return true;
     return false;
 }
 
-int _codepoint_write_utf8(uint32_t codepoint, char* utf8_string, int capacity) {
+int64_t _codepoint_write_utf8(uint32_t codepoint, char* utf8_string, int64_t capacity) {
     if (codepoint >= 0xD800 && codepoint <= 0xDFFF) {
         return 0;
     } else if (codepoint <= 0x7F) {
@@ -154,7 +154,7 @@ int _codepoint_write_utf8(uint32_t codepoint, char* utf8_string, int capacity) {
     } else return 0;
 }
 
-int _codepoint_write_utf16(uint32_t codepoint, uint16_t* utf16_string, int capacity) {
+int64_t _codepoint_write_utf16(uint32_t codepoint, uint16_t* utf16_string, int64_t capacity) {
     if (codepoint >= 0xD800 && codepoint <= 0xDFFF)
         return 0;
     else if (codepoint <= 0xFFFF) {
@@ -176,12 +176,12 @@ int _codepoint_write_utf16(uint32_t codepoint, uint16_t* utf16_string, int capac
     } else return 0;
 }
 
-int _utf8_read_codepoint(char const* utf8_string, int length, uint32_t* codepoint) {
+int64_t _utf8_read_codepoint(char const* utf8_string, int64_t length, uint32_t* codepoint) {
     _ASSERT(utf8_string != NULL);
     _ASSERT(codepoint != NULL);
     (*codepoint) = 0;
     if (length == 0) return 0;
-    int read = 0;
+    int64_t read = 0;
     if (utf8_string[0] == 0x0) {
         read = 0;
     } else if ((uint8_t)utf8_string[0] <= 0x7F) {
@@ -218,10 +218,10 @@ int _utf8_read_codepoint(char const* utf8_string, int length, uint32_t* codepoin
     return read;
 }
 
-int _utf16_read_codepoint(uint16_t const* utf16_string, int length, uint32_t* codepoint) {
+int64_t _utf16_read_codepoint(uint16_t const* utf16_string, int64_t length, uint32_t* codepoint) {
     _ASSERT(utf16_string != NULL);
     _ASSERT(codepoint != NULL);
-    int read = 0;
+    int64_t read = 0;
     if (utf16_string[0] < 0xD800 || utf16_string[0] > 0xDFFF) {
         if (length < 1)
             return 0;
@@ -240,38 +240,38 @@ int _utf16_read_codepoint(uint16_t const* utf16_string, int length, uint32_t* co
     return read;
 }
 
-int _utf8_to_utf16(char const* utf8_string, int utf8_length, uint16_t* utf16_string, int utf16_capacity) {
+int64_t _utf8_to_utf16(char const* utf8_string, int64_t utf8_length, uint16_t* utf16_string, int64_t utf16_capacity) {
     return __convert(char, uint16_t, utf8, utf16, utf8_string, utf8_length, utf16_string, utf16_capacity);
 }
 
-int _utf8_to_utf32(char const* utf8_string, int utf8_length, uint32_t* utf32_string, int utf32_capacity) {
+int64_t _utf8_to_utf32(char const* utf8_string, int64_t utf8_length, uint32_t* utf32_string, int64_t utf32_capacity) {
     return __convert(char, uint32_t, utf8, utf32, utf8_string, utf8_length, utf32_string, utf32_capacity);
 }
 
-int _utf8_to_ucs2(char const* utf8_string, int utf8_length, wchar_t* ucs2_string, int ucs2_capacity) {
+int64_t _utf8_to_ucs2(char const* utf8_string, int64_t utf8_length, wchar_t* ucs2_string, int64_t ucs2_capacity) {
     return __convert(char, uint16_t, utf8, utf16, utf8_string, utf8_length, (uint16_t*)ucs2_string, ucs2_capacity);
 }
 
-int _utf16_to_utf8(uint16_t const* utf16_string, int utf16_length, char* utf8_string, int utf8_capacity) {
+int64_t _utf16_to_utf8(uint16_t const* utf16_string, int64_t utf16_length, char* utf8_string, int64_t utf8_capacity) {
     return __convert(uint16_t, char, utf16, utf8, utf16_string, utf16_length, utf8_string, utf8_capacity);
 }
 
-int _utf16_to_utf32(uint16_t const* utf16_string, int utf16_length, uint32_t* utf32_string, int utf32_capacity) {
+int64_t _utf16_to_utf32(uint16_t const* utf16_string, int64_t utf16_length, uint32_t* utf32_string, int64_t utf32_capacity) {
     return __convert(uint16_t, uint32_t, utf16, utf32, utf16_string, utf16_length, utf32_string, utf32_capacity);
 }
 
-int _utf32_to_utf8(uint32_t const* utf32_string, int utf32_length, char* utf8_string, int utf8_capacity) {
+int64_t _utf32_to_utf8(uint32_t const* utf32_string, int64_t utf32_length, char* utf8_string, int64_t utf8_capacity) {
     return __convert(uint32_t, char, utf32, utf8, utf32_string, utf32_length, utf8_string, utf8_capacity);
 }
 
-int _utf32_to_utf16(uint32_t const* utf32_string, int utf32_length, uint16_t* utf16_string, int utf16_capacity) {
+int64_t _utf32_to_utf16(uint32_t const* utf32_string, int64_t utf32_length, uint16_t* utf16_string, int64_t utf16_capacity) {
     return __convert(uint32_t, uint16_t, utf32, utf16, utf32_string, utf32_length, utf16_string, utf16_capacity);
 }
 
-int _utf32_to_ucs2(uint32_t const* utf32_string, int utf32_length, wchar_t* ucs2_string, int ucs2_capacity) {
+int64_t _utf32_to_ucs2(uint32_t const* utf32_string, int64_t utf32_length, wchar_t* ucs2_string, int64_t ucs2_capacity) {
     return __convert(uint32_t, uint16_t, utf32, utf16, utf32_string, utf32_length, (uint16_t*)ucs2_string, ucs2_capacity);
 }
 
-int _ucs2_to_utf8(wchar_t const* ucs2_string, int ucs2_length, char* utf8_string, int utf8_capacity) {
+int64_t _ucs2_to_utf8(wchar_t const* ucs2_string, int64_t ucs2_length, char* utf8_string, int64_t utf8_capacity) {
     return __convert(uint16_t, char, utf16, utf8, (uint16_t*)ucs2_string, ucs2_length, utf8_string, utf8_capacity);
 }
