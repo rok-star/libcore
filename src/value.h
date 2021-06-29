@@ -58,7 +58,7 @@ void _value_set_bool(_value_t*,bool);
 void _value_set_array(_value_t*);
 void _value_set_map(_value_t*);
 bool _value_detach(_value_t*);
-_value_t* _value_parent(_value_t const*);
+_value_t* _value_owner(_value_t const*);
 _VALUE_TYPE _value_type(_value_t const*);
 char const* _value_string(_value_t const*);
 double _value_number(_value_t const*);
