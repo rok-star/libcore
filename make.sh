@@ -44,10 +44,17 @@ install() {
 }
 
 test_() {
-	clang $FLAGS -fsanitize=address $TEST/main.c -o $OUT/test.a
+	clang $FLAGS -fsanitize=address $TEST/main.c /usr/local/lib/libcore.a -o $OUT/test.a
 	$OUT/test.a
 }
 
 make
 install
-test_
+
+if [[ $@ == *"--test"* ]]; then
+    test_
+fi
+
+if [[ $@ == *"--example"* ]]; then
+    test_
+fi
