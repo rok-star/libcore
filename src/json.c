@@ -55,7 +55,7 @@ static bool __parse_object(_parser_t* parser, _value_t** value, _status_t* statu
 			if (_parser_peek_exact(parser, "\"", 1)) {
 				__keyvalue_t keyvalue = {};
 				if (__parse_keyvalue(parser, &keyvalue, status)) {
-					_value_map_set((*value), keyvalue.key.data, keyvalue.key.size, keyvalue.value);
+					_value_map_set_move((*value), keyvalue.key.data, keyvalue.key.size, keyvalue.value);
 					_parser_skip_whitespace(parser);
 					_parser_read_exact(parser, ",", 1);
 					_parser_skip_whitespace(parser);
@@ -84,7 +84,7 @@ static bool __parse_array(_parser_t* parser, _value_t** value, _status_t* status
 		while (!_parser_read_exact(parser, "]", 1)) {
 			_value_t* item = NULL;
 			if (__parse_value(parser, &item, status)) {
-				_value_array_push((*value), item);
+				_value_array_push_move((*value), item);
 				_parser_skip_whitespace(parser);
 				_parser_read_exact(parser, ",", 1);
 				_parser_skip_whitespace(parser);
