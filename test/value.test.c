@@ -127,82 +127,80 @@ void _value_test(void) {
 		_value_t* value = _value_create_array();
 		_ASSERT(_value_array_count(value) == 0);
 
-		_value_array_push(value, _value_create_null());
-		_value_array_push(value, _value_create_string(DUMMY_STRING, strlen(DUMMY_STRING)));
-		_value_array_push(value, _value_create_number(777));
-		_value_array_push(value, _value_create_date(DUMMY_DATE));
-		_value_array_push(value, _value_create_array());
-		_value_array_push(value, _value_create_map());
+		_value_array_push_move(value, _value_create_null());
+		_value_array_push_move(value, _value_create_string(DUMMY_STRING, strlen(DUMMY_STRING)));
+		_value_array_push_move(value, _value_create_number(777));
+		_value_array_push_move(value, _value_create_date(DUMMY_DATE));
+		_value_array_push_move(value, _value_create_array());
+		_value_array_push_move(value, _value_create_map());
 
 		_ASSERT(_value_array_count(value) == 6);
-		_ASSERT(_value_type(_value_array_item(value, 0)) == _NULL_VALUE_TYPE);
-		_ASSERT(_value_type(_value_array_item(value, 1)) == _STRING_VALUE_TYPE);
-		_ASSERT(_value_type(_value_array_item(value, 2)) == _NUMBER_VALUE_TYPE);
-		_ASSERT(_value_type(_value_array_item(value, 3)) == _DATE_VALUE_TYPE);
-		_ASSERT(_value_type(_value_array_item(value, 4)) == _ARRAY_VALUE_TYPE);
-		_ASSERT(_value_type(_value_array_item(value, 5)) == _MAP_VALUE_TYPE);
+		_ASSERT(_value_type(_value_array_get(value, 0)) == _NULL_VALUE_TYPE);
+		_ASSERT(_value_type(_value_array_get(value, 1)) == _STRING_VALUE_TYPE);
+		_ASSERT(_value_type(_value_array_get(value, 2)) == _NUMBER_VALUE_TYPE);
+		_ASSERT(_value_type(_value_array_get(value, 3)) == _DATE_VALUE_TYPE);
+		_ASSERT(_value_type(_value_array_get(value, 4)) == _ARRAY_VALUE_TYPE);
+		_ASSERT(_value_type(_value_array_get(value, 5)) == _MAP_VALUE_TYPE);
 
 		_value_t* tmp1 = _value_array_pop(value);
 		_ASSERT(_value_type(tmp1) == _MAP_VALUE_TYPE)
 		_value_destroy(tmp1);
 
 		_ASSERT(_value_array_count(value) == 5);
-		_ASSERT(_value_type(_value_array_item(value, 0)) == _NULL_VALUE_TYPE);
-		_ASSERT(_value_type(_value_array_item(value, 1)) == _STRING_VALUE_TYPE);
-		_ASSERT(_value_type(_value_array_item(value, 2)) == _NUMBER_VALUE_TYPE);
-		_ASSERT(_value_type(_value_array_item(value, 3)) == _DATE_VALUE_TYPE);
-		_ASSERT(_value_type(_value_array_item(value, 4)) == _ARRAY_VALUE_TYPE);
+		_ASSERT(_value_type(_value_array_get(value, 0)) == _NULL_VALUE_TYPE);
+		_ASSERT(_value_type(_value_array_get(value, 1)) == _STRING_VALUE_TYPE);
+		_ASSERT(_value_type(_value_array_get(value, 2)) == _NUMBER_VALUE_TYPE);
+		_ASSERT(_value_type(_value_array_get(value, 3)) == _DATE_VALUE_TYPE);
+		_ASSERT(_value_type(_value_array_get(value, 4)) == _ARRAY_VALUE_TYPE);
 
 		_value_t* tmp2 = _value_array_shift(value);
 		_ASSERT(_value_type(tmp2) == _NULL_VALUE_TYPE)
 		_value_destroy(tmp2);
 
 		_ASSERT(_value_array_count(value) == 4);
-		_ASSERT(_value_type(_value_array_item(value, 0)) == _STRING_VALUE_TYPE);
-		_ASSERT(_value_type(_value_array_item(value, 1)) == _NUMBER_VALUE_TYPE);
-		_ASSERT(_value_type(_value_array_item(value, 2)) == _DATE_VALUE_TYPE);
-		_ASSERT(_value_type(_value_array_item(value, 3)) == _ARRAY_VALUE_TYPE);
+		_ASSERT(_value_type(_value_array_get(value, 0)) == _STRING_VALUE_TYPE);
+		_ASSERT(_value_type(_value_array_get(value, 1)) == _NUMBER_VALUE_TYPE);
+		_ASSERT(_value_type(_value_array_get(value, 2)) == _DATE_VALUE_TYPE);
+		_ASSERT(_value_type(_value_array_get(value, 3)) == _ARRAY_VALUE_TYPE);
 
 		_value_t* tmp3 = _value_create_string(DUMMY_STRING, strlen(DUMMY_STRING));
-		_value_array_unshift(value, tmp3);
+		_value_array_unshift_copy(value, tmp3);
 
 		_ASSERT(_value_array_count(value) == 5);
-		_ASSERT(_value_type(_value_array_item(value, 0)) == _STRING_VALUE_TYPE);
-		_ASSERT(_value_type(_value_array_item(value, 1)) == _STRING_VALUE_TYPE);
-		_ASSERT(_value_type(_value_array_item(value, 2)) == _NUMBER_VALUE_TYPE);
-		_ASSERT(_value_type(_value_array_item(value, 3)) == _DATE_VALUE_TYPE);
-		_ASSERT(_value_type(_value_array_item(value, 4)) == _ARRAY_VALUE_TYPE);
+		_ASSERT(_value_type(_value_array_get(value, 0)) == _STRING_VALUE_TYPE);
+		_ASSERT(_value_type(_value_array_get(value, 1)) == _STRING_VALUE_TYPE);
+		_ASSERT(_value_type(_value_array_get(value, 2)) == _NUMBER_VALUE_TYPE);
+		_ASSERT(_value_type(_value_array_get(value, 3)) == _DATE_VALUE_TYPE);
+		_ASSERT(_value_type(_value_array_get(value, 4)) == _ARRAY_VALUE_TYPE);
 
-		_value_set_number(_value_array_item(value, 0), 777);
-		_ASSERT(_value_type(tmp3) == _NUMBER_VALUE_TYPE);
-		_ASSERT(_value_number(tmp3) == 777);
-		_ASSERT(_value_type(_value_array_item(value, 0)) == _NUMBER_VALUE_TYPE);
-		_ASSERT(_value_number(_value_array_item(value, 0)) == 777);
+		_value_set_number(_value_array_get(value, 0), 777);
+		_ASSERT(_value_type(tmp3) == _STRING_VALUE_TYPE);
+		_ASSERT(_value_type(_value_array_get(value, 0)) == _NUMBER_VALUE_TYPE);
+		_ASSERT(_value_number(_value_array_get(value, 0)) == 777);
 		_value_destroy(tmp3);
 
-		_value_t* tmp4 = _value_array_item(value, 2);
+		_value_t* tmp4 = _value_array_move(value, 2);
 		_ASSERT(_value_type(tmp4) == _NUMBER_VALUE_TYPE);
 		_ASSERT(_value_number(tmp4) == 777);
-		_value_array_remove(value, 2);
 		_value_destroy(tmp4);
 
 		_ASSERT(_value_array_count(value) == 4);
-		_ASSERT(_value_type(_value_array_item(value, 0)) == _NUMBER_VALUE_TYPE);
-		_ASSERT(_value_type(_value_array_item(value, 1)) == _STRING_VALUE_TYPE);
-		_ASSERT(_value_type(_value_array_item(value, 2)) == _DATE_VALUE_TYPE);
-		_ASSERT(_value_type(_value_array_item(value, 3)) == _ARRAY_VALUE_TYPE);
+		_ASSERT(_value_type(_value_array_get(value, 0)) == _NUMBER_VALUE_TYPE);
+		_ASSERT(_value_type(_value_array_get(value, 1)) == _STRING_VALUE_TYPE);
+		_ASSERT(_value_type(_value_array_get(value, 2)) == _DATE_VALUE_TYPE);
+		_ASSERT(_value_type(_value_array_get(value, 3)) == _ARRAY_VALUE_TYPE);
 
-		_value_array_set(value, 0, _value_create_string(DUMMY_STRING, strlen(DUMMY_STRING)));
+		_value_array_set_move(value, 0, _value_create_string(DUMMY_STRING, strlen(DUMMY_STRING)));
 
-		_ASSERT(_value_type(_value_array_item(value, 0)) == _STRING_VALUE_TYPE);
-		_ASSERT(strcmp(_value_string(_value_array_item(value, 0)), DUMMY_STRING) == 0);
+		_ASSERT(_value_type(_value_array_get(value, 0)) == _STRING_VALUE_TYPE);
+		_ASSERT(strcmp(_value_string(_value_array_get(value, 0)), DUMMY_STRING) == 0);
 
 		_value_t* tmp5 = _value_create_number(999);
-		_value_array_set(value, 0, tmp5);
+		_value_array_set_copy(value, 0, tmp5);
 		_value_destroy(tmp5);
 
-		_ASSERT(_value_type(_value_array_item(value, 0)) == _NUMBER_VALUE_TYPE);
-		_ASSERT(_value_number(_value_array_item(value, 0)) == 999);
+		_ASSERT(_value_type(_value_array_get(value, 0)) == _NUMBER_VALUE_TYPE);
+		_ASSERT(_value_number(_value_array_get(value, 0)) == 999);
 
 		_value_destroy(value);
 	}
