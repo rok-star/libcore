@@ -21,15 +21,20 @@ make() {
         fi
     done
 
-    if [[ $OSTYPE == "linux-gnu" ]]; then
+    if [[ $OSTYPE == "linux-gnu"* || $OSTYPE == "darwin"* ]]; then
         for path in $SRC/POSIX/*.c; do
             clang -c $FLAGS -I$OUT/include $(realpath $path) -o $OUT/obj/POSIX_$(basename $path .c).o
             if (( $? != 0 )); then
                 exit
             fi
         done
-    elif [[ $OSTYPE == "darwin" ]]; then
-        echo "..."
+    elif [[ $OSTYPE == "darwin"* ]]; then
+        for path in $SRC/apple/*.m; do
+            clang -c $FLAGS -I$OUT/include $(realpath $path) -o $OUT/obj/apple_$(basename $path .m).o
+            if (( $? != 0 )); then
+                exit
+            fi
+        done
     else
         echo "$OSTYPE not supported"
         exit

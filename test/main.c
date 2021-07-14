@@ -1,6 +1,6 @@
 #include "value.test.c"
 #include "string.test.c"
-#include "json/index.c"
+//#include "json/index.c"
 
 int main(int argc, char const *argv[]) {
 
