@@ -1,3 +1,4 @@
+#include <assert.h>
 #include <libcore/MACRO.h>
 #include "metal.h"
 
@@ -84,8 +85,8 @@ void __metal_init(void) {
 
 __attribute__((destructor))
 void __metal_done(void) {
-    _ASSERT(__metal_device != NULL);
-    _ASSERT(__metal_library != NULL);
+    assert(__metal_device != NULL);
+    assert(__metal_library != NULL);
     __metal_device = NULL;
     __metal_library = NULL;
 }

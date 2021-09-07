@@ -1,9 +1,10 @@
+#include <assert.h>
 #include <libcore/MACRO.h>
 #include <libcore/unicode.h>
 
 #define __convert(FROMTYPE, TOTYPE, FROMNAME, TONAME, string, length, out, capacity) ({ \
-    _ASSERT(string != NULL); \
-    _ASSERT(out != NULL); \
+    assert(string != NULL); \
+    assert(out != NULL); \
     int64_t ret = 0; \
     if (sizeof(FROMTYPE) == sizeof(TOTYPE)) { \
         int64_t size_to = (capacity - 1); \
@@ -33,57 +34,57 @@
 })
 
 static void __utf8_to_utf16(char const* utf8_string, int64_t utf8_length, int64_t* utf8_read, uint16_t* utf16_string, int64_t utf16_capacity, int64_t* utf16_write) {
-    _ASSERT(utf8_string != NULL);
-    _ASSERT(utf8_read != NULL);
-    _ASSERT(utf16_string != NULL);
-    _ASSERT(utf16_write != NULL);
+    assert(utf8_string != NULL);
+    assert(utf8_read != NULL);
+    assert(utf16_string != NULL);
+    assert(utf16_write != NULL);
     uint32_t codepoint = 0;
     (*utf8_read) = _utf8_read_codepoint(utf8_string, utf8_length, &codepoint);
     (*utf16_write) = ((*utf8_read) > 0) ? _codepoint_write_utf16(codepoint, utf16_string, utf16_capacity) : 0;
 }
 
 static void __utf8_to_utf32(char const* utf8_string, int64_t utf8_length, int64_t* utf8_read, uint32_t* utf32_string, int64_t utf32_capacity, int64_t* utf32_write) {
-    _ASSERT(utf8_string != NULL);
-    _ASSERT(utf8_read != NULL);
-    _ASSERT(utf32_string != NULL);
-    _ASSERT(utf32_write != NULL);
+    assert(utf8_string != NULL);
+    assert(utf8_read != NULL);
+    assert(utf32_string != NULL);
+    assert(utf32_write != NULL);
     (*utf8_read) = _utf8_read_codepoint(utf8_string, utf8_length, utf32_string);
     (*utf32_write) = ((*utf8_read) > 0 ? 1 : 0);
 }
 
 static void __utf16_to_utf8(uint16_t const* utf16_string, int64_t utf16_length, int64_t* utf16_read, char* utf8_string, int64_t utf8_capacity, int64_t* utf8_write) {
-    _ASSERT(utf16_string != NULL);
-    _ASSERT(utf16_read != NULL);
-    _ASSERT(utf8_string != NULL);
-    _ASSERT(utf8_write != NULL);
+    assert(utf16_string != NULL);
+    assert(utf16_read != NULL);
+    assert(utf8_string != NULL);
+    assert(utf8_write != NULL);
     uint32_t codepoint = 0;
     (*utf16_read) = _utf16_read_codepoint(utf16_string, utf16_length, &codepoint);
     (*utf8_write) = ((*utf16_read) > 0) ? _codepoint_write_utf8(codepoint, utf8_string, utf8_capacity) : 0;
 }
 
 static void __utf16_to_utf32(uint16_t const* utf16_string, int64_t utf16_length, int64_t* utf16_read, uint32_t* utf32_string, int64_t utf32_capacity, int64_t* utf32_write) {
-    _ASSERT(utf16_string != NULL);
-    _ASSERT(utf16_read != NULL);
-    _ASSERT(utf32_string != NULL);
-    _ASSERT(utf32_write != NULL);
+    assert(utf16_string != NULL);
+    assert(utf16_read != NULL);
+    assert(utf32_string != NULL);
+    assert(utf32_write != NULL);
     (*utf16_read) = _utf16_read_codepoint(utf16_string, utf16_length, utf32_string);
     (*utf32_write) = ((*utf16_read) > 0 ? 1 : 0);
 }
 
 static void __utf32_to_utf8(uint32_t const* utf32_string, int64_t utf32_length, int64_t* utf32_read, char* utf8_string, int64_t utf8_capacity, int64_t* utf8_write) {
-    _ASSERT(utf32_string != NULL);
-    _ASSERT(utf32_read != NULL);
-    _ASSERT(utf8_string != NULL);
-    _ASSERT(utf8_write != NULL);
+    assert(utf32_string != NULL);
+    assert(utf32_read != NULL);
+    assert(utf8_string != NULL);
+    assert(utf8_write != NULL);
     (*utf8_write) = _codepoint_write_utf8((*utf32_string), utf8_string, utf8_capacity);
     (*utf32_read) = ((*utf8_write) > 0) ? 1 : 0;
 }
 
 static void __utf32_to_utf16(uint32_t const* utf32_string, int64_t utf32_length, int64_t* utf32_read, uint16_t* utf16_string, int64_t utf16_capacity, int64_t* utf16_write) {
-    _ASSERT(utf32_string != NULL);
-    _ASSERT(utf32_read != NULL);
-    _ASSERT(utf16_string != NULL);
-    _ASSERT(utf16_write != NULL);
+    assert(utf32_string != NULL);
+    assert(utf32_read != NULL);
+    assert(utf16_string != NULL);
+    assert(utf16_write != NULL);
     (*utf16_write) = _codepoint_write_utf16((*utf32_string), utf16_string, utf16_capacity);
     (*utf32_read) = ((*utf16_write) > 0) ? 1 : 0;
 }
@@ -177,8 +178,8 @@ int64_t _codepoint_write_utf16(uint32_t codepoint, uint16_t* utf16_string, int64
 }
 
 int64_t _utf8_read_codepoint(char const* utf8_string, int64_t length, uint32_t* codepoint) {
-    _ASSERT(utf8_string != NULL);
-    _ASSERT(codepoint != NULL);
+    assert(utf8_string != NULL);
+    assert(codepoint != NULL);
     (*codepoint) = 0;
     if (length == 0) return 0;
     int64_t read = 0;
@@ -219,8 +220,8 @@ int64_t _utf8_read_codepoint(char const* utf8_string, int64_t length, uint32_t* 
 }
 
 int64_t _utf16_read_codepoint(uint16_t const* utf16_string, int64_t length, uint32_t* codepoint) {
-    _ASSERT(utf16_string != NULL);
-    _ASSERT(codepoint != NULL);
+    assert(utf16_string != NULL);
+    assert(codepoint != NULL);
     int64_t read = 0;
     if (utf16_string[0] < 0xD800 || utf16_string[0] > 0xDFFF) {
         if (length < 1)

@@ -1,3 +1,4 @@
+#include <assert.h>
 #include <libcore/texture.h>
 #include <libcore/MACRO.h>
 
@@ -13,13 +14,13 @@ typedef struct _texture_t {
 } _texture_t;
 
 _texture_t* _texture_create(void const* data, int size, int width, int height) {
-    _ASSERT(__metal_device != NULL);
-    _ASSERT(__metal_library != NULL);
+    assert(__metal_device != NULL);
+    assert(__metal_library != NULL);
 
-    _ASSERT_M((width > 0) && (height > 0), "texture \"width\" and \"height\" must be greater than 0");
-    _ASSERT_M(((data == NULL) && (size == 0)) || ((data != NULL) && (size > 0)), "texture \"data\" and \"size\" must be specified along with each other");
+    assert_M((width > 0) && (height > 0), "texture \"width\" and \"height\" must be greater than 0");
+    assert_M(((data == NULL) && (size == 0)) || ((data != NULL) && (size > 0)), "texture \"data\" and \"size\" must be specified along with each other");
     if (size > 0)
-        _ASSERT_M(size == ((width * height) * 4), "texture \"width\" and \"height\" must be correlated with \"size\"");
+        assert_M(size == ((width * height) * 4), "texture \"width\" and \"height\" must be correlated with \"size\"");
 
     MTLTextureDescriptor* descriptor = [[MTLTextureDescriptor alloc] init];
     descriptor.storageMode = MTLStorageModePrivate;
@@ -28,7 +29,7 @@ _texture_t* _texture_create(void const* data, int size, int width, int height) {
     descriptor.height = height;
 
     id<MTLTexture> texture = [__metal_device newTextureWithDescriptor: descriptor];
-    _ASSERT(texture != NULL);
+    assert(texture != NULL);
 
     if ((data != NULL) && (size > 0)) {
         id<MTLCommandQueue> command_queue = [__metal_device newCommandQueue];
@@ -60,21 +61,21 @@ _texture_t* _texture_create(void const* data, int size, int width, int height) {
 }
 
 void _texture_destroy(_texture_t* texture) {
-    _ASSERT(texture != NULL);
+    assert(texture != NULL);
     texture->texture = NULL;
 }
 
 _size_t const* _texture_size(_texture_t const* texture) {
-    _ASSERT(texture != NULL);
+    assert(texture != NULL);
     return &texture->size;
 }
 
 void* _texture_MTLTexture(_texture_t const* texture) {
-    _ASSERT(texture != NULL);
+    assert(texture != NULL);
     return (__bridge void*)texture->texture;
 }
 
 void _texture_set_msaa(_texture_t* texture, bool msaa) {
-    _ASSERT(texture != NULL);
+    assert(texture != NULL);
     ;
 }

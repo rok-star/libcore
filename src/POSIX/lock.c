@@ -2,6 +2,7 @@
     #define _POSIX_C_SOURCE 200809L
 #endif
 
+#include <assert.h>
 #include <pthread.h>
 #include <libcore/lock.h>
 #include <libcore/MACRO.h>
@@ -35,22 +36,22 @@ _lock_t* _lock_create(void) {
 }
 
 void _lock_destroy(_lock_t* lock) {
-    _ASSERT(lock != NULL);
+    assert(lock != NULL);
     pthread_mutex_destroy(&lock->mutex);
     _FREE(lock);
 }
 
 void _lock_acquire(_lock_t* lock) {
-    _ASSERT(lock != NULL);
+    assert(lock != NULL);
     pthread_mutex_lock_E(&lock->mutex);
 }
 
 void _lock_release(_lock_t* lock) {
-    _ASSERT(lock != NULL);
+    assert(lock != NULL);
     pthread_mutex_unlock_E(&lock->mutex);
 }
 
 pthread_mutex_t* _lock_mutex(_lock_t* lock) {
-    _ASSERT(lock != NULL);
+    assert(lock != NULL);
     return &lock->mutex;
 }

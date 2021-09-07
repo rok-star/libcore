@@ -3,6 +3,7 @@
 	#include <sys/epoll.h>
 #endif
 
+#include <assert.h>
 #include <errno.h>
 #include <unistd.h>
 #include <fcntl.h>
@@ -58,9 +59,9 @@ typedef struct _connection_poll_t {
 } _connection_poll_t;
 
 _listener_t* _listener_create(_listener_info_t* info, _status_t* status) {
-	_ASSERT(info != NULL);
-	_ASSERT(status != NULL);
-	_ASSERT(info->port > 0);
+	assert(info != NULL);
+	assert(status != NULL);
+	assert(info->port > 0);
 
 	int sock = socket(AF_INET, SOCK_STREAM, 0);
 	if (sock >= 0) {
@@ -99,7 +100,7 @@ _listener_t* _listener_create(_listener_info_t* info, _status_t* status) {
 }
 
 void _listener_destroy(_listener_t* listener) {
-	_ASSERT(listener != NULL);
+	assert(listener != NULL);
 
 	close(listener->socket);
 	__CLEAR_EVENTS(listener->events);
@@ -109,9 +110,9 @@ void _listener_destroy(_listener_t* listener) {
 }
 
 void _listener_process(_listener_t* listener, _listener_event_t const** events, int64_t* num) {
-	_ASSERT(listener != NULL);
-	_ASSERT(events != NULL);
-	_ASSERT(num != NULL);
+	assert(listener != NULL);
+	assert(events != NULL);
+	assert(num != NULL);
 
 	(*events) = NULL;
 	(*num) = 0;
@@ -146,8 +147,8 @@ void _listener_process(_listener_t* listener, _listener_event_t const** events, 
 }
 
 _connection_t* _connection_accept(_listener_t* listener, _status_t* status) {
-	_ASSERT(listener != NULL);
-	_ASSERT(status != NULL);
+	assert(listener != NULL);
+	assert(status != NULL);
 
 	int sock = accept(listener->socket, (sockaddr_t*)&listener->addr, &(socklen_t){ sizeof(sockaddr_in_t) });
 	if (sock > 0) {
@@ -172,7 +173,7 @@ _connection_t* _connection_accept(_listener_t* listener, _status_t* status) {
 }
 
 void _connection_destroy(_connection_t* connection) {
-	_ASSERT(connection != NULL);
+	assert(connection != NULL);
 
 	close(connection->socket);
 	__CLEAR_EVENTS(connection->events);
@@ -182,9 +183,9 @@ void _connection_destroy(_connection_t* connection) {
 }
 
 void _connection_process(_connection_t* connection, _connection_event_t const** events, int64_t* num) {
-	_ASSERT(connection != NULL);
-	_ASSERT(events != NULL);
-	_ASSERT(num != NULL);
+	assert(connection != NULL);
+	assert(events != NULL);
+	assert(num != NULL);
 
 	(*events) = NULL;
 	(*num) = 0;
@@ -219,16 +220,16 @@ void _connection_process(_connection_t* connection, _connection_event_t const** 
 }
 
 void _connection_write(_connection_t* connection, uint8_t* data, int64_t size) {
-	_ASSERT(connection != NULL);
-	_ASSERT(data != NULL);
+	assert(connection != NULL);
+	assert(data != NULL);
 
 	write(connection->socket, data, size);
 }
 
 void _connection_read(_connection_t* connection, uint8_t** data, int64_t* size) {
-	_ASSERT(connection != NULL);
-	_ASSERT(data != NULL);
-	_ASSERT(size != NULL);
+	assert(connection != NULL);
+	assert(data != NULL);
+	assert(size != NULL);
 
 	(*data) = NULL;
 	(*size) = 0;
@@ -279,7 +280,7 @@ void _connection_read(_connection_t* connection, uint8_t** data, int64_t* size) 
 }
 
 _connection_poll_t* _connection_poll_create(_status_t* status) {
-	_ASSERT(status != NULL);
+	assert(status != NULL);
 
 #ifdef __linux__
 	int pollfd = epoll_create(1);
@@ -297,7 +298,7 @@ _connection_poll_t* _connection_poll_create(_status_t* status) {
 }
 
 void _connection_poll_destroy(_connection_poll_t* poll) {
-	_ASSERT(poll != NULL);
+	assert(poll != NULL);
 
 #ifdef __linux__
 	close(poll->pollfd);
@@ -311,9 +312,9 @@ void _connection_poll_destroy(_connection_poll_t* poll) {
 }
 
 void _connection_poll_process(_connection_poll_t* poll, _connection_event_t const** events, int64_t* num) {
-	_ASSERT(poll != NULL);
-	_ASSERT(events != NULL);
-	_ASSERT(num != NULL);
+	assert(poll != NULL);
+	assert(events != NULL);
+	assert(num != NULL);
 
 	(*events) = NULL;
 	(*num) = 0;
@@ -352,8 +353,8 @@ void _connection_poll_process(_connection_poll_t* poll, _connection_event_t cons
 }
 
 void _connection_poll_append(_connection_poll_t* poll, _connection_t* connection) {
-	_ASSERT(poll != NULL);
-	_ASSERT(connection != NULL);
+	assert(poll != NULL);
+	assert(connection != NULL);
 
 #ifdef __linux__
 	_CALL(
@@ -371,8 +372,8 @@ void _connection_poll_append(_connection_poll_t* poll, _connection_t* connection
 }
 
 void _connection_poll_remove(_connection_poll_t* poll, _connection_t* connection) {
-	_ASSERT(poll != NULL);
-	_ASSERT(connection != NULL);
+	assert(poll != NULL);
+	assert(connection != NULL);
 
 #ifdef __linux__
 	_CALL(

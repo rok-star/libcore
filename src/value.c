@@ -1,3 +1,4 @@
+#include <assert.h>
 #include <libcore/value.h>
 #include <libcore/string.h>
 #include <libcore/MACRO.h>
@@ -34,7 +35,7 @@ typedef struct _value_keyvalue_array_t {
 } _value_keyvalue_array_t;
 
 _value_entry_t* _value_entry_create_null(char const* path, int64_t len) {
-	_ASSERT(path != NULL);
+	assert(path != NULL);
 	return _NEW(_value_entry_t, {
 		.type = _NULL_VALUE_ENTRY_TYPE,
 		.path = _string_clone(path, len)
@@ -42,8 +43,8 @@ _value_entry_t* _value_entry_create_null(char const* path, int64_t len) {
 }
 
 _value_entry_t* _value_entry_create_string(char const* path, int64_t len, char const* string, int64_t len2) {
-	_ASSERT(path != NULL);
-	_ASSERT(string != NULL);
+	assert(path != NULL);
+	assert(string != NULL);
 	return _NEW(_value_entry_t, {
 		.type = _STRING_VALUE_ENTRY_TYPE,
 		.path = _string_clone(path, len),
@@ -52,7 +53,7 @@ _value_entry_t* _value_entry_create_string(char const* path, int64_t len, char c
 }
 
 _value_entry_t* _value_entry_create_number(char const* path, int64_t len, double number) {
-	_ASSERT(path != NULL);
+	assert(path != NULL);
 	return _NEW(_value_entry_t, {
 		.type = _NUMBER_VALUE_ENTRY_TYPE,
 		.path = _string_clone(path, len),
@@ -61,7 +62,7 @@ _value_entry_t* _value_entry_create_number(char const* path, int64_t len, double
 }
 
 _value_entry_t* _value_entry_create_date(char const* path, int64_t len, double date) {
-	_ASSERT(path != NULL);
+	assert(path != NULL);
 	return _NEW(_value_entry_t, {
 		.type = _DATE_VALUE_ENTRY_TYPE,
 		.path = _string_clone(path, len),
@@ -70,41 +71,41 @@ _value_entry_t* _value_entry_create_date(char const* path, int64_t len, double d
 }
 
 _VALUE_ENTRY_TYPE _value_entry_type(_value_entry_t* entry) {
-	_ASSERT(entry != NULL);
+	assert(entry != NULL);
 	return entry->type;
 }
 
 char const* _value_entry_path(_value_entry_t* entry) {
-	_ASSERT(entry != NULL);
+	assert(entry != NULL);
 	return entry->path;
 }
 
 char const* _value_entry_string(_value_entry_t* entry) {
-	_ASSERT(entry != NULL);
-	_ASSERT(entry->type == _STRING_VALUE_ENTRY_TYPE);
+	assert(entry != NULL);
+	assert(entry->type == _STRING_VALUE_ENTRY_TYPE);
 	return entry->string;
 }
 
 double _value_entry_number(_value_entry_t* entry) {
-	_ASSERT(entry != NULL);
-	_ASSERT(entry->type == _NUMBER_VALUE_ENTRY_TYPE);
+	assert(entry != NULL);
+	assert(entry->type == _NUMBER_VALUE_ENTRY_TYPE);
 	return entry->number;
 }
 
 double _value_entry_date(_value_entry_t* entry) {
-	_ASSERT(entry != NULL);
-	_ASSERT(entry->type == _DATE_VALUE_ENTRY_TYPE);
+	assert(entry != NULL);
+	assert(entry->type == _DATE_VALUE_ENTRY_TYPE);
 	return entry->date;
 }
 
 void _value_entry_destroy(_value_entry_t* entry) {
-	_ASSERT(entry != NULL);
+	assert(entry != NULL);
 	_FREE(entry->string);
 	_FREE(entry);
 }
 
 _value_t* _value_clone(_value_t const* value) {
-	_ASSERT(value != NULL);
+	assert(value != NULL);
 	if (value->type == _NULL_VALUE_TYPE) {
 		return _NEW(_value_t, {
 			.type = _NULL_VALUE_TYPE
@@ -137,7 +138,7 @@ _value_t* _value_clone(_value_t const* value) {
 		_value_array_t* dst = _NEW(_value_array_t, {});
 		_RESERVE(*dst, src->size);
 		for (int64_t i = 0; i < src->size; i++) {
-			_ASSERT(src->data[i] != NULL);
+			assert(src->data[i] != NULL);
 			_value_t* copy = _value_clone(src->data[i]);
 			_PUSH(*dst, copy);
 		}
@@ -150,8 +151,8 @@ _value_t* _value_clone(_value_t const* value) {
 		_value_keyvalue_array_t* dst = _NEW(_value_keyvalue_array_t, {});
 		_RESERVE(*dst, src->size);
 		for (int64_t i = 0; i < src->size; i++) {
-			_ASSERT(src->data[i].key != NULL);
-			_ASSERT(src->data[i].value != NULL);
+			assert(src->data[i].key != NULL);
+			assert(src->data[i].value != NULL);
 			_value_keyvalue_t pair = {
 				.key = _string_clone(src->data[i].key, strlen(src->data[i].key)),
 				.value = _value_clone(src->data[i].value)
@@ -220,25 +221,25 @@ _value_t* _value_create_entries(_value_entry_t const** entries, int64_t size) {
 }
 
 void _value_destroy(_value_t* value) {
-	_ASSERT(value != NULL);
+	assert(value != NULL);
 	_value_set_null(value);
 	_FREE(value);
 }
 
 void _value_set_null(_value_t* value) {
-	_ASSERT(value != NULL);
+	assert(value != NULL);
 	if (value->type == _ARRAY_VALUE_TYPE) {
 		_value_array_t* array = (_value_array_t*)_NOTNULL(value->data);
 		for (int64_t i = 0; i < array->size; i++) {
-			_ASSERT(array->data[i] != NULL);
+			assert(array->data[i] != NULL);
 			_value_destroy(array->data[i]);
 		}
 		_FREE(array->data);
 	} else if (value->type == _MAP_VALUE_TYPE) {
 		_value_keyvalue_array_t* array = (_value_keyvalue_array_t*)_NOTNULL(value->data);
 		for (int64_t i = 0; i < array->size; i++) {
-			_ASSERT(array->data[i].key != NULL);
-			_ASSERT(array->data[i].value != NULL);
+			assert(array->data[i].key != NULL);
+			assert(array->data[i].value != NULL);
 			_FREE(array->data[i].key);
 			_value_destroy(array->data[i].value);
 		}
@@ -249,49 +250,49 @@ void _value_set_null(_value_t* value) {
 }
 
 void _value_set_string(_value_t* value, char const* string, int64_t len) {
-	_ASSERT(value != NULL);
+	assert(value != NULL);
 	_value_set_null(value);
 	value->type = _STRING_VALUE_TYPE;
 	value->data = (void*)_string_clone(string, len);
 }
 
 void _value_set_number(_value_t* value, double number) {
-	_ASSERT(value != NULL);
+	assert(value != NULL);
 	_value_set_null(value);
 	value->type = _NUMBER_VALUE_TYPE;
 	value->data = (void*)_NEW(double, number);
 }
 
 void _value_set_date(_value_t* value, double date) {
-	_ASSERT(value != NULL);
+	assert(value != NULL);
 	_value_set_null(value);
 	value->type = _DATE_VALUE_TYPE;
 	value->data = (void*)_NEW(double, date);
 }
 
 void _value_set_bool(_value_t* value, bool val) {
-	_ASSERT(value != NULL);
+	assert(value != NULL);
 	_value_set_null(value);
 	value->type = _BOOL_VALUE_TYPE;
 	value->data = (void*)_NEW(int, (val ? 1 : 0));
 }
 
 void _value_set_array(_value_t* value) {
-	_ASSERT(value != NULL);
+	assert(value != NULL);
 	_value_set_null(value);
 	value->type = _ARRAY_VALUE_TYPE;
 	value->data = (void*)_NEW(_value_array_t, {});
 }
 
 void _value_set_map(_value_t* value) {
-	_ASSERT(value != NULL);
+	assert(value != NULL);
 	_value_set_null(value);
 	value->type = _MAP_VALUE_TYPE;
 	value->data = (void*)_NEW(_value_keyvalue_array_t, {});
 }
 
 bool _value_detach(_value_t* value) {
-	_ASSERT(value != NULL);
+	assert(value != NULL);
 	if (value->owner != NULL) {
 		if (value->owner->type == _ARRAY_VALUE_TYPE) {
 			_value_array_t* array = (_value_array_t*)_NOTNULL(value->owner->data);
@@ -318,159 +319,159 @@ bool _value_detach(_value_t* value) {
 }
 
 _VALUE_TYPE _value_type(_value_t const* value) {
-	_ASSERT(value != NULL);
+	assert(value != NULL);
 	return value->type;
 }
 
 char const* _value_string(_value_t const* value) {
-	_ASSERT(value != NULL);
-	_ASSERT(value->data != NULL);
-	_ASSERT(value->type == _STRING_VALUE_TYPE);
+	assert(value != NULL);
+	assert(value->data != NULL);
+	assert(value->type == _STRING_VALUE_TYPE);
 	return (char const*)value->data;
 }
 
 double _value_number(_value_t const* value) {
-	_ASSERT(value != NULL);
-	_ASSERT(value->data != NULL);
-	_ASSERT(value->type == _NUMBER_VALUE_TYPE);
+	assert(value != NULL);
+	assert(value->data != NULL);
+	assert(value->type == _NUMBER_VALUE_TYPE);
 	return *(double*)value->data;
 }
 
 double _value_date(_value_t const* value) {
-	_ASSERT(value != NULL);
-	_ASSERT(value->data != NULL);
-	_ASSERT(value->type == _DATE_VALUE_TYPE);
+	assert(value != NULL);
+	assert(value->data != NULL);
+	assert(value->type == _DATE_VALUE_TYPE);
 	return *(double*)value->data;
 }
 
 bool _value_bool(_value_t const* value) {
-	_ASSERT(value != NULL);
-	_ASSERT(value->data != NULL);
-	_ASSERT(value->type == _BOOL_VALUE_TYPE);
+	assert(value != NULL);
+	assert(value->data != NULL);
+	assert(value->type == _BOOL_VALUE_TYPE);
 	return ((*(int*)value->data) == 1);
 }
 
 int64_t _value_array_count(_value_t const* value) {
-	_ASSERT(value != NULL);
-	_ASSERT(value->data != NULL);
-	_ASSERT(value->type == _ARRAY_VALUE_TYPE);
+	assert(value != NULL);
+	assert(value->data != NULL);
+	assert(value->type == _ARRAY_VALUE_TYPE);
 	return ((_value_array_t*)value->data)->size;
 }
 
 _value_t* _value_array_get(_value_t const* value, int64_t index) {
-	_ASSERT(value != NULL);
-	_ASSERT(value->data != NULL);
-	_ASSERT(value->type == _ARRAY_VALUE_TYPE);
-	_ASSERT(index >= 0);
+	assert(value != NULL);
+	assert(value->data != NULL);
+	assert(value->type == _ARRAY_VALUE_TYPE);
+	assert(index >= 0);
 	_value_array_t* array = (_value_array_t*)_NOTNULL(value->data);
-	_ASSERT(index < array->size);
+	assert(index < array->size);
 	return _NOTNULL(array->data[index]);
 }
 
 _value_t* _value_array_move(_value_t const* value, int64_t index) {
-	_ASSERT(value != NULL);
-	_ASSERT(value->data != NULL);
-	_ASSERT(value->type == _ARRAY_VALUE_TYPE);
-	_ASSERT(index >= 0);
+	assert(value != NULL);
+	assert(value->data != NULL);
+	assert(value->type == _ARRAY_VALUE_TYPE);
+	assert(index >= 0);
 	_value_array_t* array = (_value_array_t*)_NOTNULL(value->data);
-	_ASSERT(index < array->size);
+	assert(index < array->size);
 	_value_t* ret = array->data[index];
 	_REMOVE_INDEX(*array, index);
 	return _NOTNULL(ret);
 }
 
 void _value_array_remove(_value_t* value, int64_t index) {
-	_ASSERT(value != NULL);
-	_ASSERT(value->data != NULL);
-	_ASSERT(value->type == _ARRAY_VALUE_TYPE);
-	_ASSERT(index >= 0);
+	assert(value != NULL);
+	assert(value->data != NULL);
+	assert(value->type == _ARRAY_VALUE_TYPE);
+	assert(index >= 0);
 	_value_array_t* array = (_value_array_t*)_NOTNULL(value->data);
-	_ASSERT(index < array->size);
+	assert(index < array->size);
 	_REMOVE_INDEX(*array, index);
 }
 
 void _value_array_set_copy(_value_t* value, int64_t index, _value_t const* item) {
-	_ASSERT(value != NULL);
-	_ASSERT(value->data != NULL);
-	_ASSERT(value->type == _ARRAY_VALUE_TYPE);
-	_ASSERT(index >= 0);
-	_ASSERT(item != NULL);
+	assert(value != NULL);
+	assert(value->data != NULL);
+	assert(value->type == _ARRAY_VALUE_TYPE);
+	assert(index >= 0);
+	assert(item != NULL);
 	_value_array_t* array = (_value_array_t*)_NOTNULL(value->data);
-	_ASSERT(index < array->size);
+	assert(index < array->size);
 	_value_destroy(_NOTNULL(array->data[index]));
 	array->data[index] = _value_clone(item);
 }
 
 void _value_array_set_move(_value_t* value, int64_t index, _value_t* item) {
-	_ASSERT(value != NULL);
-	_ASSERT(value->data != NULL);
-	_ASSERT(value->type == _ARRAY_VALUE_TYPE);
-	_ASSERT(index >= 0);
-	_ASSERT(item != NULL);
+	assert(value != NULL);
+	assert(value->data != NULL);
+	assert(value->type == _ARRAY_VALUE_TYPE);
+	assert(index >= 0);
+	assert(item != NULL);
 	_value_array_t* array = (_value_array_t*)_NOTNULL(value->data);
-	_ASSERT(index < array->size);
+	assert(index < array->size);
 	_value_destroy(_NOTNULL(array->data[index]));
 	array->data[index] = item;
 }
 
 void _value_array_push_copy(_value_t* value, _value_t const* item) {
-	_ASSERT(value != NULL);
-	_ASSERT(value->data != NULL);
-	_ASSERT(value->type == _ARRAY_VALUE_TYPE);
-	_ASSERT(item != NULL);
+	assert(value != NULL);
+	assert(value->data != NULL);
+	assert(value->type == _ARRAY_VALUE_TYPE);
+	assert(item != NULL);
 	_value_array_t* array = (_value_array_t*)_NOTNULL(value->data);
 	_value_t* copy = _value_clone(item);
 	_PUSH(*array, copy);
 }
 
 void _value_array_push_move(_value_t* value, _value_t* item) {
-	_ASSERT(value != NULL);
-	_ASSERT(value->data != NULL);
-	_ASSERT(value->type == _ARRAY_VALUE_TYPE);
-	_ASSERT(item != NULL);
+	assert(value != NULL);
+	assert(value->data != NULL);
+	assert(value->type == _ARRAY_VALUE_TYPE);
+	assert(item != NULL);
 	_value_array_t* array = (_value_array_t*)_NOTNULL(value->data);
 	_PUSH(*array, item);
 }
 
 void _value_array_unshift_copy(_value_t* value, _value_t const* item) {
-	_ASSERT(value != NULL);
-	_ASSERT(value->data != NULL);
-	_ASSERT(value->type == _ARRAY_VALUE_TYPE);
+	assert(value != NULL);
+	assert(value->data != NULL);
+	assert(value->type == _ARRAY_VALUE_TYPE);
 	_value_array_t* array = (_value_array_t*)_NOTNULL(value->data);
 	_value_t* copy = _value_clone(item);
 	_UNSHIFT(*array, copy);
 }
 
 void _value_array_unshift_move(_value_t* value, _value_t* item) {
-	_ASSERT(value != NULL);
-	_ASSERT(value->data != NULL);
-	_ASSERT(value->type == _ARRAY_VALUE_TYPE);
+	assert(value != NULL);
+	assert(value->data != NULL);
+	assert(value->type == _ARRAY_VALUE_TYPE);
 	_value_array_t* array = (_value_array_t*)_NOTNULL(value->data);
 	_UNSHIFT(*array, item);
 }
 
 _value_t* _value_array_pop(_value_t* value) {
-	_ASSERT(value != NULL);
-	_ASSERT(value->data != NULL);
-	_ASSERT(value->type == _ARRAY_VALUE_TYPE);
+	assert(value != NULL);
+	assert(value->data != NULL);
+	assert(value->type == _ARRAY_VALUE_TYPE);
 	_value_array_t* array = (_value_array_t*)_NOTNULL(value->data);
 	_value_t* ret = _POP(*array);
 	return _NOTNULL(ret);
 }
 
 _value_t* _value_array_shift(_value_t* value) {
-	_ASSERT(value != NULL);
-	_ASSERT(value->data != NULL);
-	_ASSERT(value->type == _ARRAY_VALUE_TYPE);
+	assert(value != NULL);
+	assert(value->data != NULL);
+	assert(value->type == _ARRAY_VALUE_TYPE);
 	_value_array_t* array = (_value_array_t*)_NOTNULL(value->data);
 	_value_t* ret = _SHIFT(*array);
 	return _NOTNULL(ret);
 }
 
 void _value_array_clear(_value_t* value) {
-	_ASSERT(value != NULL);
-	_ASSERT(value->data != NULL);
-	_ASSERT(value->type == _ARRAY_VALUE_TYPE);
+	assert(value != NULL);
+	assert(value->data != NULL);
+	assert(value->type == _ARRAY_VALUE_TYPE);
 	_value_array_t* array = (_value_array_t*)_NOTNULL(value->data);
 	for (int64_t i = 0; i < array->size; i++) {
 		_value_destroy(_NOTNULL(array->data[i]));
@@ -479,27 +480,27 @@ void _value_array_clear(_value_t* value) {
 }
 
 int64_t _value_map_key_count(_value_t const* value) {
-	_ASSERT(value != NULL);
-	_ASSERT(value->data != NULL);
-	_ASSERT(value->type == _MAP_VALUE_TYPE);
+	assert(value != NULL);
+	assert(value->data != NULL);
+	assert(value->type == _MAP_VALUE_TYPE);
 	_value_keyvalue_array_t* map = (_value_keyvalue_array_t*)_NOTNULL(value->data);
 	return map->size;
 }
 
 char const* _value_map_key_item(_value_t const* value, int64_t index) {
-	_ASSERT(value != NULL);
-	_ASSERT(value->data != NULL);
-	_ASSERT(value->type == _MAP_VALUE_TYPE);
-	_ASSERT(index >= 0);
+	assert(value != NULL);
+	assert(value->data != NULL);
+	assert(value->type == _MAP_VALUE_TYPE);
+	assert(index >= 0);
 	_value_keyvalue_array_t* map = (_value_keyvalue_array_t*)_NOTNULL(value->data);
-	_ASSERT(index < map->size);
+	assert(index < map->size);
 	return _NOTNULL(map->data[index].key);
 }
 
 void _value_map_set_copy(_value_t* value, char const* key, int64_t len, _value_t const* val) {
-	_ASSERT(value != NULL);
-	_ASSERT(value->data != NULL);
-	_ASSERT(value->type == _MAP_VALUE_TYPE);
+	assert(value != NULL);
+	assert(value->data != NULL);
+	assert(value->type == _MAP_VALUE_TYPE);
 	_value_keyvalue_array_t* map = (_value_keyvalue_array_t*)_NOTNULL(value->data);
 	for (int64_t i = 0; i < map->size; i++) {
 		if (_string_compare(map->data[i].key, strlen(map->data[i].key), key, len)) {
@@ -516,9 +517,9 @@ void _value_map_set_copy(_value_t* value, char const* key, int64_t len, _value_t
 }
 
 void _value_map_set_move(_value_t* value, char const* key, int64_t len, _value_t* val) {
-	_ASSERT(value != NULL);
-	_ASSERT(value->data != NULL);
-	_ASSERT(value->type == _MAP_VALUE_TYPE);
+	assert(value != NULL);
+	assert(value->data != NULL);
+	assert(value->type == _MAP_VALUE_TYPE);
 	_value_keyvalue_array_t* map = (_value_keyvalue_array_t*)_NOTNULL(value->data);
 	for (int64_t i = 0; i < map->size; i++) {
 		if (_string_compare(map->data[i].key, strlen(map->data[i].key), key, len)) {
@@ -535,9 +536,9 @@ void _value_map_set_move(_value_t* value, char const* key, int64_t len, _value_t
 }
 
 bool _value_map_has(_value_t* value, char const* key, int64_t len) {
-	_ASSERT(value != NULL);
-	_ASSERT(value->data != NULL);
-	_ASSERT(value->type == _MAP_VALUE_TYPE);
+	assert(value != NULL);
+	assert(value->data != NULL);
+	assert(value->type == _MAP_VALUE_TYPE);
 	_value_keyvalue_array_t* map = (_value_keyvalue_array_t*)_NOTNULL(value->data);
 	for (int64_t i = 0; i < map->size; i++) {
 		if (_string_compare(map->data[i].key, strlen(map->data[i].key), key, len)) {
@@ -548,9 +549,9 @@ bool _value_map_has(_value_t* value, char const* key, int64_t len) {
 }
 
 _value_t* _value_map_get(_value_t* value, char const* key, int64_t len) {
-	_ASSERT(value != NULL);
-	_ASSERT(value->data != NULL);
-	_ASSERT(value->type == _MAP_VALUE_TYPE);
+	assert(value != NULL);
+	assert(value->data != NULL);
+	assert(value->type == _MAP_VALUE_TYPE);
 	_value_keyvalue_array_t* map = (_value_keyvalue_array_t*)_NOTNULL(value->data);
 	for (int64_t i = 0; i < map->size; i++) {
 		if (_string_compare(map->data[i].key, strlen(map->data[i].key), key, len)) {
@@ -561,9 +562,9 @@ _value_t* _value_map_get(_value_t* value, char const* key, int64_t len) {
 }
 
 _value_t* _value_map_move(_value_t* value, char const* key, int64_t len) {
-	_ASSERT(value != NULL);
-	_ASSERT(value->data != NULL);
-	_ASSERT(value->type == _MAP_VALUE_TYPE);
+	assert(value != NULL);
+	assert(value->data != NULL);
+	assert(value->type == _MAP_VALUE_TYPE);
 	_value_keyvalue_array_t* map = (_value_keyvalue_array_t*)_NOTNULL(value->data);
 	for (int64_t i = 0; i < map->size; i++) {
 		if (_string_compare(map->data[i].key, strlen(map->data[i].key), key, len)) {
@@ -577,9 +578,9 @@ _value_t* _value_map_move(_value_t* value, char const* key, int64_t len) {
 }
 
 void _value_map_clear(_value_t* value) {
-	_ASSERT(value != NULL);
-	_ASSERT(value->data != NULL);
-	_ASSERT(value->type == _MAP_VALUE_TYPE);
+	assert(value != NULL);
+	assert(value->data != NULL);
+	assert(value->type == _MAP_VALUE_TYPE);
 	_value_keyvalue_array_t* map = (_value_keyvalue_array_t*)_NOTNULL(value->data);
 	for (int64_t i = 0; i < map->size; i++) {
 		_FREE(map->data[i].key);

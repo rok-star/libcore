@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
+#include <assert.h>
 #include <execinfo.h>
 #include <libcore/MACRO.h>
 #include <libcore/thread.h>
@@ -17,7 +18,7 @@ typedef struct _timer_t {
 } _timer_t;
 
 static void __thread_proc(void* param) {
-    _ASSERT(param != NULL);
+    assert(param != NULL);
     _timer_t* timer = (_timer_t*)param;
     for (;;) {
         _sleep(timer->ms);
@@ -28,8 +29,8 @@ static void __thread_proc(void* param) {
 }
 
 _timer_t* _timer_create(double ms, void(*proc)(void*), void* param) {
-    _ASSERT(ms > 0);
-    _ASSERT(proc != NULL);
+    assert(ms > 0);
+    assert(proc != NULL);
     _timer_t* timer = _NEW(_timer_t, {});
     timer->proc = proc;
     timer->param = param;
@@ -40,7 +41,7 @@ _timer_t* _timer_create(double ms, void(*proc)(void*), void* param) {
 }
 
 void _timer_destroy(_timer_t* timer) {
-    _ASSERT(timer != NULL);
+    assert(timer != NULL);
     timer->exit = true;
     _thread_join(timer->thread);
     _thread_destroy(timer->thread);

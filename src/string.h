@@ -19,17 +19,17 @@ void _string_split(char const*,int64_t,char const*,char const***,int64_t*);
 bool _string_digital(char const*,int64_t);
 bool _string_whitespace(char const*,int64_t);
 int64_t _string_index_of(char const*,int64_t,char const*,int64_t,int64_t);
-int64_t _string_read_int8(char const*,int64_t,bool,int8_t*);
-int64_t _string_read_int16(char const*,int64_t,bool,int16_t*);
-int64_t _string_read_int32(char const*,int64_t,bool,int32_t*);
-int64_t _string_read_int64(char const*,int64_t,bool,int64_t*);
-int64_t _string_read_uint8(char const*,int64_t,bool,uint8_t*);
-int64_t _string_read_uint16(char const*,int64_t,bool,uint16_t*);
-int64_t _string_read_uint32(char const*,int64_t,bool,uint32_t*);
-int64_t _string_read_uint64(char const*,int64_t,bool,uint64_t*);
-int64_t _string_read_double(char const*,int64_t,bool,double*);
 int64_t _string_read_line(char const*,int64_t);
 int64_t _string_read_until(char const*,int64_t,char const*);
+int64_t _string_read_int8(char const*,int64_t,int8_t*);
+int64_t _string_read_int16(char const*,int64_t,int16_t*);
+int64_t _string_read_int32(char const*,int64_t,int32_t*);
+int64_t _string_read_int64(char const*,int64_t,int64_t*);
+int64_t _string_read_uint8(char const*,int64_t,uint8_t*);
+int64_t _string_read_uint16(char const*,int64_t,uint16_t*);
+int64_t _string_read_uint32(char const*,int64_t,uint32_t*);
+int64_t _string_read_uint64(char const*,int64_t,uint64_t*);
+int64_t _string_read_double(char const*,int64_t,double*);
 
 #ifdef __cplusplus
 }

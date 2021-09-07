@@ -4,6 +4,7 @@
 
 #include <math.h>
 #include <time.h>
+#include <assert.h>
 #include <sys/time.h>
 #include <libcore/MACRO.h>
 #include <libcore/time.h>

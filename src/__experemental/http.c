@@ -7,8 +7,8 @@
 static char const* __METHODS[] = { "GET", "HEAD", "POST", "PUT", "DELETE", "CONNECT", "OPTIONS", "TRACE", "PATCH", NULL };
 
 static bool __read_space(_parser_t* parser, _status_t* status) {
-    _ASSERT(parser != NULL);
-    _ASSERT(status != NULL);
+    assert(parser != NULL);
+    assert(status != NULL);
 
     if (_parser_read_exact(parser, " ", 1)) {
         return true;
@@ -19,8 +19,8 @@ static bool __read_space(_parser_t* parser, _status_t* status) {
 }
 
 static bool __read_return(_parser_t* parser, _status_t* status) {
-    _ASSERT(parser != NULL);
-    _ASSERT(status != NULL);
+    assert(parser != NULL);
+    assert(status != NULL);
 
     if (_parser_read_exact(parser, "\r\n", 2)) {
         return true;
@@ -31,9 +31,9 @@ static bool __read_return(_parser_t* parser, _status_t* status) {
 }
 
 static bool __read_version(_parser_t* parser, _http_value_t* value, _status_t* status) {
-    _ASSERT(parser != NULL);
-    _ASSERT(value != NULL);
-    _ASSERT(status != NULL);
+    assert(parser != NULL);
+    assert(value != NULL);
+    assert(status != NULL);
 
     if (_parser_read_string(parser, &value->data, &value->size)) {
         if ((value->size > 6)
@@ -50,9 +50,9 @@ static bool __read_version(_parser_t* parser, _http_value_t* value, _status_t* s
 }
 
 static bool __read_method(_parser_t* parser, _http_value_t* value, _status_t* status) {
-    _ASSERT(parser != NULL);
-    _ASSERT(value != NULL);
-    _ASSERT(status != NULL);
+    assert(parser != NULL);
+    assert(value != NULL);
+    assert(status != NULL);
 
     if (_parser_read_string(parser, &value->data, &value->size)) {
         int64_t i = 0;
@@ -75,9 +75,9 @@ static bool __read_method(_parser_t* parser, _http_value_t* value, _status_t* st
 }
 
 static bool __read_status(_parser_t* parser, int* value, _status_t* status) {
-    _ASSERT(parser != NULL);
-    _ASSERT(value != NULL);
-    _ASSERT(status != NULL);
+    assert(parser != NULL);
+    assert(value != NULL);
+    assert(status != NULL);
 
     if (_parser_read_int32(parser, false, value)) {
         return true;
@@ -88,9 +88,9 @@ static bool __read_status(_parser_t* parser, int* value, _status_t* status) {
 }
 
 static bool __read_message(_parser_t* parser, _http_value_t* value, _status_t* status) {
-    _ASSERT(parser != NULL);
-    _ASSERT(value != NULL);
-    _ASSERT(status != NULL);
+    assert(parser != NULL);
+    assert(value != NULL);
+    assert(status != NULL);
 
     if (_parser_read_string(parser, &value->data, &value->size)) {
         return true;
@@ -101,9 +101,9 @@ static bool __read_message(_parser_t* parser, _http_value_t* value, _status_t* s
 }
 
 static bool __read_url(_parser_t* parser, _http_value_t* value, _status_t* status) {
-    _ASSERT(parser != NULL);
-    _ASSERT(value != NULL);
-    _ASSERT(status != NULL);
+    assert(parser != NULL);
+    assert(value != NULL);
+    assert(status != NULL);
 
     if (_parser_read_string(parser, &value->data, &value->size)) {
         if (value->data[0] == '/') {
@@ -119,9 +119,9 @@ static bool __read_url(_parser_t* parser, _http_value_t* value, _status_t* statu
 }
 
 static bool __read_request(_parser_t* parser, _http_message_t* http_message, _status_t* status) {
-    _ASSERT(parser != NULL);
-    _ASSERT(http_message != NULL);
-    _ASSERT(status != NULL);
+    assert(parser != NULL);
+    assert(http_message != NULL);
+    assert(status != NULL);
 
     return (__read_method(parser, &http_message->method, status)
         && __read_space(parser, status)
@@ -131,9 +131,9 @@ static bool __read_request(_parser_t* parser, _http_message_t* http_message, _st
 }
 
 static bool __read_response(_parser_t* parser, _http_message_t* http_message, _status_t* status) {
-    _ASSERT(parser != NULL);
-    _ASSERT(http_message != NULL);
-    _ASSERT(status != NULL);
+    assert(parser != NULL);
+    assert(http_message != NULL);
+    assert(status != NULL);
 
     return (__read_version(parser, &http_message->method, status)
         && __read_space(parser, status)
@@ -143,9 +143,9 @@ static bool __read_response(_parser_t* parser, _http_message_t* http_message, _s
 }
 
 static bool __read_first_line(_parser_t* parser, _http_message_t* http_message, _status_t* status) {
-    _ASSERT(parser != NULL);
-    _ASSERT(http_message != NULL);
-    _ASSERT(status != NULL);
+    assert(parser != NULL);
+    assert(http_message != NULL);
+    assert(status != NULL);
 
     if (http_message->type == _REQUEST_HTTP_MESSAGE_TYPE) {
         return __read_request(parser, http_message, status);
@@ -158,9 +158,9 @@ static bool __read_first_line(_parser_t* parser, _http_message_t* http_message, 
 }
 
 static bool __read_header(_parser_t* parser, _http_header_t* header, _status_t* status) {
-    _ASSERT(parser != NULL);
-    _ASSERT(header != NULL);
-    _ASSERT(status != NULL);
+    assert(parser != NULL);
+    assert(header != NULL);
+    assert(status != NULL);
 
     if (_parser_read_until(parser, ": ", 2, &header->name.data, &header->name.size)) {
         if (_parser_seek(parser, 2)) {
@@ -181,9 +181,9 @@ static bool __read_header(_parser_t* parser, _http_header_t* header, _status_t* 
 }
 
 static bool __read_headers(_parser_t* parser, _http_message_t* http_message, _status_t* status) {
-    _ASSERT(parser != NULL);
-    _ASSERT(http_message != NULL);
-    _ASSERT(status != NULL);
+    assert(parser != NULL);
+    assert(http_message != NULL);
+    assert(status != NULL);
 
     _http_header_t header = {};
     for (;;) {
@@ -206,8 +206,8 @@ static bool __read_headers(_parser_t* parser, _http_message_t* http_message, _st
 }
 
 _http_message_t* _http_message_create(char const* data, int64_t size, _HTTP_MESSAGE_TYPE type, _status_t* status) {
-    _ASSERT(data != NULL);
-    _ASSERT(status != NULL);
+    assert(data != NULL);
+    assert(status != NULL);
 
     _http_message_t* http_message = _NEW(_http_message_t, { .type = type });
 

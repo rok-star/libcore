@@ -1,3 +1,4 @@
+#include <assert.h>
 #include <Cocoa/Cocoa.h>
 #include <libcore/MACRO.h>
 #include <libcore/window.h>
@@ -42,7 +43,7 @@ typedef struct _window_t {
 }
 
 - (void)triggerEventMouse:(_WINDOW_EVENT)type event:(NSEvent*)event {
-    _ASSERT(event != NULL);
+    assert(event != NULL);
     if (_window->on_event != NULL) {
         NSPoint point = [event locationInWindow];
         _window->on_event(
@@ -64,9 +65,9 @@ typedef struct _window_t {
 
 
 - (void)triggerEventKey:(_WINDOW_EVENT)type event:(NSEvent*)event {
-    _ASSERT(event != NULL);
+    assert(event != NULL);
     if (_window->on_event != NULL) {
-        _ASSERT(event.keyCode < 256);
+        assert(event.keyCode < 256);
         _window->on_event(
             &(_window_event_t){
                 .type = type,
@@ -193,7 +194,7 @@ _window_t* _window_create(void) {
 }
 
 void _window_destroy(_window_t* window) {
-    _ASSERT(window != NULL);
+    assert(window != NULL);
     window->on_event = NULL;
     [window->pNSWindow setReleasedWhenClosed: YES];
     [window->pNSWindow close];
@@ -201,7 +202,7 @@ void _window_destroy(_window_t* window) {
 }
 
 void _window_set_visible(_window_t* window, bool value) {
-    _ASSERT(window != NULL);
+    assert(window != NULL);
     if (value) {
         if (!window->pNSWindow.visible) {
             [window->pNSWindow makeKeyAndOrderFront: nil];
@@ -216,7 +217,7 @@ void _window_set_visible(_window_t* window, bool value) {
 }
 
 void _window_set_sizable(_window_t* window, bool value) {
-    _ASSERT(window != NULL);
+    assert(window != NULL);
     if (value == (bool)(window->pNSWindow.styleMask & NSWindowStyleMaskResizable))
         return;
     if (value) {
@@ -227,7 +228,7 @@ void _window_set_sizable(_window_t* window, bool value) {
 }
 
 void _window_set_closable(_window_t* window, bool value) {
-    _ASSERT(window != NULL);
+    assert(window != NULL);
     if (value == (bool)(window->pNSWindow.styleMask & NSWindowStyleMaskClosable))
         return;
     if (value) {
@@ -238,7 +239,7 @@ void _window_set_closable(_window_t* window, bool value) {
 }
 
 void _window_set_maximizable(_window_t* window, bool value) {
-    _ASSERT(window != NULL);
+    assert(window != NULL);
     if (value == (bool)(window->pNSWindow.styleMask & NSWindowStyleMaskResizable))
         return;
     if (value) {
@@ -249,7 +250,7 @@ void _window_set_maximizable(_window_t* window, bool value) {
 }
 
 void _window_set_minimizable(_window_t* window, bool value) {
-    _ASSERT(window != NULL);
+    assert(window != NULL);
     if (value == (bool)(window->pNSWindow.styleMask & NSWindowStyleMaskMiniaturizable))
         return;
     if (value) {
@@ -260,14 +261,14 @@ void _window_set_minimizable(_window_t* window, bool value) {
 }
 
 void _window_set_maximized(_window_t* window, bool value) {
-    _ASSERT(window != NULL);
+    assert(window != NULL);
     if (value == (bool)(window->pNSWindow.styleMask & NSWindowStyleMaskFullScreen))
         return;
     [window->pNSWindow toggleFullScreen: window->pNSWindow];
 }
 
 void _window_set_minimized(_window_t* window, bool value) {
-    _ASSERT(window != NULL);
+    assert(window != NULL);
     if (value == window->pNSWindow.miniaturized)
         return;
     if (value) {
@@ -278,19 +279,19 @@ void _window_set_minimized(_window_t* window, bool value) {
 }
 
 void _window_set_topmost(_window_t* window, bool value) {
-    _ASSERT(window != NULL);
+    assert(window != NULL);
     [window->pNSWindow setLevel: value ? NSStatusWindowLevel : NSNormalWindowLevel];
 }
 
 void _window_set_origin(_window_t* window, _point_t const* value) {
-    _ASSERT(window != NULL);
-    _ASSERT(value != NULL);
+    assert(window != NULL);
+    assert(value != NULL);
     ;
 }
 
 void _window_set_size(_window_t* window, _size_t const* value) {
-    _ASSERT(window != NULL);
-    _ASSERT(value != NULL);
+    assert(window != NULL);
+    assert(value != NULL);
     NSRect rect = [window->pNSWindow frame];
     rect.size.width = value->width;
     rect.size.height = value->height + (window->pNSWindow.frame.size.height
@@ -300,53 +301,53 @@ void _window_set_size(_window_t* window, _size_t const* value) {
 }
 
 void _window_set_text(_window_t* window, char const* value) {
-    _ASSERT(window != NULL);
-    _ASSERT(value != NULL);
+    assert(window != NULL);
+    assert(value != NULL);
     [window->pNSWindow setTitle: [NSString stringWithUTF8String: value]];
 }
 
 bool _window_visible(_window_t const* window) {
-    _ASSERT(window != NULL);
+    assert(window != NULL);
     return window->pNSWindow.visible;
 }
 
 bool _window_closable(_window_t const* window) {
-    _ASSERT(window != NULL);
+    assert(window != NULL);
     return (bool)(window->pNSWindow.styleMask & NSWindowStyleMaskClosable);
 }
 
 bool _window_sizable(_window_t const* window) {
-    _ASSERT(window != NULL);
+    assert(window != NULL);
     return (bool)(window->pNSWindow.styleMask & NSWindowStyleMaskResizable);
 }
 
 bool _window_maximizable(_window_t const* window) {
-    _ASSERT(window != NULL);
+    assert(window != NULL);
     return (bool)(window->pNSWindow.styleMask & NSWindowStyleMaskResizable);
 }
 
 bool _window_minimizable(_window_t const* window) {
-    _ASSERT(window != NULL);
+    assert(window != NULL);
     return (bool)(window->pNSWindow.styleMask & NSWindowStyleMaskMiniaturizable);
 }
 
 bool _window_maximized(_window_t const* window) {
-    _ASSERT(window != NULL);
+    assert(window != NULL);
     return (bool)(window->pNSWindow.styleMask & NSWindowStyleMaskFullScreen);
 }
 
 bool _window_minimized(_window_t const* window) {
-    _ASSERT(window != NULL);
+    assert(window != NULL);
     return window->pNSWindow.miniaturized;
 }
 
 bool _window_topmost(_window_t const* window) {
-    _ASSERT(window != NULL);
+    assert(window != NULL);
     return window->pNSWindow.level == NSStatusWindowLevel;
 }
 
 _point_t const* _window_origin(_window_t const* window) {
-    _ASSERT(window != NULL);
+    assert(window != NULL);
     ((_window_t*)window)->origin = (_point_t){
         .x = window->pNSWindow.contentView.frame.origin.x,
         .y = window->pNSWindow.contentView.frame.origin.y
@@ -355,7 +356,7 @@ _point_t const* _window_origin(_window_t const* window) {
 }
 
 _size_t const* _window_size(_window_t const* window) {
-    _ASSERT(window != NULL);
+    assert(window != NULL);
     ((_window_t*)window)->size = (_size_t){
         .width = window->pNSWindow.contentView.frame.size.width,
         .height = window->pNSWindow.contentView.frame.size.height
@@ -364,22 +365,22 @@ _size_t const* _window_size(_window_t const* window) {
 }
 
 char const* _window_text(_window_t const* window) {
-    _ASSERT(window != NULL);
+    assert(window != NULL);
     return [window->pNSWindow.title cStringUsingEncoding: NSUTF8StringEncoding];
 }
 
 float _window_pixelratio(_window_t const* window) {
-    _ASSERT(window != NULL);
+    assert(window != NULL);
     return window->pNSWindow.backingScaleFactor;
 }
 
 void _window_on_event(_window_t* window, void (*on_event)(_window_event_t const*,void*), void* param) {
-    _ASSERT(window != NULL);
+    assert(window != NULL);
     window->on_event = on_event;
     window->param = param;
 }
 
 void* _window_NSWindow(_window_t const* window) {
-    _ASSERT(window != NULL);
+    assert(window != NULL);
     return (__bridge void*)window->pNSWindow;
 }

@@ -5,6 +5,7 @@
 #include <time.h>
 #include <stdint.h>
 #include <pthread.h>
+#include <assert.h>
 #include <libcore/lock.h>
 #include <libcore/cond.h>
 #include <libcore/MACRO.h>
@@ -58,30 +59,30 @@ _cond_t* _cond_create(void) {
 }
 
 void _cond_destroy(_cond_t* cond) {
-    _ASSERT(cond != NULL);
+    assert(cond != NULL);
     pthread_cond_destroy(&cond->cond);
     _FREE(cond);
 }
 
 void _cond_notify(_cond_t* cond) {
-    _ASSERT(cond != NULL);
+    assert(cond != NULL);
     pthread_cond_signal_E(&cond->cond);
 }
 
 void _cond_notify_all(_cond_t* cond) {
-    _ASSERT(cond != NULL);
+    assert(cond != NULL);
     pthread_cond_broadcast_E(&cond->cond);
 }
 
 void _cond_wait(_cond_t* cond, _lock_t* lock) {
-    _ASSERT(cond != NULL);
-    _ASSERT(lock != NULL);
+    assert(cond != NULL);
+    assert(lock != NULL);
     pthread_cond_wait_E(&cond->cond, _lock_mutex(lock));
 }
 
 void _cond_wait_timeout(_cond_t* cond, _lock_t* lock, double ms) {
-    _ASSERT(cond != NULL);
-    _ASSERT(lock != NULL);
+    assert(cond != NULL);
+    assert(lock != NULL);
     uint32_t ns = (((ms < 0) ? 0 : ms) * 1000000.0);
     struct timespec until = {};
     clock_gettime_E(CLOCK_REALTIME, &until);

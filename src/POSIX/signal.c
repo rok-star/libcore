@@ -3,6 +3,7 @@
 #endif
 
 #include <stdint.h>
+#include <assert.h>
 #include <libcore/signal.h>
 #include <libcore/MACRO.h>
 
@@ -35,8 +36,8 @@ typedef struct _signal_t {
 static void* __map[256] = {};
 
 static void __handler(int signum) {
-	_ASSERT(signum > 0);
-	_ASSERT(signum < 256);
+	assert(signum > 0);
+	assert(signum < 256);
 
 	_signal_t* signal = __map[signum];
 
@@ -46,15 +47,15 @@ static void __handler(int signum) {
 }
 
 _signal_t* _signal_create(int* signums, int num) {
-	_ASSERT(signums != NULL);
-	_ASSERT(num > 0);
+	assert(signums != NULL);
+	assert(num > 0);
 
 	_signal_t* signal = _NEW(_signal_t, {});
 
 	for (int i = 0; i < num; i++) {
 		int signum = signums[i];
-		_ASSERT(signum > 0);
-		_ASSERT(signum < 256);
+		assert(signum > 0);
+		assert(signum < 256);
 		__map[signum] = signal;
 		sigaction_E(
 			signum,
@@ -69,7 +70,7 @@ _signal_t* _signal_create(int* signums, int num) {
 }
 
 void _signal_destroy(_signal_t* signal) {
-	_ASSERT(signal != NULL);
+	assert(signal != NULL);
 	__CLEAR_EVENTS(signal->events);
 	_FREE(signal->events.data);
 	_FREE(signal->signums.data);
@@ -77,7 +78,7 @@ void _signal_destroy(_signal_t* signal) {
 }
 
 void _signal_process(_signal_t* signal, _signal_event_t const** events, int64_t* num) {
-	_ASSERT(signal != NULL);
+	assert(signal != NULL);
 
 	(*events) = NULL;
 	(*num) = 0;

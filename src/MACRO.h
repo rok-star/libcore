@@ -38,15 +38,11 @@
 }
 
 #ifdef NDEBUG
-    #define _ASSERT(a)
-    #define _ASSERT_M(a, b)
     #define _NOTNULL(a) a
 #else
-    #define _ASSERT(a) if (!(a)) _ABORT("Assertion failed: (%s) in function \"%s\" in file \"%s\" at line %d\n", #a, __FUNCTION__, __FILE__, __LINE__)
-    #define _ASSERT_M(a, b) if (!(a)) _ABORT("Assertion failed: %s, (%s) in function \"%s\" in file \"%s\" at line %d\n", #b, #a, __FUNCTION__, __FILE__, __LINE__)
     #define _NOTNULL(a) ({ \
         __typeof__(a) __val = a; \
-        _ASSERT(__val != NULL); \
+        assert(__val != NULL); \
         __val; \
     })
 #endif
@@ -69,7 +65,7 @@
 
 #define _ALLOC(TYPE, N) ({ \
     TYPE* __ret = (TYPE*)calloc(N, sizeof(TYPE)); \
-    _ASSERT(__ret != NULL); \
+    assert(__ret != NULL); \
     __ret; \
 })
 
@@ -99,10 +95,10 @@
 })
 
 #define _RESERVE_V(data, size, capacity, reserve) { \
-    _ASSERT(size >= 0); \
-    _ASSERT(capacity >= 0); \
-    _ASSERT(reserve >= 0); \
-    _ASSERT(size <= capacity); \
+    assert(size >= 0); \
+    assert(capacity >= 0); \
+    assert(reserve >= 0); \
+    assert(size <= capacity); \
     if (reserve > capacity) { \
         __typeof__(data) __data = _ALLOC(__typeof__(*data), reserve); \
         if (data != NULL) { \
@@ -115,14 +111,14 @@
 }
 
 #define _CLEAR_V(data, size) { \
-    _ASSERT(size >= 0); \
+    assert(size >= 0); \
     size = 0; \
 }
 
 #define _PUSH_V(data, size, capacity, ...) { \
-    _ASSERT(size >= 0); \
-    _ASSERT(capacity >= 0); \
-    _ASSERT(size <= capacity); \
+    assert(size >= 0); \
+    assert(capacity >= 0); \
+    assert(size <= capacity); \
     if (size == capacity) { \
         __typeof__(capacity) __reserve = ((size == 0) ? 10 : (size * 2)); \
         _RESERVE_V(data, size, capacity, __reserve); \
@@ -131,19 +127,19 @@
 }
 
 #define _POP_V(data, size, capacity) ({ \
-    _ASSERT(data != NULL); \
-    _ASSERT(size > 0); \
-    _ASSERT(capacity > 0); \
-    _ASSERT(size <= capacity); \
+    assert(data != NULL); \
+    assert(size > 0); \
+    assert(capacity > 0); \
+    assert(size <= capacity); \
     __typeof__(*data) __ret = data[size - 1]; \
     size -= 1; \
     __ret; \
 })
 
 #define _UNSHIFT_V(data, size, capacity, ...) { \
-    _ASSERT(size >= 0); \
-    _ASSERT(capacity >= 0); \
-    _ASSERT(size <= capacity); \
+    assert(size >= 0); \
+    assert(capacity >= 0); \
+    assert(size <= capacity); \
     if (size == capacity) { \
         __typeof__(capacity) __reserve = ((size * 2) + 1); \
         __typeof__(data) __data = _ALLOC(__typeof__(*data), __reserve); \
@@ -163,10 +159,10 @@
 }
 
 #define _SHIFT_V(data, size, capacity, ...) ({ \
-    _ASSERT(data != NULL); \
-    _ASSERT(size > 0); \
-    _ASSERT(capacity > 0); \
-    _ASSERT(size <= capacity); \
+    assert(data != NULL); \
+    assert(size > 0); \
+    assert(capacity > 0); \
+    assert(size <= capacity); \
     __typeof__(*data) __ret = data[0]; \
     for (__typeof__(size) __i = 1; __i < size; __i++) \
         data[__i - 1] = data[__i]; \
@@ -175,9 +171,9 @@
 })
 
 #define _REMOVE_V(data, size, capacity, item) { \
-    _ASSERT(size >= 0); \
-    _ASSERT(capacity >= 0); \
-    _ASSERT(size <= capacity); \
+    assert(size >= 0); \
+    assert(capacity >= 0); \
+    assert(size <= capacity); \
     if (data != NULL) { \
         __typeof__(size) __index = -1; \
         for (__typeof__(size) __i = 0; __i < size; __i++) { \
@@ -195,9 +191,9 @@
 }
 
 #define _REMOVE_INDEX_V(data, size, capacity, index) { \
-    _ASSERT(size >= 0); \
-    _ASSERT(capacity >= 0); \
-    _ASSERT(size <= capacity); \
+    assert(size >= 0); \
+    assert(capacity >= 0); \
+    assert(size <= capacity); \
     if (data != NULL) { \
         if ((index >= 0) && (index < size)) { \
             for (__typeof__(size) __i = (index + 1); __i < size; __i++) { \
@@ -209,7 +205,7 @@
 }
 
 #define _FIND_INDEX_V(data, size, ...) ({ \
-    _ASSERT(size >= 0); \
+    assert(size >= 0); \
     __typeof__(size) __ret = -1; \
     if (data != NULL) { \
         for (__typeof__(size) __i = 0; __i < size; __i++) { \
@@ -224,7 +220,7 @@
 })
 
 #define _INDEX_OF_V(data, size, item) ({ \
-    _ASSERT(size >= 0); \
+    assert(size >= 0); \
     __typeof__(size) __ret = -1; \
     if (data != NULL) { \
         for (__typeof__(size) __i = 0; __i < size; __i++) { \
@@ -238,15 +234,15 @@
 })
 
 #define _FIRST_V(data, size) ({ \
-    _ASSERT(data != NULL); \
-    _ASSERT(size > 0); \
+    assert(data != NULL); \
+    assert(size > 0); \
     __typeof__(*data) __ret = data[0]; \
     __ret; \
 })
 
 #define _LAST_V(data, size) ({ \
-    _ASSERT(data != NULL); \
-    _ASSERT(size > 0); \
+    assert(data != NULL); \
+    assert(size > 0); \
     __typeof__(*data) __ret = data[size - 1]; \
     __ret; \
 })

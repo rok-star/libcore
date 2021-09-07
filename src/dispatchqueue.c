@@ -1,3 +1,4 @@
+#include <assert.h>
 #include <stdbool.h>
 #include <stdint.h>
 #include <libcore/MACRO.h>
@@ -22,7 +23,7 @@ typedef struct _dispatch_queue_t {
 } _dispatch_queue_t;
 
 static void __dispatch_queue_process(_dispatch_queue_t* queue, double timeout) {
-    _ASSERT(queue != NULL);
+    assert(queue != NULL);
     _lock_acquire(queue->lock);
     if (queue->items.size == 0) {
         if (timeout < 0) {
@@ -51,7 +52,7 @@ _dispatch_queue_t* _dispatch_queue_create(void) {
 }
 
 void _dispatch_queue_destroy(_dispatch_queue_t* queue) {
-    _ASSERT(queue != NULL);
+    assert(queue != NULL);
     _lock_destroy(queue->lock);
     _cond_destroy(queue->cond);
     _FREE(queue->items.data);
@@ -59,8 +60,8 @@ void _dispatch_queue_destroy(_dispatch_queue_t* queue) {
 }
 
 void _dispatch_queue_post(_dispatch_queue_t* queue, void(*proc)(void*), void* param) {
-    _ASSERT(queue != NULL);
-    _ASSERT(proc != NULL);
+    assert(queue != NULL);
+    assert(proc != NULL);
     _lock_acquire(queue->lock);
     _PUSH(queue->items, (_dispatch_queue_item_t){ proc, param });
     _lock_release(queue->lock);
@@ -69,8 +70,8 @@ void _dispatch_queue_post(_dispatch_queue_t* queue, void(*proc)(void*), void* pa
 }
 
 bool _dispatch_queue_remove(_dispatch_queue_t* queue, void(*proc)(void*), void* param) {
-    _ASSERT(queue != NULL);
-    _ASSERT(proc != NULL);
+    assert(queue != NULL);
+    assert(proc != NULL);
     bool ret = false;
     _lock_acquire(queue->lock);
     for (int i = (queue->items.size - 1); i >= 0; i--) {
@@ -85,7 +86,7 @@ bool _dispatch_queue_remove(_dispatch_queue_t* queue, void(*proc)(void*), void* 
 }
 
 bool _dispatch_queue_remove_proc(_dispatch_queue_t* queue, void(*proc)(void*)) {
-    _ASSERT(queue != NULL);
+    assert(queue != NULL);
     _lock_acquire(queue->lock);
     for (int i = (queue->items.size - 1); i >= 0; i--) {
         if (queue->items.data[i].proc == proc) {
@@ -99,7 +100,7 @@ bool _dispatch_queue_remove_proc(_dispatch_queue_t* queue, void(*proc)(void*)) {
 }
 
 bool _dispatch_queue_remove_param(_dispatch_queue_t* queue, void* param) {
-    _ASSERT(queue != NULL);
+    assert(queue != NULL);
     _lock_acquire(queue->lock);
     for (int i = (queue->items.size - 1); i >= 0; i--) {
         if (queue->items.data[i].param == param) {
@@ -113,12 +114,12 @@ bool _dispatch_queue_remove_param(_dispatch_queue_t* queue, void* param) {
 }
 
 void _dispatch_queue_process(_dispatch_queue_t* queue) {
-    _ASSERT(queue != NULL);
+    assert(queue != NULL);
     __dispatch_queue_process(queue, -1);
 }
 
 void _dispatch_queue_process_timeout(_dispatch_queue_t* queue, double timeout) {
-    _ASSERT(queue != NULL);
-    _ASSERT(timeout >= 0);
+    assert(queue != NULL);
+    assert(timeout >= 0);
     __dispatch_queue_process(queue, timeout);
 }

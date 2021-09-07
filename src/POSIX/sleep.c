@@ -4,6 +4,7 @@
 
 #include <math.h>
 #include <pthread.h>
+#include <assert.h>
 #include <libcore/sleep.h>
 #include <libcore/MACRO.h>
 

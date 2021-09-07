@@ -9,7 +9,7 @@ void* __param = NULL;
 bool __running = false;
 
 void _app_run() {
-    _ASSERT(__running == false);
+    assert(__running == false);
     __running = true;
     MSG msg;
     while (GetMessage(&msg, NULL, 0, 0) > 0) {
@@ -20,12 +20,12 @@ void _app_run() {
 }
 
 void _app_exit(void) {
-    _ASSERT(__running == true);
+    assert(__running == true);
     PostQuitMessage(0);
 }
 
 void _app_wakeup(void) {
-    _ASSERT(__running == true);
+    assert(__running == true);
     PostThreadMessageA(__thread_id, 0, 0, 0);
 }
 
@@ -34,7 +34,7 @@ bool _app_running(void) {
 }
 
 void _app_on_event(void (*on_event)(_app_event_t const*,void*), void* param) {
-    _ASSERT(on_event != NULL);
+    assert(on_event != NULL);
     __on_event = on_event;
     __param = param;
 }

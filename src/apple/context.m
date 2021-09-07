@@ -1,3 +1,4 @@
+#include <assert.h>
 #include <libcore/MACRO.h>
 #include <libcore/window.h>
 #include <libcore/context.h>
@@ -62,8 +63,8 @@ typedef struct _context_t {
 } _context_t;
 
 static _context_t* __create(_texture_t const* texture, _window_t const* window) {
-    _ASSERT(__metal_device != NULL);
-    _ASSERT(__metal_library != NULL);
+    assert(__metal_device != NULL);
+    assert(__metal_library != NULL);
 
     _context_t* context = _NEW(_context_t, { .scale = 1.0 });
 
@@ -114,17 +115,17 @@ static _context_t* __create(_texture_t const* texture, _window_t const* window) 
 }
 
 _context_t* _context_create_texture(_texture_t const* texture) {
-    _ASSERT(texture != NULL);
+    assert(texture != NULL);
     return __create(texture, NULL);
 }
 
 _context_t* _context_create_window(_window_t const* window) {
-    _ASSERT(window != NULL);
+    assert(window != NULL);
     return __create(NULL, window);
 }
 
 void _context_destroy(_context_t* context) {
-    _ASSERT(context != NULL);
+    assert(context != NULL);
 
     if (context->window != NULL)
         [context->layer removeFromSuperlayer];
@@ -142,10 +143,10 @@ void _context_destroy(_context_t* context) {
 }
 
 void _context_begin_paint(_context_t* context) {
-    _ASSERT(context != NULL);
-    _ASSERT(context->command_queue != NULL);
-    _ASSERT(context->color_pipeline_state != NULL);
-    _ASSERT(context->painting == false);
+    assert(context != NULL);
+    assert(context->command_queue != NULL);
+    assert(context->color_pipeline_state != NULL);
+    assert(context->painting == false);
 
     context->painting = true;
 
@@ -156,15 +157,15 @@ void _context_begin_paint(_context_t* context) {
     id<MTLTexture> resolve_texture = nil;
 
     if (context->window != NULL) {
-        _ASSERT(context->layer != NULL);
+        assert(context->layer != NULL);
 
         context->size = (_size_t){
             .width = (context->window.contentView.frame.size.width * context->window.backingScaleFactor),
             .height = (context->window.contentView.frame.size.height * context->window.backingScaleFactor),
         };
 
-        _ASSERT(context->size.width > 0);
-        _ASSERT(context->size.height > 0);
+        assert(context->size.width > 0);
+        assert(context->size.height > 0);
 
         [CATransaction begin];
         [CATransaction setValue: (id)kCFBooleanTrue forKey: kCATransactionDisableActions];
@@ -177,8 +178,8 @@ void _context_begin_paint(_context_t* context) {
     } else {
         context->size = *_texture_size(context->texture);
 
-        _ASSERT(context->size.width > 0);
-        _ASSERT(context->size.height > 0);
+        assert(context->size.width > 0);
+        assert(context->size.height > 0);
 
         resolve_texture = (__bridge id<MTLTexture>)_texture_MTLTexture(context->texture);
     }
@@ -206,16 +207,16 @@ void _context_begin_paint(_context_t* context) {
 }
 
 void _context_end_paint(_context_t* context) {
-    _ASSERT(context != NULL);
-    _ASSERT(context->command_buffer != NULL);
-    _ASSERT(context->painting == true);
+    assert(context != NULL);
+    assert(context->command_buffer != NULL);
+    assert(context->painting == true);
 
     context->painting = false;
 
     [context->command_encoder endEncoding];
 
     if (context->window != NULL) {
-        _ASSERT(context->drawable != NULL);
+        assert(context->drawable != NULL);
         [context->drawable present];
     }
 
@@ -226,14 +227,14 @@ void _context_end_paint(_context_t* context) {
 }
 
 float _context_scale(_context_t const* context) {
-    _ASSERT(context != NULL);
+    assert(context != NULL);
     return context->scale;
 }
 
 _size_t const* _context_size(_context_t const* context) {
-    _ASSERT(context != NULL);
+    assert(context != NULL);
     if (context->window != NULL) {
-        _ASSERT(context->layer != NULL);
+        assert(context->layer != NULL);
         // ¯\_(ツ)_/¯
         ((_context_t*)context)->size = (_size_t){
             .width = (context->window.contentView.frame.size.width * context->window.backingScaleFactor),
@@ -246,22 +247,22 @@ _size_t const* _context_size(_context_t const* context) {
 }
 
 _rect_t const* _context_clip(_context_t const* context) {
-    _ASSERT(context != NULL);
+    assert(context != NULL);
     return &context->clip;
 }
 
 _CONTEXT_ORIGIN _context_origin(_context_t const* context) {
-    _ASSERT(context != NULL);
+    assert(context != NULL);
     return context->origin;
 }
 
 void _context_set_scale(_context_t* context, float scale) {
-    _ASSERT(context != NULL);
+    assert(context != NULL);
     context->scale = scale;
 }
 
 void _context_set_clip(_context_t* context, _rect_t const* rect) {
-    _ASSERT(context != NULL);
+    assert(context != NULL);
 
     if ((rect == NULL)
     || (rect->size.width <= 0)
@@ -273,18 +274,18 @@ void _context_set_clip(_context_t* context, _rect_t const* rect) {
 }
 
 void _context_set_origin(_context_t* context, _CONTEXT_ORIGIN origin) {
-    _ASSERT(context != NULL);
+    assert(context != NULL);
     context->origin = origin;
 }
 
 void _context_draw_vertices(_context_t const* context, float const* array, int size, bool strip, _brush_t const* brush) {
-    _ASSERT(context != NULL);
-    _ASSERT(array != NULL);
-    _ASSERT(size > 0);
-    _ASSERT(brush != NULL);
-    _ASSERT(context->painting == true);
-    _ASSERT(context->command_encoder != NULL);
-    _ASSERT((context->size.width > 0) && (context->size.height > 0));
+    assert(context != NULL);
+    assert(array != NULL);
+    assert(size > 0);
+    assert(brush != NULL);
+    assert(context->painting == true);
+    assert(context->command_encoder != NULL);
+    assert((context->size.width > 0) && (context->size.height > 0));
 
     _color_t const* color = _brush_color(brush);
 
@@ -317,15 +318,15 @@ void _context_draw_vertices(_context_t const* context, float const* array, int s
 }
 
 void _context_draw_texture(_context_t const* context, _texture_t const* texture, _rect_t const* src, _rect_t const* dst, _color_t const* tint) {
-    _ASSERT(texture != NULL);
-    _ASSERT(context != NULL);
-    _ASSERT(context->painting == true);
-    _ASSERT(context->command_encoder != NULL);
-    _ASSERT(_texture_MTLTexture(texture) != NULL);
+    assert(texture != NULL);
+    assert(context != NULL);
+    assert(context->painting == true);
+    assert(context->command_encoder != NULL);
+    assert(_texture_MTLTexture(texture) != NULL);
 
     _size_t size = *_texture_size(texture);
-    _ASSERT(size.width > 0);
-    _ASSERT(size.height > 0);
+    assert(size.width > 0);
+    assert(size.height > 0);
 
     _rect_t src_ = ((src != NULL) ? *src : (_rect_t){ { 0, 0 }, size });
     _rect_t dst_ = ((dst != NULL) ? *dst : (_rect_t){ { 0, 0 }, size });
@@ -398,16 +399,16 @@ void _context_draw_texture(_context_t const* context, _texture_t const* texture,
 }
 
 void _context_stroke_line(_context_t const* context, _point_t const* from, _point_t const* to, double width, _LINE_CAP cap, _brush_t const* brush) {
-    _ASSERT(context != NULL);
-    _ASSERT(from != NULL);
-    _ASSERT(to != NULL);
-    _ASSERT(brush != NULL);
+    assert(context != NULL);
+    assert(from != NULL);
+    assert(to != NULL);
+    assert(brush != NULL);
 }
 
 void _context_stroke_rect(_context_t const* context, _rect_t const* rect, double width, _brush_t const* brush) {
-    _ASSERT(context != NULL);
-    _ASSERT(rect != NULL);
-    _ASSERT(brush != NULL);
+    assert(context != NULL);
+    assert(rect != NULL);
+    assert(brush != NULL);
 
     /* NOTE: Borders are being generated clock-wise for TopLeft origin and opposite for BottomLeft */
 
@@ -477,9 +478,9 @@ void _context_stroke_ellipse(_context_t const* context, _rect_t const* rect, dou
 }
 
 void _context_fill_rect(_context_t const* context, _rect_t const* rect, _brush_t const* brush) {
-    _ASSERT(context != NULL);
-    _ASSERT(rect != NULL);
-    _ASSERT(brush != NULL);
+    assert(context != NULL);
+    assert(rect != NULL);
+    assert(brush != NULL);
 
     _rect_t rect_ = *rect;
 

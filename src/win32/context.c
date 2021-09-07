@@ -6,17 +6,17 @@ typedef struct _context_t {
 } _context_t;
 
 _context_t* _context_create(void) {
-    _ASSERT();
+    assert();
 }
 
 void _context_destroy(_context_t* context) {
-    _ASSERT();
+    assert();
 }
 
 void _context_begin_paint(_context_t* context) {
-    _ASSERT();
+    assert();
 }
 
 void _context_end_paint(_context_t* context) {
-    _ASSERT();
+    assert();
 }

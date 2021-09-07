@@ -2,6 +2,7 @@
     #define _POSIX_C_SOURCE 200809L
 #endif
 
+#include <assert.h>
 #include <unistd.h>
 #include <stdbool.h>
 #include <limits.h>
@@ -23,8 +24,8 @@ char* _path_cwd(void) {
 }
 
 void _path_stat(char const* path, _path_stat_t* stat_) {
-    _ASSERT(path != NULL);
-    _ASSERT(stat != NULL);
+    assert(path != NULL);
+    assert(stat != NULL);
     struct stat st;
     if (stat(path, &st) == 0) {
     	*stat_ = (_path_stat_t){

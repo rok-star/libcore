@@ -1,3 +1,4 @@
+#include <assert.h>
 #include <Cocoa/Cocoa.h>
 #include <libcore/MACRO.h>
 #include <libcore/sleep.h>
@@ -42,7 +43,7 @@ typedef struct _app_t {
 _app_t* __current = NULL;
 
 _app_t* _app_create(void) {
-    _ASSERT_M(__current == NULL, "only one instance of \"_app_t\" can be created");
+    assert_M(__current == NULL, "only one instance of \"_app_t\" can be created");
     _app_t* app = _NEW(_app_t, {});
     __current = app;
     [[NSApplication sharedApplication]
@@ -75,15 +76,15 @@ _app_t* _app_create(void) {
 }
 
 void _app_destroy(_app_t* app) {
-    _ASSERT(app != NULL);
-    _ASSERT(app == __current);
+    assert(app != NULL);
+    assert(app == __current);
     [[NSApplication sharedApplication] setDelegate: nil];
     _FREE(app);
     __current = NULL;
 }
 
 void _app_process(_app_t* app) {
-    _ASSERT(app != NULL);
+    assert(app != NULL);
     for (;;) {
         NSEvent* event = [NSApp nextEventMatchingMask: NSEventMaskAny
                                             untilDate: nil
@@ -97,7 +98,7 @@ void _app_process(_app_t* app) {
 }
 
 void _app_process_timeout(_app_t* app, double timeout) {
-    _ASSERT(app != NULL);
+    assert(app != NULL);
     NSEvent* event = [NSApp nextEventMatchingMask: NSEventMaskAny
                                         untilDate: [NSDate dateWithTimeIntervalSinceNow: (timeout / 1000.0)]
                                            inMode: NSDefaultRunLoopMode
@@ -110,7 +111,7 @@ void _app_process_timeout(_app_t* app, double timeout) {
 }
 
 void _app_on_event(_app_t* app, void(*proc)(_app_event_t const*,void*), void* param) {
-    _ASSERT(app != NULL);
+    assert(app != NULL);
     app->proc = proc;
     app->param = param;
 }

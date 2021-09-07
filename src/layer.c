@@ -1,3 +1,4 @@
+#include <assert.h>
 #include <math.h>
 #include <stdint.h>
 #include <libcore/MACRO.h>
@@ -31,7 +32,7 @@ _layer_t* _layer_create(void) {
 }
 
 void _layer_destroy(_layer_t* layer) {
-	_ASSERT(layer != NULL);
+	assert(layer != NULL);
 	if (layer->frame_brush != NULL) {
 		_brush_destroy(layer->frame_brush);
 	}
@@ -42,56 +43,56 @@ void _layer_destroy(_layer_t* layer) {
 }
 
 void _layer_set_center(_layer_t* layer, _point_t const* center) {
-	_ASSERT(layer != NULL);
-	_ASSERT(center != NULL);
+	assert(layer != NULL);
+	assert(center != NULL);
 	layer->center = *center;
 	layer->rect.origin.x = (center->x - (layer->rect.size.width / 2.0));
 	layer->rect.origin.y = (center->y - (layer->rect.size.height / 2.0));
 }
 
 void _layer_set_origin(_layer_t* layer, _point_t const* origin) {
-	_ASSERT(layer != NULL);
-	_ASSERT(origin != NULL);
+	assert(layer != NULL);
+	assert(origin != NULL);
 	layer->rect.origin = *origin;
 	layer->center.x = (layer->rect.origin.x + (layer->rect.size.width / 2.0));
 	layer->center.y = (layer->rect.origin.y + (layer->rect.size.height / 2.0));
 }
 
 void _layer_set_size(_layer_t* layer, _size_t const* size) {
-	_ASSERT(layer != NULL);
-	_ASSERT(size != NULL);
+	assert(layer != NULL);
+	assert(size != NULL);
 	layer->rect.size = *size;
 }
 
 void _layer_set_texture(_layer_t* layer, _texture_t const* texture) {
-	_ASSERT(layer != NULL);
-	_ASSERT(texture != NULL);
+	assert(layer != NULL);
+	assert(texture != NULL);
 	layer->texture = texture;
 }
 
 void _layer_set_texture_layout(_layer_t* layer, _TEXTURE_LAYOUT layout) {
-	_ASSERT(layer != NULL);
+	assert(layer != NULL);
 	layer->texture_layout = layout;
 }
 
 void _layer_set_texture_scale(_layer_t* layer, double scale) {
-	_ASSERT(layer != NULL);
+	assert(layer != NULL);
 	layer->texture_scale = scale;
 }
 
 void _layer_set_texture_stretch_indent(_layer_t* layer, int x, int y) {
-	_ASSERT(layer != NULL);
+	assert(layer != NULL);
 	layer->stretch_indent_x = x;
 	layer->stretch_indent_y = y;
 }
 
 void _layer_set_frame_width(_layer_t* layer, double width) {
-	_ASSERT(layer != NULL);
+	assert(layer != NULL);
 	layer->frame_width = width;
 }
 
 void _layer_set_frame_color(_layer_t* layer, _color_t const* color) {
-	_ASSERT(layer != NULL);
+	assert(layer != NULL);
 	if (layer->frame_brush != NULL) {
 		_brush_destroy(layer->frame_brush);
 	}
@@ -101,7 +102,7 @@ void _layer_set_frame_color(_layer_t* layer, _color_t const* color) {
 }
 
 void _layer_set_background_color(_layer_t* layer, _color_t const* color) {
-	_ASSERT(layer != NULL);
+	assert(layer != NULL);
 	if (layer->background_brush != NULL) {
 		_brush_destroy(layer->background_brush);
 	}
@@ -111,32 +112,32 @@ void _layer_set_background_color(_layer_t* layer, _color_t const* color) {
 }
 
 _point_t const* _layer_center(_layer_t const* layer) {
-	_ASSERT(layer != NULL);
+	assert(layer != NULL);
 	return &layer->center;
 }
 
 _point_t const* _layer_origin(_layer_t const* layer) {
-	_ASSERT(layer != NULL);
+	assert(layer != NULL);
 	return &layer->rect.origin;
 }
 
 _size_t const* _layer_size(_layer_t const* layer) {
-	_ASSERT(layer != NULL);
+	assert(layer != NULL);
 	return &layer->rect.size;
 }
 
 _texture_t const* _layer_texture(_layer_t const* layer) {
-	_ASSERT(layer != NULL);
+	assert(layer != NULL);
 	return layer->texture;
 }
 
 double _layer_frame_width(_layer_t const* layer) {
-	_ASSERT(layer != NULL);
+	assert(layer != NULL);
 	return layer->frame_width;
 }
 
 _color_t const* _layer_frame_color(_layer_t const* layer) {
-	_ASSERT(layer != NULL);
+	assert(layer != NULL);
 	if (layer->frame_brush != NULL) {
 		return _brush_color(layer->frame_brush);
 	} else {
@@ -145,7 +146,7 @@ _color_t const* _layer_frame_color(_layer_t const* layer) {
 }
 
 _color_t const* _layer_background_color(_layer_t const* layer) {
-	_ASSERT(layer != NULL);
+	assert(layer != NULL);
 	if (layer->background_brush != NULL) {
 		return _brush_color(layer->background_brush);
 	} else {
@@ -154,31 +155,31 @@ _color_t const* _layer_background_color(_layer_t const* layer) {
 }
 
 _layer_t* _layer_parent(_layer_t const* layer) {
-	_ASSERT(layer != NULL);
+	assert(layer != NULL);
 	return layer->parent;
 }
 
 _layer_t* _layer_children_item(_layer_t const* layer, int index) {
-	_ASSERT(layer != NULL);
-	_ASSERT((index >= 0) && (index < layer->children.size));
+	assert(layer != NULL);
+	assert((index >= 0) && (index < layer->children.size));
 	return layer->children.data[index];
 }
 
 int _layer_children_count(_layer_t const* layer) {
-	_ASSERT(layer != NULL);
+	assert(layer != NULL);
 	return layer->children.size;
 }
 
 void _layer_append_child(_layer_t* layer, _layer_t* child) {
-	_ASSERT(layer != NULL);
-	_ASSERT(child != NULL);
+	assert(layer != NULL);
+	assert(child != NULL);
 	_layer_remove_from_parent(child);
 	_PUSH(layer->children, child);
 }
 
 bool _layer_remove_child(_layer_t* layer, _layer_t* child) {
-	_ASSERT(layer != NULL);
-	_ASSERT(child != NULL);
+	assert(layer != NULL);
+	assert(child != NULL);
 	int index = _INDEX_OF(layer->children, child);
 	if (index > -1) {
 		_REMOVE_INDEX(layer->children, index);
@@ -190,7 +191,7 @@ bool _layer_remove_child(_layer_t* layer, _layer_t* child) {
 }
 
 bool _layer_remove_from_parent(_layer_t* layer) {
-	_ASSERT(layer != NULL);
+	assert(layer != NULL);
 	if (layer->parent != NULL) {
 		int index = _INDEX_OF(layer->parent->children, layer);
 		_REMOVE_INDEX(layer->parent->children, index);
@@ -202,8 +203,8 @@ bool _layer_remove_from_parent(_layer_t* layer) {
 }
 
 void _layer_paint(_layer_t const* layer, _context_t* context, _point_t const* point) {
-	_ASSERT(layer != NULL);
-	_ASSERT(context != NULL);
+	assert(layer != NULL);
+	assert(context != NULL);
 	_rect_t rect = {
 		.origin = _POINT_ADD(layer->rect.origin, ((point != NULL) ? *point : ((_point_t){ 0, 0 }))),
 		.size = layer->rect.size

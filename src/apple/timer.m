@@ -1,3 +1,4 @@
+#include <assert.h>
 #include <Cocoa/Cocoa.h>
 #include <libcore/MACRO.h>
 #include <libcore/timer.h>
@@ -9,8 +10,8 @@ typedef struct _timer_t {
 } _timer_t;
 
 _timer_t* _timer_create(double ms, void(*proc)(void*), void* param) {
-    _ASSERT(ms > 0);
-    _ASSERT(proc != NULL);
+    assert(ms > 0);
+    assert(proc != NULL);
     _timer_t* timer = _NEW(_timer_t, {
         .proc = proc,
         .param = param
@@ -22,7 +23,7 @@ _timer_t* _timer_create(double ms, void(*proc)(void*), void* param) {
 }
 
 void _timer_destroy(_timer_t* timer) {
-    _ASSERT(timer != NULL);
+    assert(timer != NULL);
     [timer->timer invalidate];
     timer->timer = nil;
     _FREE(timer);
