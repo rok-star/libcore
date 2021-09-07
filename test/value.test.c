@@ -1,7 +1,7 @@
 #include <assert.h>
-#include <libcore/time.h>
-#include <libcore/value.h>
-#include <libcore/MACRO.h>
+#include <libcore/core/time.h>
+#include <libcore/core/value.h>
+#include <libcore/core/MACRO.h>
 
 void _value_test(void) {
 	char const* DUMMY_STRING = "Hello, World";

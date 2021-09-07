@@ -1,4 +1,4 @@
-#include <libcore/string.h>
+#include <libcore/core/string.h>
 
 void _string_test(void) {
 
